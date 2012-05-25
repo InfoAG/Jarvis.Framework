@@ -1,1 +1,1 @@
-#include "Word.cpp"
+#include "Word.h"
