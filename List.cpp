@@ -22,8 +22,8 @@ void List<T>::append(const T &item)
     } else {
         last->next = new Node(item, last);
         last = last->next;
-        size++;
     }
+    size++;
 }
 
 template <class T>
@@ -36,8 +36,8 @@ void List<T>::prepend(const T &item)
     } else {
         first->previous = new Node(item, NULL, first);
         first = first->previous;
-        size++;
     }
+    size++;
 }
 
 template <class T>
@@ -76,4 +76,37 @@ void List<T>::clear()
     first = NULL;
     last = NULL;
     size = 0;
+}
+
+template <class T>
+void List<T>::insert(const T &item, unsigned int pos)
+{
+    if (pos == 0) prepend(item);
+    else if (pos == getSize()) append(item);
+    else if (pos > getSize()) throw 0; //out_of_range
+    else {
+        Node *previous_node = first;
+        for (unsigned int i = 0; i < pos - 1; i++)
+            previous_node = previous_node->next;
+        previous_node->next->previous = new Node(item, previous_node, previous_node->next);
+        previous_node->next = previous_node->next->previous;
+        size++;
+    }
+}
+
+template <class T>
+void List<T>::remove(unsigned int pos)
+{
+    if (pos >= getSize()) throw 0; //out_of_range
+    else {
+        Node *target_node = first;
+        for (unsigned int i = 0; i < pos; i++)
+            target_node = target_node->next;
+        if (target_node->previous != NULL) target_node->previous->next = target_node->next;
+        else first = target_node->next;
+        if (target_node->next != NULL) target_node->next->previous = target_node->previous;
+        else last = target_node->previous;
+        delete target_node;
+        size--;
+    }
 }

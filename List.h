@@ -48,7 +48,7 @@ public:
 
     void append(const T &item);
     void prepend(const T &item);
-    void insert(const T &item, unsigned int before_pos);
+    void insert(const T &item, unsigned int pos);
     void remove(unsigned int pos);
     void clear();
 
