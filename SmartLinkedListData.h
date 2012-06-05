@@ -5,6 +5,9 @@
 #include "NaiveNode.h"
 #include "AbstractListData.h"
 
+/** COW-enabled list data for a SmartLinkedList
+  * @author Alexander Schlüter
+  */
 template <class T>
 class SmartLinkedListData : public List<T, NaiveNode<T> >, public AbstractListData<T>
 {

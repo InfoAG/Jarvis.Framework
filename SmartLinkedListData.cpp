@@ -1,5 +1,3 @@
-#include "SmartLinkedListData.h"
-
 template <class T>
 SmartLinkedListData<T> *SmartLinkedListData<T>::detach()
 {

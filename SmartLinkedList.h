@@ -4,8 +4,13 @@
 #include "AbstractSmartList.h"
 #include "SmartLinkedListData.h"
 
+/** @brief Doubly linked list with listwise COW
+  *
+  * This is probably the right list to use in most situations.
+  * @author Alexander Schlüter
+  */
 template <class T>
-class SmartList : public AbstractSmartList<T, SmartLinkedListData<T> >
+class SmartLinkedList : public AbstractSmartList<T, SmartLinkedListData<T> >
 {
 
 };

@@ -4,27 +4,28 @@
 #include "AbstractList.h"
 #include "NaiveNode.h"
 
-/** @brief List class implemented as doubly linked list with nodewise COW.
+/** @brief Doubly linked list
   *
-  * Optimized for copying of lists with large elements, insert / remove.
-  * Suboptimal for small elements and random access.
-  *
+  * Simple doubly linked list without listwise COW.
+  * @param T The type of objects to store
+  * @param _Node The type of nodes used internally
   * @author Alexander Schlüter
   */
-
 template <class T, class _Node = NaiveNode<T> >
 class List : public AbstractList<T>
 {
 private:
-    AbstractNode<T> *first; /**< Pointer to first node in list.*/
-    AbstractNode<T> *last; /**< Pointer to last node in list.*/
-    unsigned int _size; /**< List size.*/
-
-    //virtual AbstractNode *getLast() const { return last; };
+    AbstractNode<T> *first; /**< Pointer to first node in list */
+    AbstractNode<T> *last; /**< Pointer to last node in list */
+    unsigned int _size; /**< List size */
 
 public:
-    inline List() : first(0), last(0), _size(0) {};
+    inline List() : first(0), last(0), _size(0) {}; /**< Constructor */
+    /** Copy constructor
+      * @param other The list to copy
+      */
     List(const List &other);
+    virtual inline ~List() {};
 
     virtual void append(const T &item);
     virtual void prepend(const T &item);

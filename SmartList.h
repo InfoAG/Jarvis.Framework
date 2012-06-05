@@ -3,8 +3,11 @@
 
 #include "SmartLinkedList.h"
 
+/** Alias for SmartLinkedList (no template typedefs in C++)
+  * @author Alexander Schlüter
+  */
 template <class T>
-class SmartList : SmartLinkedList<T>
+class SmartList : public SmartLinkedList<T>
 {
 
 };

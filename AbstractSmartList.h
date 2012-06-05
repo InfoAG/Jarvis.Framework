@@ -3,18 +3,29 @@
 
 #include "AbstractList.h"
 
+/** Abstract base class for all lists with listwise COW
+  * @author Alexander Schlüter
+  */
 template <class T, class _ListData>
 class AbstractSmartList : public AbstractList<T>
 {
 private:
-    _ListData *listData;
+    _ListData *listData; /**< A pointer to the list data */
 
+    /** @brief Helper function for detaching from shared list data
+      *
+      * Call this to replace listData by a version you are allowed to change
+      * without influencing other lists.
+      */
     inline void detach() { listData = listData->detach(); };
-    //virtual AbstractNode *getLast() const { return listData->getLast(); };
 
 public:
-    inline AbstractSmartList() : listData(new _ListData) {};
+    inline AbstractSmartList() : listData(new _ListData) {}; /**< Constructor */
+    /** Copy constructor
+      * @param other Reference to the list to copy
+      */
     inline AbstractSmartList(const AbstractSmartList &other) : listData(other.listData->copy()) {};
+    virtual inline ~AbstractSmartList() { listData->release(); };
 
     virtual inline void append(const T &item) { detach(); listData->append(item); };
     virtual inline void prepend(const T &item){ detach(); listData->prepend(item); };
