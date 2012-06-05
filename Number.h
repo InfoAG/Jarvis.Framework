@@ -20,3 +20,4 @@ namespace CAS{
 };
 
 #endif //NUMBER_H
+
