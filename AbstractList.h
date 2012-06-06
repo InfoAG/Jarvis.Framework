@@ -36,18 +36,14 @@ private:
         virtual inline ~BaseIterator() {};
 
         inline BaseIterator &operator++() { target = target->next; return *this; };
-        inline BaseIterator operator++(int) { target = target->next; return BaseIterator(target->previous, baseList); };
         inline BaseIterator &operator--();
-        inline BaseIterator operator--(int);
         inline bool operator==(const BaseIterator &other) const { return (target == other.target && baseList == other.baseList); };
-        inline bool operator!=(const BaseIterator &other) const { return ! (*this == other); };
         inline BaseIterator operator+(int n) const;
-        inline BaseIterator operator-(int n) const { return operator+(-n); };
-        inline BaseIterator &operator+=(int n) { return *this = *this + n; };
-        inline BaseIterator &operator-=(int n) { return *this = *this - n; };
     };
 
 protected:
+    /** @return A pointer to the first node in the list */
+    virtual AbstractNode<T> *getFirst() const = 0;
     /** @return A pointer to the last node in the list */
     virtual AbstractNode<T> *getLast() const = 0;
 
@@ -68,6 +64,16 @@ public:
 
         inline T &operator*() const { return BaseIterator::target->getItem(); };
         inline T *operator->() const { return &BaseIterator::target->getItem(); };
+        inline iterator &operator++() { BaseIterator::operator++(); return *this; };
+        inline iterator operator++(int) { iterator result(*this); BaseIterator::operator++(); return result; };
+        inline iterator &operator--() { BaseIterator::operator--(); return *this; };
+        inline iterator operator--(int) { iterator result(*this); BaseIterator::operator--(); return result; };
+        inline bool operator==(const iterator &other) const { return BaseIterator::operator==(other); };
+        inline bool operator!=(const iterator &other) const { return ! (*this == other); };
+        inline iterator operator+(int n) const { return BaseIterator::operator+(n); };
+        inline iterator operator-(int n) const { return operator+(-n); };
+        inline iterator &operator+=(int n) { return *this = *this + n; };
+        inline iterator &operator-=(int n) { return *this = *this - n; };
     };
 
     //! Const list iterator
@@ -86,7 +92,16 @@ public:
 
         inline const T &operator*() const { return BaseIterator::target->getItem(); };
         inline const T *operator->() const { return &BaseIterator::target->getItem(); };
-
+        inline const_iterator &operator++() { BaseIterator::operator++(); return *this; };
+        inline const_iterator operator++(int) { const_iterator result(*this); BaseIterator::operator++(); return result; };
+        inline const_iterator &operator--() { BaseIterator::operator--(); return *this; };
+        inline const_iterator operator--(int) { const_iterator result(*this); BaseIterator::operator--(); return result; };
+        inline bool operator==(const const_iterator &other) const { return (target == other.target && baseList == other.baseList); };
+        inline bool operator!=(const const_iterator &other) const { return ! (*this == other); };
+        inline const_iterator operator+(int n) const { return BaseIterator::operator+(n); };
+        inline const_iterator operator-(int n) const { return operator+(-n); };
+        inline const_iterator &operator+=(int n) { return *this = *this + n; };
+        inline const_iterator &operator-=(int n) { return *this = *this - n; };
     };
 
     //! Default constructor

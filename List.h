@@ -22,6 +22,7 @@ private:
     unsigned int _size; /**< List size */
 
 protected:
+    virtual inline AbstractNode<T> *getFirst() const { return first; };
     virtual inline AbstractNode<T> *getLast() const { return last; };
 
 public:

@@ -17,7 +17,7 @@ public:
     virtual inline RepetitiveLinkedListData *copy() { refcount++; return this; };
     virtual RepetitiveLinkedListData *detach();
 
-    friend AbstractSmartList<T, RepetitiveLinkedListData<T> >; //to access List::getLast() without making it public
+    friend AbstractSmartList<T, RepetitiveLinkedListData<T> >; //to access List::getLast() and List::getFirst() without making them public
 };
 
 #include "RepetitiveLinkedListData.cpp"

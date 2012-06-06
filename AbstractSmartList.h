@@ -22,6 +22,7 @@ private:
     inline void detach() { listData = listData->detach(); };
 
 protected:
+    virtual inline AbstractNode<T> *getFirst() const { return listData->getFirst(); };
     virtual inline AbstractNode<T> *getLast() const { return listData->getLast(); };
 
 public:
@@ -38,10 +39,10 @@ public:
     virtual inline void remove(unsigned int pos){ detach(); listData->remove(pos); };
     virtual inline void clear() { detach(); listData->clear(); };
 
-    virtual inline iterator begin() { return listData->begin(); };
-    virtual inline const_iterator begin() const { return listData->begin(); };
-    virtual inline iterator end() { return listData->end(); };
-    virtual inline const_iterator end() const { return listData->end(); };
+    virtual inline iterator begin() { return iterator(listData->getFirst(), this); };
+    virtual inline const_iterator begin() const { return const_iterator(listData->getFirst(), this); };
+    virtual inline iterator end() { return iterator(listData->getLast(), this); };
+    virtual inline const_iterator end() const { return const_iterator(listData->getLast(), this); };
     virtual inline const T &at(unsigned int pos) const { return listData->at(pos); };
     virtual inline bool isEmpty() const { return listData->isEmpty(); };
     virtual inline unsigned int size() const { return listData->size(); };

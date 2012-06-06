@@ -17,7 +17,7 @@ public:
     virtual inline SmartLinkedListData *copy() { refcount++; return this; };
     virtual SmartLinkedListData *detach();
 
-    friend AbstractSmartList<T, SmartLinkedListData<T> >; //to access List::getLast() without making it public
+    friend AbstractSmartList<T, SmartLinkedListData<T> >; //to access List::getLast() and List::getFirst() without making them public
 };
 
 #include "SmartLinkedListData.cpp"

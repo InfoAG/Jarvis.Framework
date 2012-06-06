@@ -89,7 +89,7 @@ const T &List<T, _Node>::at(unsigned int pos) const
 {
     if (pos > size() - 1) throw 0; //out_of_range
     else {
-        iterator it(this->begin());
+        const_iterator it(this->begin());
         while (pos--) ++it;
         return *it;
     }
