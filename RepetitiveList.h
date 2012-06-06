@@ -3,6 +3,8 @@
 
 #include "RepetitiveLinkedList.h"
 
+namespace CAS {
+
 /** Alias for RepetitiveLinkedList (no template typedefs in C++)
   * @author Alexander Schlüter
   */
@@ -11,5 +13,7 @@ class RepetitiveList : public RepetitiveLinkedList<T>
 {
 
 };
+
+}
 
 #endif //REPETITIVELIST_H

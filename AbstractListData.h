@@ -1,6 +1,8 @@
 #ifndef ABSTRACTLISTDATA_H
 #define ABSTRACTLISTDATA_H
 
+namespace CAS {
+
 /** Abstract base class for all COW list data
   * @author Alexander Schlüter
   */
@@ -29,5 +31,7 @@ public:
     //! Removes a reference and deletes when appropriate
     inline void release() { if (--refcount < 1) delete this; }; //needs virtual destructor to prevent slicing
 };
+
+}
 
 #endif //ABSTRACTLISTDATA_H

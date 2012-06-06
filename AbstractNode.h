@@ -1,6 +1,8 @@
 #ifndef ABSTRACTNODE_H
 #define ABSTRACTNODE_H
 
+namespace CAS {
+
 //! A list node.
 template <class T>
 struct AbstractNode
@@ -22,5 +24,7 @@ struct AbstractNode
 
     virtual T &getItem() = 0; /**< @return A reference to the item */
 };
+
+}
 
 #endif //ABSTRACTNODE_H

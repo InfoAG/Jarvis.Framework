@@ -5,6 +5,8 @@
 #include "List.h"
 #include "SmartNode.h"
 
+namespace CAS {
+
 /** COW-enabled list data for a RepetitiveLinkedList
   * @author Alexander Schlüter
   */
@@ -14,8 +16,12 @@ class RepetitiveLinkedListData : public AbstractListData<T>, public List<T, Smar
 public:
     virtual inline RepetitiveLinkedListData *copy() { refcount++; return this; };
     virtual RepetitiveLinkedListData *detach();
+
+    friend AbstractSmartList<T, RepetitiveLinkedListData<T> >; //to access List::getLast() without making it public
 };
 
 #include "RepetitiveLinkedListData.cpp"
+
+}
 
 #endif //REPETITIVELINKEDLISTDATA_H

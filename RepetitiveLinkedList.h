@@ -4,6 +4,8 @@
 #include "AbstractSmartList.h"
 #include "RepetitiveLinkedListData.h"
 
+namespace CAS {
+
 /** @brief Doubly linked list with both listwise and nodewise COW
   *
   * Optimized for a high number of equal elements due to copying / appending
@@ -19,5 +21,7 @@ class RepetitiveLinkedList : public AbstractSmartList<T, RepetitiveLinkedListDat
 {
 
 };
+
+}
 
 #endif //REPETITIVELINKEDLIST_H

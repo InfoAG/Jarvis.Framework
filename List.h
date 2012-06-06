@@ -4,6 +4,8 @@
 #include "AbstractList.h"
 #include "NaiveNode.h"
 
+namespace CAS {
+
 /** @brief Doubly linked list
   *
   * Simple doubly linked list without listwise COW.
@@ -18,6 +20,9 @@ private:
     AbstractNode<T> *first; /**< Pointer to first node in list */
     AbstractNode<T> *last; /**< Pointer to last node in list */
     unsigned int _size; /**< List size */
+
+protected:
+    virtual inline AbstractNode<T> *getLast() const { return last; };
 
 public:
     inline List() : first(0), last(0), _size(0) {}; /**< Constructor */
@@ -50,7 +55,8 @@ public:
     T &operator[](unsigned int pos) { iterator it(this->begin()); while (pos--) ++it; return *it; };
 };
 
-
 #include "List.cpp"
+
+}
 
 #endif //LIST_H

@@ -4,6 +4,8 @@
 #include "Container.h"
 #include "AbstractNode.h"
 
+namespace CAS {
+
 /** Abstract base class providing the interface for all lists
   * @author Alexander Schlüter
   */
@@ -45,6 +47,10 @@ private:
         inline BaseIterator &operator-=(int n) { return *this = *this - n; };
     };
 
+protected:
+    /** @return A pointer to the last node in the list */
+    virtual AbstractNode<T> *getLast() const = 0;
+
 public:
     //! List iterator
     class iterator : public BaseIterator
@@ -60,7 +66,8 @@ public:
           */
         inline iterator(const BaseIterator &other) : BaseIterator(other) {};
 
-        inline T &operator*() { return BaseIterator::target->getItem(); };
+        inline T &operator*() const { return BaseIterator::target->getItem(); };
+        inline T *operator->() const { return &BaseIterator::target->getItem(); };
     };
 
     //! Const list iterator
@@ -77,7 +84,8 @@ public:
           */
         inline const_iterator(const BaseIterator &other) : BaseIterator(other) {};
 
-        inline const T &operator*() { return BaseIterator::target->getItem(); };
+        inline const T &operator*() const { return BaseIterator::target->getItem(); };
+        inline const T *operator->() const { return &BaseIterator::target->getItem(); };
 
     };
 
@@ -126,5 +134,7 @@ public:
 };
 
 #include "AbstractList.cpp"
+
+}
 
 #endif //ABSTRACTLIST_H

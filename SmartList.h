@@ -3,6 +3,8 @@
 
 #include "SmartLinkedList.h"
 
+namespace CAS {
+
 /** Alias for SmartLinkedList (no template typedefs in C++)
   * @author Alexander Schlüter
   */
@@ -11,5 +13,7 @@ class SmartList : public SmartLinkedList<T>
 {
 
 };
+
+}
 
 #endif //SMARTLIST_H

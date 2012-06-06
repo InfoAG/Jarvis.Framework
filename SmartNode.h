@@ -3,6 +3,8 @@
 
 #include "AbstractNode.h"
 
+namespace CAS {
+
 /** COW-enabled list node for a doubly linked list
   * @author Alexander Schlüter
   */
@@ -60,5 +62,7 @@ struct SmartNode : AbstractNode<T>
 };
 
 #include "SmartNode.cpp"
+
+}
 
 #endif //SMARTNODE_H

@@ -1,7 +1,7 @@
 template <class T>
 typename AbstractList<T>::BaseIterator &AbstractList<T>::BaseIterator::operator--()
 {
-    if (target == 0) target = baseList->last;
+    if (target == 0) target = baseList->getLast();
     else target = target->previous;
     return *this;
 }
@@ -9,7 +9,7 @@ typename AbstractList<T>::BaseIterator &AbstractList<T>::BaseIterator::operator-
 template <class T>
 typename AbstractList<T>::BaseIterator AbstractList<T>::BaseIterator::operator--(int)
 {
-    if (target == 0) target = baseList->last;
+    if (target == 0) target = baseList->getLast();
     else target = target->previous;
     return BaseIterator(target->next, baseList);
 }

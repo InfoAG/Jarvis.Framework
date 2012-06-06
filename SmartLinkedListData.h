@@ -5,6 +5,8 @@
 #include "NaiveNode.h"
 #include "AbstractListData.h"
 
+namespace CAS {
+
 /** COW-enabled list data for a SmartLinkedList
   * @author Alexander Schlüter
   */
@@ -14,8 +16,12 @@ class SmartLinkedListData : public List<T, NaiveNode<T> >, public AbstractListDa
 public:
     virtual inline SmartLinkedListData *copy() { refcount++; return this; };
     virtual SmartLinkedListData *detach();
+
+    friend AbstractSmartList<T, SmartLinkedListData<T> >; //to access List::getLast() without making it public
 };
 
 #include "SmartLinkedListData.cpp"
+
+}
 
 #endif //SMARTLINKEDLISTDATA_H

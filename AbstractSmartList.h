@@ -3,6 +3,8 @@
 
 #include "AbstractList.h"
 
+namespace CAS {
+
 /** Abstract base class for all lists with listwise COW
   * @author Alexander Schlüter
   */
@@ -18,6 +20,9 @@ private:
       * without influencing other lists.
       */
     inline void detach() { listData = listData->detach(); };
+
+protected:
+    virtual inline AbstractNode<T> *getLast() const { return listData->getLast(); };
 
 public:
     inline AbstractSmartList() : listData(new _ListData) {}; /**< Constructor */
@@ -50,5 +55,6 @@ public:
     inline T &operator[](unsigned int pos) { iterator it(this->begin()); while (pos--) ++it; return *it; };
 };
 
+}
 
 #endif //ABSTRACTSMARTLIST_H

@@ -3,6 +3,8 @@
 
 #include "AbstractNode.h"
 
+namespace CAS {
+
 template <class T>
 struct NaiveNode : public AbstractNode<T>
 {
@@ -24,5 +26,7 @@ struct NaiveNode : public AbstractNode<T>
 
     virtual inline T &getItem() { return item; };
 };
+
+}
 
 #endif //NAIVENODE_H
