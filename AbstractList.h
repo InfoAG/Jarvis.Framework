@@ -60,7 +60,7 @@ public:
         /** Copy constructor
           * @param other Reference of the iterator to copy
           */
-        inline iterator(const BaseIterator &other) : BaseIterator(other) {};
+        inline iterator(const iterator &other) : BaseIterator(other) {};
 
         inline T &operator*() const { return BaseIterator::target->getItem(); };
         inline T *operator->() const { return &BaseIterator::target->getItem(); };
@@ -89,6 +89,7 @@ public:
           * @param other Reference of the iterator to copy
           */
         inline const_iterator(const BaseIterator &other) : BaseIterator(other) {};
+        //inline const_iterator(const iterator &other) : BaseIterator(other) {};
 
         inline const T &operator*() const { return BaseIterator::target->getItem(); };
         inline const T *operator->() const { return &BaseIterator::target->getItem(); };
