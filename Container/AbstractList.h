@@ -41,11 +41,11 @@ private:
         inline BaseIterator operator+(int n) const;
     };
 
-protected:
+//protected:
     /** @return A pointer to the first node in the list */
-    virtual AbstractNode<T> *getFirst() const = 0;
+    //virtual AbstractNode<T> *getFirst() const = 0;
     /** @return A pointer to the last node in the list */
-    virtual AbstractNode<T> *getLast() const = 0;
+    //virtual AbstractNode<T> *getLast() const = 0;
 
 public:
     //! List iterator
@@ -89,7 +89,6 @@ public:
           * @param other Reference of the iterator to copy
           */
         inline const_iterator(const BaseIterator &other) : BaseIterator(other) {};
-        //inline const_iterator(const iterator &other) : BaseIterator(other) {};
 
         inline const T &operator*() const { return BaseIterator::target->getItem(); };
         inline const T *operator->() const { return &BaseIterator::target->getItem(); };

@@ -2,7 +2,7 @@
 #define REPETITIVELINKEDLISTDATA_H
 
 #include "AbstractListData.h"
-#include "List.h"
+#include "LinkedList.h"
 #include "SmartNode.h"
 
 namespace CAS {
@@ -11,13 +11,13 @@ namespace CAS {
   * @author Alexander Schlüter
   */
 template <class T>
-class RepetitiveLinkedListData : public AbstractListData<T>, public List<T, SmartNode<T> >
+class RepetitiveLinkedListData : public AbstractListData<T>, public LinkedList<T, SmartNode<T> >
 {
 public:
     virtual inline RepetitiveLinkedListData *copy() { refcount++; return this; };
     virtual RepetitiveLinkedListData *detach();
 
-    friend AbstractSmartList<T, RepetitiveLinkedListData<T> >; //to access List::getLast() and List::getFirst() without making them public
+    friend AbstractSmartLinkedList<T, RepetitiveLinkedListData<T> >; //to access List::getLast() and List::getFirst() without making them public
 };
 
 #include "RepetitiveLinkedListData.cpp"

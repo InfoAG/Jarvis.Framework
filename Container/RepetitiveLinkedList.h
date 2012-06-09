@@ -17,7 +17,7 @@ namespace CAS {
   * @author Alexander Schlüter
   */
 template <class T>
-class RepetitiveLinkedList : public AbstractSmartList<T, RepetitiveLinkedListData<T> >
+class RepetitiveLinkedList : public AbstractSmartLinkedList<T, RepetitiveLinkedListData<T> >
 {
 
 };

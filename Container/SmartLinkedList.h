@@ -1,7 +1,7 @@
 #ifndef SMARTLINKEDLIST_H
 #define SMARTLINKEDLIST_H
 
-#include "AbstractSmartList.h"
+#include "AbstractSmartLinkedList.h"
 #include "SmartLinkedListData.h"
 
 namespace CAS {
@@ -12,7 +12,7 @@ namespace CAS {
   * @author Alexander Schlüter
   */
 template <class T>
-class SmartLinkedList : public AbstractSmartList<T, SmartLinkedListData<T> >
+class SmartLinkedList : public AbstractSmartLinkedList<T, SmartLinkedListData<T> >
 {
 
 };
