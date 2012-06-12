@@ -1,8 +1,8 @@
-#include "utility.h"
+#include "Utility.h"
 
 void cropzeros(string* str){
-	while(str->at(0) == '0' && str->length() > 1){
-		str->erase(str->begin());	
+	while(str->length() > 1 && str->at(0) == '0'){
+		str->erase(0,1);	
 	}
 }
 

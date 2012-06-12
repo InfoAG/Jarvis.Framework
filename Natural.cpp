@@ -1,6 +1,6 @@
 #include <string>
 #include <iostream>
-#include "utility.h"
+#include "Utility.h"
 #include "Natural.h"
 using namespace CAS;
 using namespace std;
@@ -35,6 +35,10 @@ Natural::Natural(string str){
 		digits[0]+=(str.at(max+j)-48)*mod[length-(j+1)];
 	}
 }
+Natural::Natural(const Natural& rhs){
+	digits=rhs.digits;
+	size=rhs.size;
+}
 
 bool Natural::isInteger(){
 	return true;
@@ -43,20 +47,17 @@ bool Natural::isInteger(){
 string Natural::toString(){
 	string str = "";
 	char c;
-	int i=size-1;
-	for( ; i > 0 ; i-- ){
+
+	for(int i=size-1 ; i >= 0 ; i-- ){
 		for( int j = 17 ; j >= 0 ; j-- ){
 			c=(digits[i]/mod[j])%10+48;
 			str.push_back(c);
 		}
 	}
-	for(int j=17;j>=0;j--){
-		if(digits[0]>mod[j]){
-			c=(digits[i]/mod[j])%10+48;
-			str.push_back(c);		
-		}
-	}
+	
 	cropzeros(&str);
+	//if(str=="")
+	//	str="0";
 	return str;
 }
 void Natural::setDigits(ebyte* d, unsigned int ui){
@@ -67,29 +68,41 @@ unsigned int Natural::getSize(){
 	return size;
 }
 
-Natural Natural::operator+(Natural& right){
-	Number result;
-	unsigned int s=(getSize() < right.getSize())? right.getSize()+1 : getSize()+1;
-	unsigned int min=(getSize() > right.getSize())? right.getSize() : getSize();
-	ebyte* d=new ebyte[s];
+//eigentlich Natural to be changed
+Natural Natural::Addition(Natural right){
+	Natural result(0);
+	unsigned int s=((getSize() < right.getSize())? right.getSize() : getSize())+1;
+	unsigned int min=((getSize() > right.getSize())? right.getSize() : getSize())+1;
+	ebyte* f=new ebyte[s];
 	ebyte buffer=0;
 	for(int i=0;i<min;i++){
-		d[i]=(buffer+digits[i]+right.digits[i])%mod[19];
-		buffer=(buffer+digits[i]+right.digits[i])/mod[19];
+		f[i]=(buffer+digits[i]+right.digits[i])%mod[18];
+		buffer=(buffer+digits[i]+right.digits[i])/mod[18];
 	}
 	if(getSize() > min){
 		for(int i=min;i<s;i++){
-			d[i]=(buffer+digits[i])%mod[19];
-			buffer=(buffer+digits[i])/mod[19];
+			f[i]=(buffer+digits[i])%mod[18];
+			buffer=(buffer+digits[i])/mod[18];
 		}
 	}else if(right.getSize() > min){
 		for(int i=min;i<s;i++){
-			d[i]=(buffer+right.digits[i])%mod[19];
-			buffer=(buffer+right.digits[i])/mod[19];			
+			f[i]=(buffer+right.digits[i])%mod[18];
+			buffer=(buffer+right.digits[i])/mod[18];
 		}
 	}
-
-	result->digits=d;
-	result->size=s;
+	if(f[s-1]==0){
+		result.size=s-1;
+		result.digits=new ebyte[result.getSize()];
+		for(int i=0;i<s-1;i++){
+			result.digits[i]=f[i];
+		}
+	}else{
+		result.size=s;
+		result.digits=f;
+	}
 	return result;
+}
+
+Natural Natural::operator+(Natural right){
+	return (*this).Addition(right);
 }

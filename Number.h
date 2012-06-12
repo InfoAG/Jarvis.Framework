@@ -14,7 +14,7 @@ namespace CAS{
 	public:
 		virtual bool isInteger()=0;
 		virtual string toString()=0;
-		virtual Natural Add(Natural, Natural)=0;
+
 	};
 
 };

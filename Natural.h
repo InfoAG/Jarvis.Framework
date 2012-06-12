@@ -16,12 +16,14 @@ namespace CAS{
 		Natural();
 		Natural(unsigned int);
 		Natural(string);
+		Natural(const Natural& rhs);
 		bool isInteger();
 		string toString();
 		void setDigits(ebyte*, unsigned int);
 		unsigned int getSize();
-
-		Natural& operator+(Natural& right);
+		
+		Natural Addition(Natural);
+		Natural operator+(Natural right);
 	};
 };
 
