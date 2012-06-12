@@ -96,7 +96,7 @@ public:
         inline const_iterator operator++(int) { const_iterator result(*this); BaseIterator::operator++(); return result; };
         inline const_iterator &operator--() { BaseIterator::operator--(); return *this; };
         inline const_iterator operator--(int) { const_iterator result(*this); BaseIterator::operator--(); return result; };
-        inline bool operator==(const const_iterator &other) const { return (target == other.target && baseList == other.baseList); };
+        inline bool operator==(const const_iterator &other) const { return BaseIterator::operator==(other); };
         inline bool operator!=(const const_iterator &other) const { return ! (*this == other); };
         inline const_iterator operator+(int n) const { return BaseIterator::operator+(n); };
         inline const_iterator operator-(int n) const { return operator+(-n); };
