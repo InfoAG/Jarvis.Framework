@@ -8,6 +8,7 @@ namespace CAS {
 class Addition : public AbstractBinaryOperation
 {
 public:
+    Addition(AbstractArithmetic *first_op, AbstractArithmetic *second_op) : AbstractBinaryOperation(first_op, second_op) {};
     virtual inline AbstractArithmetic *copy() const { return new Addition(*this); };
 
     virtual inline AbstractArithmetic *eval(const EvalInfo &ei) const { return this->copy(); };
