@@ -1,7 +1,7 @@
 #ifndef LIST_H
 #define LIST_H
 
-#include "AbstractList.h"
+#include "AbstractLinkedList.h"
 #include "NaiveNode.h"
 
 namespace CAS {
@@ -14,7 +14,7 @@ namespace CAS {
   * @author Alexander Schlüter
   */
 template <class T, class _Node = NaiveNode<T> >
-class LinkedList : public AbstractList<T>
+class LinkedList : public AbstractLinkedList<T>
 {
 private:
     AbstractNode<T> *first; /**< Pointer to first node in list */
@@ -31,7 +31,6 @@ public:
       * @param other The list to copy
       */
     LinkedList(const LinkedList &other);
-    virtual inline ~LinkedList() {};
 
     virtual void append(const T &item);
     virtual void prepend(const T &item);

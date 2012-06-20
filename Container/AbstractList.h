@@ -12,100 +12,44 @@ namespace CAS {
 template <class T>
 class AbstractList : Container
 {
-private:
-    //! Abstract base class for list iterators
+protected:
+    /** Abstract base class for list iterators
+      * @param _BaseList Type of lists to iterate on
+      */
+    template <class _BaseList>
     class BaseIterator
     {
-    private:
-        const AbstractList *baseList; /**< Pointer to the list this iterator is based on */
-
     protected:
-        AbstractNode<T> *target; /**< Pointer to targeted node */
+        const _BaseList *baseList; /**< Pointer to the list this iterator is based on */
 
     public:
         /** Constructor
-          * @param target Pointer to target node
           * @param baseList Pointer to base list
           */
-        inline BaseIterator(AbstractNode<T> *target = 0, const AbstractList  *baseList = 0) : target(target), baseList(baseList) {};
-        /** Copy constructor
-          * @param other Reference of the iterator to copy
-          */
-        inline BaseIterator(const BaseIterator &other) : target(other.target), baseList(other.baseList) {};
+        BaseIterator(const _BaseList *baseList) : baseList(baseList) {};
         //! Virtual destructor
         virtual inline ~BaseIterator() {};
 
-        inline BaseIterator &operator++() { target = target->next; return *this; };
-        inline BaseIterator &operator--();
-        inline bool operator==(const BaseIterator &other) const { return (target == other.target && baseList == other.baseList); };
-        inline BaseIterator operator+(int n) const;
+        inline bool operator==(const BaseIterator &other) const { return (baseList == other.baseList); };
     };
-
-//protected:
-    /** @return A pointer to the first node in the list */
-    //virtual AbstractNode<T> *getFirst() const = 0;
-    /** @return A pointer to the last node in the list */
-    //virtual AbstractNode<T> *getLast() const = 0;
 
 public:
-    //! List iterator
-    class iterator : public BaseIterator
+    //! Abstract list iterator
+    class iterator
     {
     public:
-        /** Constructor
-          * @param target Pointer to target node
-          * @param baseList Pointer to base list
-          */
-        inline iterator(AbstractNode<T> *target = 0, const AbstractList *baseList = 0) : BaseIterator(target, baseList) {};
-        /** Copy constructor
-          * @param other Reference of the iterator to copy
-          */
-        inline iterator(const iterator &other) : BaseIterator(other) {};
-
-        inline T &operator*() const { return BaseIterator::target->getItem(); };
-        inline T *operator->() const { return &BaseIterator::target->getItem(); };
-        inline iterator &operator++() { BaseIterator::operator++(); return *this; };
-        inline iterator operator++(int) { iterator result(*this); BaseIterator::operator++(); return result; };
-        inline iterator &operator--() { BaseIterator::operator--(); return *this; };
-        inline iterator operator--(int) { iterator result(*this); BaseIterator::operator--(); return result; };
-        inline bool operator==(const iterator &other) const { return BaseIterator::operator==(other); };
-        inline bool operator!=(const iterator &other) const { return ! (*this == other); };
-        inline iterator operator+(int n) const { return BaseIterator::operator+(n); };
-        inline iterator operator-(int n) const { return operator+(-n); };
-        inline iterator &operator+=(int n) { return *this = *this + n; };
-        inline iterator &operator-=(int n) { return *this = *this - n; };
+        virtual T &operator*() const = 0;
+        virtual T *operator->() const = 0;
     };
 
-    //! Const list iterator
-    class const_iterator : public BaseIterator
+    //! Abstract const list iterator
+    class const_iterator
     {
     public:
-        /** Constructor
-          * @param target Pointer to target node
-          * @param baseList Pointer to base list
-          */
-        inline const_iterator(AbstractNode<T> *target = 0, const AbstractList *baseList = 0) : BaseIterator(target, baseList) {};
-        /** Copy constructor
-          * @param other Reference of the iterator to copy
-          */
-        inline const_iterator(const BaseIterator &other) : BaseIterator(other) {};
-
-        inline const T &operator*() const { return BaseIterator::target->getItem(); };
-        inline const T *operator->() const { return &BaseIterator::target->getItem(); };
-        inline const_iterator &operator++() { BaseIterator::operator++(); return *this; };
-        inline const_iterator operator++(int) { const_iterator result(*this); BaseIterator::operator++(); return result; };
-        inline const_iterator &operator--() { BaseIterator::operator--(); return *this; };
-        inline const_iterator operator--(int) { const_iterator result(*this); BaseIterator::operator--(); return result; };
-        inline bool operator==(const const_iterator &other) const { return BaseIterator::operator==(other); };
-        inline bool operator!=(const const_iterator &other) const { return ! (*this == other); };
-        inline const_iterator operator+(int n) const { return BaseIterator::operator+(n); };
-        inline const_iterator operator-(int n) const { return operator+(-n); };
-        inline const_iterator &operator+=(int n) { return *this = *this + n; };
-        inline const_iterator &operator-=(int n) { return *this = *this - n; };
+        virtual const T &operator*() const = 0;
+        virtual const T *operator->() const = 0;
     };
 
-    //! Default constructor
-    inline AbstractList() {}; //to prevent bug from MSVC
     //! Virtual destructor
     virtual inline ~AbstractList() {};
 
@@ -128,15 +72,6 @@ public:
     virtual void remove(unsigned int pos) = 0;
     /** Delete all list items */
     virtual void clear() = 0;
-
-    /** @return Returns an iterator to the first item of the list */
-    virtual iterator begin() = 0;
-    /** @return Returns a const_iterator to the first item of the list */
-    virtual const_iterator begin() const = 0;
-    /** @return Returns an iterator pointing after the last item in the list */
-    virtual iterator end() = 0;
-    /** @return Returns a const_iterator pointing after the last item in the list */
-    virtual const_iterator end() const = 0;
     /** Access one element based on its position
       * @param pos The position to access
       * @return A reference to the item
@@ -147,8 +82,6 @@ public:
     /** @return The list's size */
     virtual unsigned int size() const = 0;
 };
-
-#include "AbstractList.cpp"
 
 }
 

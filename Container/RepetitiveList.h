@@ -11,7 +11,8 @@ namespace CAS {
 template <class T>
 class RepetitiveList : public RepetitiveLinkedList<T>
 {
-
+public:
+    using RepetitiveLinkedList<T>::operator=;
 };
 
 }

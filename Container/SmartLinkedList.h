@@ -14,7 +14,8 @@ namespace CAS {
 template <class T>
 class SmartLinkedList : public AbstractSmartLinkedList<T, SmartLinkedListData<T> >
 {
-
+public:
+    using AbstractSmartLinkedList<T, SmartLinkedListData<T> >::operator=;
 };
 
 }

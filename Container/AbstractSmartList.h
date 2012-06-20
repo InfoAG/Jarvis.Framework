@@ -2,14 +2,18 @@
 #define ABSTRACTSMARTLIST_H
 
 #include "AbstractList.h"
+#include "AbstractListData.h"
 
 namespace CAS {
 
 /** Abstract base class for all lists with listwise COW
   * @author Alexander Schlüter
+  * @param T The type of objects to store
+  * @param _ListData Type of list data for COW (e.g. RepetitiveLinkedListData for nodewise COW)
+  * @param _BaseList Type of base list to inherit from (e.g. AbstractLinkedList for linked lists)
   */
-template <class T, class _ListData>
-class AbstractSmartList : public AbstractList<T>
+template <class T, class _ListData, class _BaseList>
+class AbstractSmartList : public _BaseList
 {
 protected:
     _ListData *listData; /**< A pointer to the list data */
@@ -20,10 +24,6 @@ protected:
       * without influencing other lists.
       */
     inline void detach() { listData = listData->detach(); };
-
-/*protected:
-    virtual inline AbstractNode<T> *getFirst() const { return listData->getFirst(); };
-    virtual inline AbstractNode<T> *getLast() const { return listData->getLast(); };*/
 
 public:
     inline AbstractSmartList() : listData(new _ListData) {}; /**< Constructor */
@@ -39,23 +39,11 @@ public:
     virtual inline void remove(unsigned int pos){ detach(); listData->remove(pos); };
     virtual inline void clear() { detach(); listData->clear(); };
 
-    virtual inline iterator begin() = 0;
-    virtual inline const_iterator begin() const = 0;
-    virtual inline iterator end() = 0;
-    virtual inline const_iterator end() const = 0;
     virtual inline const T &at(unsigned int pos) const { return listData->at(pos); };
     virtual inline bool isEmpty() const { return listData->isEmpty(); };
     virtual inline unsigned int size() const { return listData->size(); };
 
-    /*
-    inline bool operator==(const AbstractSmartList &other) const { return *listData == other.listData; };
-    inline bool operator!=(const AbstractSmartList &other) const { return ! (*this == other); };
-    inline AbstractSmartList operator+(const T &item) const { AbstractSmartList result(*this); result.append(item); return result; };
-    inline AbstractSmartList operator+(const AbstractSmartList &other) const { AbstractSmartList result(*this); result += other; return result; };
-    inline AbstractSmartList &operator+=(const T &item) { append(item); };
-    inline AbstractSmartList &operator+=(const AbstractSmartList &other) { detach(); *listData += *(other.listData); return *this; };
-    inline T &operator[](unsigned int pos) { iterator it(this->begin()); while (pos--) ++it; return *it; };
-    */
+    AbstractSmartList &operator=(const AbstractSmartList &other) { listData->release(); listData = other.listData->copy(); return *this; };
 };
 
 }

@@ -1,11 +1,22 @@
 #ifndef ARRAY_H
 #define ARRAY_H
 
-#include "AbstractList.h"
+//#include "AbstractList.h"
+#include <vector>
 
 namespace CAS {
 
+
+/** List storing elements in an array
+  * This is pointing to std::vector for now (to be changed).
+  */
 template <class T>
+class ArrayList: public std::vector<T>
+{
+
+};
+
+/*template <class T>
 class ArrayList : public AbstractList<T>
 {
 private:
@@ -41,7 +52,7 @@ public:
 };
 
 #include "ArrayList.cpp"
-
+*/
 }
 
 #endif //ARRAY_H

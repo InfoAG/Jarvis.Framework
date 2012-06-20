@@ -17,7 +17,7 @@ public:
     //! Virtual destructor
     virtual inline ~AbstractListData() {};
 
-    /** Handles copying by increasing intern reference count
+    /** Handles copying by increasing internal reference count
       * @return A pointer to this data object
       */
     virtual inline AbstractListData *copy() = 0;

@@ -19,7 +19,8 @@ namespace CAS {
 template <class T>
 class RepetitiveLinkedList : public AbstractSmartLinkedList<T, RepetitiveLinkedListData<T> >
 {
-
+public:
+    using AbstractSmartLinkedList<T, RepetitiveLinkedListData<T> >::operator=;
 };
 
 }

@@ -4,6 +4,7 @@
 #include "AbstractListData.h"
 #include "LinkedList.h"
 #include "SmartNode.h"
+#include "AbstractSmartLinkedList.h"
 
 namespace CAS {
 
@@ -17,7 +18,7 @@ public:
     virtual inline RepetitiveLinkedListData *copy() { refcount++; return this; };
     virtual RepetitiveLinkedListData *detach();
 
-    friend AbstractSmartLinkedList<T, RepetitiveLinkedListData<T> >; //to access List::getLast() and List::getFirst() without making them public
+    friend class AbstractSmartLinkedList<T, RepetitiveLinkedListData<T> >; //to access LinkedList::getLast() and LinkedList::getFirst() without making them public
 };
 
 #include "RepetitiveLinkedListData.cpp"
