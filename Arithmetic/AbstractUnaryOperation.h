@@ -7,8 +7,11 @@ namespace CAS {
 
 class AbstractUnaryOperation : public AbstractArithmetic
 {
-private:
-    Arithmetic *operand;
+protected:
+    AbstractArithmetic *operand;
+
+public:
+    inline AbstractUnaryOperation(AbstractArithmetic *operand) : operand(operand) {};
 };
 
 }
