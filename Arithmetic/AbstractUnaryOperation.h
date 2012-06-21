@@ -12,6 +12,7 @@ protected:
 
 public:
     inline AbstractUnaryOperation(AbstractArithmetic *operand) : operand(operand) {};
+    inline AbstractUnaryOperation(const AbstractUnaryOperation &other) : operand(other.operand->copy()) {};
 };
 
 }
