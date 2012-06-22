@@ -89,7 +89,7 @@ const T &LinkedList<T, _Node>::at(unsigned int pos) const
 {
     if (pos > size() - 1) throw 0; //out_of_range
     else {
-        const_iterator it(this->begin());
+        typename AbstractLinkedList<T>::const_iterator it(this->begin());
         while (pos--) ++it;
         return *it;
     }
@@ -101,7 +101,7 @@ bool LinkedList<T, _Node>::operator==(const LinkedList &other) const
 {
     if (size() != other.size()) return false;
     else {
-        for (const_iterator it = begin(), it_other = other.begin(); it != end(); ++it, ++it_other)
+        for (typename AbstractLinkedList<T>::const_iterator it = begin(), it_other = other.begin(); it != end(); ++it, ++it_other)
             if (*it != *it_other) return false;
         return true;
     }

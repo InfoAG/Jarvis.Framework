@@ -14,7 +14,7 @@ template <class T>
 class SmartLinkedListData : public LinkedList<T, NaiveNode<T> >, public AbstractListData<T>
 {
 public:
-    virtual inline SmartLinkedListData *copy() { refcount++; return this; };
+    virtual inline SmartLinkedListData *copy() { AbstractListData<T>::refcount++; return this; };
     virtual SmartLinkedListData *detach();
 
     friend class AbstractSmartLinkedList<T, SmartLinkedListData<T> >; //to access LinkedList::getLast() and LinkedList::getFirst() without making them public

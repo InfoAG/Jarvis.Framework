@@ -15,14 +15,14 @@ struct NaiveNode : public AbstractNode<T>
       * @param previous A pointer to the previous node in list
       * @param next A pointer to the next node in list
       */
-    inline NaiveNode(const T &item, AbstractNode *previous = 0, AbstractNode *next = 0) : item(item), AbstractNode(previous, next) {};
+    inline NaiveNode(const T &item, AbstractNode<T> *previous = 0, AbstractNode<T> *next = 0) : AbstractNode<T>(previous, next), item(item) {};
     /** Copy constructor
       * @param other A reference to the SmartNode to copy
       * @param previous A pointer to the previous node in list
       * @param next A pointer to the next node in list
       */
-    inline NaiveNode(const NaiveNode &other, AbstractNode *previous = 0, AbstractNode *next = 0) : item(other.item), AbstractNode(previous, next) {};
-    virtual inline NaiveNode *copy(AbstractNode *previous = 0, AbstractNode *next = 0) const { return new NaiveNode(*this, previous, next); };
+    inline NaiveNode(const NaiveNode &other, AbstractNode<T> *previous = 0, AbstractNode<T> *next = 0) : AbstractNode<T>(previous, next), item(other.item) {};
+    virtual inline NaiveNode *copy(AbstractNode<T> *previous = 0, AbstractNode<T> *next = 0) const { return new NaiveNode(*this, previous, next); };
 
     virtual inline T &getItem() { return item; };
 };
