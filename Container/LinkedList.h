@@ -38,10 +38,10 @@ public:
     virtual void remove(unsigned int pos);
     virtual void clear();
 
-    virtual inline iterator begin() { return iterator(first, this); };
-    virtual inline const_iterator begin() const { return const_iterator(first, this); };
-    virtual inline iterator end() { return iterator(0, this); };
-    virtual inline const_iterator end() const { return const_iterator(0, this); };
+    virtual inline typename AbstractLinkedList<T>::iterator begin() { return typename AbstractLinkedList<T>::iterator(first, this); };
+    virtual inline typename AbstractLinkedList<T>::const_iterator begin() const { return typename AbstractLinkedList<T>::const_iterator(first, this); };
+    virtual inline typename AbstractLinkedList<T>::iterator end() { return typename AbstractLinkedList<T>::iterator(0, this); };
+    virtual inline typename AbstractLinkedList<T>::const_iterator end() const { return typename AbstractLinkedList<T>::const_iterator(0, this); };
     virtual const T &at(unsigned int pos) const;
     virtual inline bool isEmpty() const { return size() == 0; };
     virtual inline unsigned int size() const { return _size; };
@@ -52,7 +52,7 @@ public:
     inline LinkedList operator+(const LinkedList &other) const { LinkedList result(*this); result += other; return result; };
     inline LinkedList &operator+=(const T &item) { append(item); };
     LinkedList &operator+=(const LinkedList &other);
-    T &operator[](unsigned int pos) { iterator it(this->begin()); while (pos--) ++it; return *it; };
+    T &operator[](unsigned int pos) { typename AbstractLinkedList<T>::iterator it(this->begin()); while (pos--) ++it; return *it; };
 };
 
 #include "LinkedList.cpp"

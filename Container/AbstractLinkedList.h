@@ -13,7 +13,7 @@ class AbstractLinkedList : public AbstractList<T>
 {
 private:
     //! Abstract base class for linked list iterators
-    class BaseIterator : public AbstractList<T>::BaseIterator<AbstractLinkedList>
+    class BaseIterator : public AbstractList<T>::template BaseIterator<AbstractLinkedList>
     {
     protected:
         AbstractNode<T> *target; /**< Pointer to targeted node */
@@ -23,17 +23,17 @@ private:
           * @param target Pointer to target node
           * @param baseList Pointer to base list
           */
-        inline BaseIterator(AbstractNode<T> *target = 0, const AbstractLinkedList<T> *baseList = 0) : target(target), AbstractList<T>::BaseIterator<AbstractLinkedList>(baseList) {};
+        inline BaseIterator(AbstractNode<T> *target = 0, const AbstractLinkedList<T> *baseList = 0) : AbstractList<T>::template BaseIterator<AbstractLinkedList>(baseList), target(target) {};
         /** Copy constructor
           * @param other Reference of the iterator to copy
           */
-        inline BaseIterator(const BaseIterator &other) : target(other.target), AbstractList<T>::BaseIterator<AbstractLinkedList>(other) {};
+        inline BaseIterator(const BaseIterator &other) : AbstractList<T>::template BaseIterator<AbstractLinkedList>(other), target(other.target) {};
 
         inline BaseIterator &operator++() { target = target->next; return *this; };
         inline BaseIterator operator++(int) { BaseIterator result(*this); target = target->next; return result; };
         inline BaseIterator &operator--();
         inline BaseIterator &operator--(int);
-        inline bool operator==(const BaseIterator &other) const { return (target == other.target && AbstractList<T>::BaseIterator<AbstractLinkedList>::operator==(other)); };
+        inline bool operator==(const BaseIterator &other) const { return (target == other.target && AbstractList<T>::template BaseIterator<AbstractLinkedList>::operator==(other)); };
         inline bool operator!=(const BaseIterator &other) const { return ! (*this == other); };
         inline BaseIterator operator+(int n) const;
         inline BaseIterator operator-(int n) const { return operator+(-n); };
@@ -121,4 +121,4 @@ public:
 
 }
 
-#endif ABSTRACTLINKEDLIST_H
+#endif //ABSTRACTLINKEDLIST_H
