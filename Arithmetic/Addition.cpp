@@ -2,10 +2,10 @@
 
 namespace CAS {
 
-AbstractArithmetic *Addition::eval(const EvalInfo &ei) const
+std::unique_ptr<AbstractArithmetic> Addition::eval(const EvalInfo &ei) const
 {
-    if (first_op->getType() == NUMBER && second_op->getType() == NUMBER)
-        return new Number(*(static_cast<Number*>(first_op)) + *(static_cast<Number*>(second_op)));
+    if (first_op->getType() == NUMBERARITH && second_op->getType() == NUMBERARITH)
+        return std::unique_ptr<NumberArith>(new NumberArith(*(static_cast<NumberArith*>(first_op.get())) + *(static_cast<NumberArith*>(second_op.get()))));
     else return this->copy();
 }
 

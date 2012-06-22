@@ -8,10 +8,10 @@ namespace CAS {
 class Multiplication : public AbstractBinaryOperation
 {
 public:
-    inline Multiplication(AbstractArithmetic *first_op, AbstractArithmetic *second_op) : AbstractBinaryOperation(first_op, second_op) {};
-    virtual inline AbstractArithmetic *copy() const { return new Multiplication(*this); };
+    inline Multiplication(std::unique_ptr<AbstractArithmetic> first_op, std::unique_ptr<AbstractArithmetic> second_op) : AbstractBinaryOperation(std::move(first_op), std::move(second_op)) {};
+    virtual inline std::unique_ptr<AbstractArithmetic> copy() const { return std::unique_ptr<AbstractArithmetic>(new Multiplication(*this)); };
 
-    virtual inline AbstractArithmetic *eval(const EvalInfo &ei) const { return this->copy(); };
+    virtual inline std::unique_ptr<AbstractArithmetic> eval(const EvalInfo &ei) const { return this->copy(); };
     virtual inline ArithmeticType getType() const { return MULTIPLICATION; };
 };
 

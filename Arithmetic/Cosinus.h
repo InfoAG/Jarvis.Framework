@@ -8,10 +8,10 @@ namespace CAS {
 class Cosinus : public AbstractUnaryOperation
 {
 public:
-    inline Cosinus(AbstractArithmetic *operand) : AbstractUnaryOperation(operand) {};
-    virtual inline AbstractArithmetic *copy() const { return new Cosinus(*this); };
+    inline Cosinus(std::unique_ptr<AbstractArithmetic> operand) : AbstractUnaryOperation(std::move(operand)) {};
+    virtual inline std::unique_ptr<AbstractArithmetic> copy() const { return std::unique_ptr<AbstractArithmetic>(new Cosinus(*this); };
 
-    virtual inline AbstractArithmetic *eval(const EvalInfo &ei) const { return this->copy(); };
+    virtual inline std::unique_ptr<AbstractArithmetic> eval(const EvalInfo &ei) const { return this->copy(); };
     virtual inline ArithmeticType getType() const { return COSINUS; };
 };
 

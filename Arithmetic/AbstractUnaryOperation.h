@@ -8,13 +8,13 @@ namespace CAS {
 class AbstractUnaryOperation : public AbstractArithmetic
 {
 protected:
-    AbstractArithmetic *operand;
+    std::unique_ptr<AbstractArithmetic> operand;
 
 public:
-    inline AbstractUnaryOperation(AbstractArithmetic *operand) : operand(operand) {};
+    inline AbstractUnaryOperation(std::unique_ptr<AbstractArithmetic> operand) : operand(std::move(operand)) {};
     inline AbstractUnaryOperation(const AbstractUnaryOperation &other) : operand(other.operand->copy()) {};
 };
 
 }
 
-#endif ABSTRACTUNARYOPERATION_H
+#endif //ABSTRACTUNARYOPERATION_H

@@ -2,6 +2,7 @@
 #define ABSTRACTARITHMETIC_H
 
 #include "EvalInfo.h"
+#include <memory>
 
 namespace CAS {
 
@@ -20,14 +21,14 @@ public:
         COSINUS,
         TANGENT,
         INTEGRAL,
-        NUMBER,
+        NUMBERARITH,
         VARIABLE
     };
 
     virtual inline ~AbstractArithmetic() {};
-    virtual AbstractArithmetic *copy() const = 0;
+    virtual std::unique_ptr<AbstractArithmetic> copy() const = 0;
 
-    virtual AbstractArithmetic *eval(const EvalInfo &ei) const = 0;
+    virtual std::unique_ptr<AbstractArithmetic> eval(const EvalInfo &ei) const = 0;
     virtual ArithmeticType getType() const = 0;
 };
 

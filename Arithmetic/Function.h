@@ -13,9 +13,9 @@ private:
 
 public:
     inline Function(const SmartList<AbstractArithmetic*> arguments) : arguments(arguments) {};
-    virtual inline AbstractArithmetic *copy() const { return new Function(*this); };
+    virtual inline std::unique_ptr<AbstractArithmetic> copy() const { return std::unique_ptr<AbstractArithmetic>(new Function(*this)); };
 
-    virtual AbstractArithmetic *eval(const EvalInfo &ei) const;
+    virtual std::unique_ptr<AbstractArithmetic> eval(const EvalInfo &ei) const;
     virtual inline ArithmeticType getType() const { return ADDITION; };
 };
 

@@ -8,13 +8,13 @@ namespace CAS {
 class Sinus : public AbstractUnaryOperation
 {
 public:
-    inline Sinus(AbstractArithmetic *operand) : AbstractUnaryOperation(operand) {};
-    virtual inline AbstractArithmetic *copy() const { return new Sinus(*this); };
+    inline Sinus(std::unique_ptr<AbstractArithmetic> operand) : AbstractUnaryOperation(std::move(operand)) {};
+    virtual inline std::unique_ptr<AbstractArithmetic> copy() const { return std::unique_ptr<AbstractArithmetic>(new Sinus(*this)); };
 
-    virtual inline AbstractArithmetic *eval(const EvalInfo &ei) const { return this->copy(); };
+    virtual inline std::unique_ptr<AbstractArithmetic> eval(const EvalInfo &ei) const { return this->copy(); };
     virtual inline ArithmeticType getType() const { return SINUS; };
 };
 
 }
 
-#endif ADDITION_H
+#endif //SINUS_H
