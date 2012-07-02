@@ -24,8 +24,8 @@ protected:
 public:
     inline typename AbstractLinkedList<T>::iterator begin() { _Inherited::detach(); return typename AbstractLinkedList<T>::iterator(_Inherited::listData->getFirst(), this); };
     inline typename AbstractLinkedList<T>::const_iterator begin() const { return typename AbstractLinkedList<T>::const_iterator(_Inherited::listData->getFirst(), this); };
-    inline typename AbstractLinkedList<T>::iterator end() { _Inherited::detach(); return typename AbstractLinkedList<T>::iterator(0, this); };
-    inline typename AbstractLinkedList<T>::const_iterator end() const { return typename AbstractLinkedList<T>::const_iterator(0, this); };
+    inline typename AbstractLinkedList<T>::iterator end() { _Inherited::detach(); return typename AbstractLinkedList<T>::iterator(nullptr, this); };
+    inline typename AbstractLinkedList<T>::const_iterator end() const { return typename AbstractLinkedList<T>::const_iterator(nullptr, this); };
 
     inline bool operator==(const AbstractSmartLinkedList &other) const { return *_Inherited::listData == *(other.listData); };
     inline bool operator!=(const AbstractSmartLinkedList &other) const { return ! (*this == other); };

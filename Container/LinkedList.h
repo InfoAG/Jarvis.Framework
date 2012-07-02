@@ -66,8 +66,8 @@ public:
 
     virtual inline typename AbstractLinkedList<T>::iterator begin() { return typename AbstractLinkedList<T>::iterator(first, this); };
     virtual inline typename AbstractLinkedList<T>::const_iterator begin() const { return typename AbstractLinkedList<T>::const_iterator(first, this); };
-    virtual inline typename AbstractLinkedList<T>::iterator end() { return typename AbstractLinkedList<T>::iterator(0, this); };
-    virtual inline typename AbstractLinkedList<T>::const_iterator end() const { return typename AbstractLinkedList<T>::const_iterator(0, this); };
+    virtual inline typename AbstractLinkedList<T>::iterator end() { return typename AbstractLinkedList<T>::iterator(nullptr, this); };
+    virtual inline typename AbstractLinkedList<T>::const_iterator end() const { return typename AbstractLinkedList<T>::const_iterator(nullptr, this); };
     virtual const T &at(unsigned int pos) const;
     virtual inline bool isEmpty() const { return size() == 0; };
     virtual inline unsigned int size() const { return _size; };
