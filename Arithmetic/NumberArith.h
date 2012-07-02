@@ -2,6 +2,7 @@
 #define NUMBERARITH_H
 
 #include "AbstractArithmetic.h"
+#include <sstream>
 
 namespace CAS {
 
@@ -16,6 +17,7 @@ public:
 
     virtual std::unique_ptr<AbstractArithmetic> eval(const EvalInfo &ei) const { return copy(); };
     virtual ArithmeticType getType() const { return NUMBERARITH; };
+    virtual std::string getString() const;
 
     inline NumberArith operator+(const NumberArith& other) { return NumberArith(value + other.value); };
 };
