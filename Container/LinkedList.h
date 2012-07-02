@@ -17,8 +17,8 @@ template <class T, class _Node = NaiveNode<T> >
 class LinkedList : public AbstractLinkedList<T>
 {
 private:
-    AbstractNode<T> *first; /**< Pointer to first node in list */
-    AbstractNode<T> *last; /**< Pointer to last node in list */
+    _Node *first; /**< Pointer to first node in list */
+    _Node *last; /**< Pointer to last node in list */
     unsigned int _size; /**< List size */
 
 protected:
@@ -26,15 +26,41 @@ protected:
     inline AbstractNode<T> *getLast() const { return last; };
 
 public:
-    inline LinkedList() : first(0), last(0), _size(0) {}; /**< Constructor */
+    inline LinkedList() : first(nullptr), last(nullptr), _size(0) {}; /**< Constructor */
     /** Copy constructor
       * @param other The list to copy
       */
     LinkedList(const LinkedList &other);
+    /** Move constructor
+      * @param other The list to move
+      */
+    LinkedList(LinkedList &&other) : first(other.first), last(other.last), _size(other.size()) {};
 
-    virtual void append(const T &item);
-    virtual void prepend(const T &item);
-    virtual void insert(const T &item, unsigned int pos);
+    /** Append one item to list
+      * @param item The item to append
+      */
+    void append(const T &item);
+    /**
+     * @overload
+     */
+    void append(T &&item);
+    /** Prepend one item to list
+      * @param item The item to prepend
+      */
+    void prepend(const T &item);
+    /**
+     * @overload
+     */
+    void prepend(T &&item);
+    /** Insert one item into list
+      * @param item The item to insert
+      * @param pos The position for the new item
+      */
+    void insert(const T &item, unsigned int pos);
+    /**
+     * @overload
+     */
+    void insert(T &&item, unsigned int pos);
     virtual void remove(unsigned int pos);
     virtual void clear();
 

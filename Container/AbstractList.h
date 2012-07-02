@@ -53,19 +53,6 @@ public:
     //! Virtual destructor
     virtual inline ~AbstractList() {};
 
-    /** Append one item to list
-      * @param item The item to append
-      */
-    virtual void append(const T &item) = 0;
-    /** Prepend one item to list
-      * @param item The item to prepend
-      */
-    virtual void prepend(const T &item) = 0;
-    /** Insert one item into list
-      * @param item The item to insert
-      * @param pos The position for the new item
-      */
-    virtual void insert(const T &item, unsigned int pos) = 0;
     /** Remove one item from list
       * @param pos Position of the item to remove
       */

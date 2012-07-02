@@ -15,14 +15,12 @@ struct AbstractNode
       * @param next Pointer to next node in list
       */
     inline AbstractNode(AbstractNode *previous = 0, AbstractNode *next = 0) : previous(previous), next(next) {};
-    /** Virtual copy constructor
-      * @return A pointer to a copy of this node
-      */
-    virtual AbstractNode *copy(AbstractNode *previous = 0, AbstractNode *next = 0) const = 0;
     //! Virtual destructor
     virtual inline ~AbstractNode() {};
 
     virtual T &getItem() = 0; /**< @return A reference to the item */
+    virtual AbstractNode *getPrevious() const = 0;
+    virtual AbstractNode *getNext() const = 0;
 };
 
 }

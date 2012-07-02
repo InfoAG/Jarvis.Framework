@@ -47,18 +47,20 @@ struct SmartNode : AbstractNode<T>
       * @param previous A pointer to the previous node in list
       * @param next A pointer to the next node in list
       */
-    inline SmartNode(const T &item, AbstractNode *previous = 0, AbstractNode *next = 0) : data(new NodeData(item)), AbstractNode(previous, next) {};
+    inline SmartNode(const T &item, AbstractNode<T> *previous = 0, AbstractNode<T> *next = 0) : AbstractNode<T>(previous, next), data(new NodeData(item)) {};
     /** Copy constructor
       * @param other A reference to the SmartNode to copy
       * @param previous A pointer to the previous node in list
       * @param next A pointer to the next node in list
       */
-    inline SmartNode(const SmartNode &other, AbstractNode *previous = 0, AbstractNode *next = 0) : data(other.data->copy()), AbstractNode(previous, next) {};
+    inline SmartNode(const SmartNode &other, AbstractNode<T> *previous = 0, AbstractNode<T> *next = 0) : AbstractNode<T>(previous, next), data(other.data->copy()) {};
     virtual inline ~SmartNode() { data->release(); };
 
-    virtual inline SmartNode *copy(AbstractNode *previous = 0, AbstractNode *next = 0) const { return new SmartNode(*this, previous, next); };
+    //virtual inline SmartNode *copy(AbstractNode *previous = 0, AbstractNode *next = 0) const { return new SmartNode(*this, previous, next); };
 
     virtual inline T &getItem() { data = data->detach(); return data->getItem(); };
+    virtual inline SmartNode *getPrevious() const { return static_cast<SmartNode*>(AbstractNode<T>::previous); };
+    virtual inline SmartNode *getNext() const { return static_cast<SmartNode*>(AbstractNode<T>::next); };
 };
 
 #include "SmartNode.cpp"

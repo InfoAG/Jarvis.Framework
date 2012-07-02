@@ -31,11 +31,37 @@ public:
       * @param other Reference to the list to copy
       */
     inline AbstractSmartList(const AbstractSmartList &other) : listData(other.listData->copy()) {};
+    /** Move constructor
+      * @param other The list to move
+      */
+    AbstractSmartList(AbstractSmartList &&other) : listData(other.listData) {};
     virtual inline ~AbstractSmartList() { listData->release(); };
 
-    virtual inline void append(const T &item) { detach(); listData->append(item); };
-    virtual inline void prepend(const T &item){ detach(); listData->prepend(item); };
-    virtual inline void insert(const T &item, unsigned int pos){ detach(); listData->insert(item, pos); };
+    /** Append one item to list
+      * @param item The item to append
+      */
+    inline void append(const T &item) { detach(); listData->append(item); };
+    /**
+     * @overload
+     */
+    inline void append(T &&item) { detach(); listData->append(std::forward<T>(item)); };
+    /** Prepend one item to list
+      * @param item The item to prepend
+      */
+    inline void prepend(const T &item){ detach(); listData->prepend(item); };
+    /**
+     * @overload
+     */
+    inline void prepend(T &&item){ detach(); listData->prepend(std::forward<T>(item)); };
+    /** Insert one item into list
+      * @param item The item to insert
+      * @param pos The position for the new item
+      */
+    inline void insert(const T &item, unsigned int pos){ detach(); listData->insert(item, pos); };
+    /**
+     * @overload
+     */
+    inline void insert(T &&item, unsigned int pos){ detach(); listData->insert(std::forward<T>(item), pos); };
     virtual inline void remove(unsigned int pos){ detach(); listData->remove(pos); };
     virtual inline void clear() { detach(); listData->clear(); };
 

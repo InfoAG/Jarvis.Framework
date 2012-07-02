@@ -16,12 +16,22 @@ namespace CAS {
   * Overhead lies in the reference count of SmartNode::NodeData and the pointer to this data.
   * @author Alexander Schlüter
   */
+
+#ifndef DOXYGEN_PREPROCESSOR
+
+template <class T>
+using RepetitiveLinkedList = AbstractSmartLinkedList<T, RepetitiveLinkedListData<T> >;
+
+#else //DOXYGEN_PREPROCESSOR
+
 template <class T>
 class RepetitiveLinkedList : public AbstractSmartLinkedList<T, RepetitiveLinkedListData<T> >
 {
 public:
     using AbstractSmartLinkedList<T, RepetitiveLinkedListData<T> >::operator=;
 };
+
+#endif //DOXYGEN_PREPROCESSOR
 
 }
 
