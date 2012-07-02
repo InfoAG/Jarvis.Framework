@@ -10,7 +10,7 @@ template <class T>
 class ArrayListData : public AbstractListData<T>, public ArrayList<T>
 {
 public:
-    virtual inline ArrayListData *copy() { refcount++; return this; };
+    virtual inline ArrayListData *copy() { AbstractListData<T>::refcount++; return this; };
     virtual ArrayListData *detach();
 };
 

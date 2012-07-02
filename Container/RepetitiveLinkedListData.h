@@ -15,7 +15,7 @@ template <class T>
 class RepetitiveLinkedListData : public AbstractListData<T>, public LinkedList<T, SmartNode<T> >
 {
 public:
-    virtual inline RepetitiveLinkedListData *copy() { refcount++; return this; };
+    virtual inline RepetitiveLinkedListData *copy() { AbstractListData<T>::refcount++; return this; };
     virtual RepetitiveLinkedListData *detach();
 
     friend class AbstractSmartLinkedList<T, RepetitiveLinkedListData<T> >; //to access LinkedList::getLast() and LinkedList::getFirst() without making them public

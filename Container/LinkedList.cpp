@@ -1,12 +1,15 @@
 template <class T, class _Node>
 LinkedList<T, _Node>::LinkedList(const LinkedList<T, _Node> &other) : _size(other.size())
 {
-    if (! other.isEmpty()) {
-        first = other.first->copy(),
+    if (other.isEmpty()) {
+        first = nullptr;
+        last = nullptr;
+    } else {
+        first = new _Node(*(other.first));
         last = first;
-        for (AbstractNode<T> *other_node = other.first->next; other_node != 0; other_node = other_node->next) {
-            last->next = other_node->copy(last);
-            last = last->next;
+        for (_Node *other_node = other.first->getNext(); other_node != 0; other_node = other_node->getNext()) {
+            last->next = new _Node(*other_node, last);
+            last = last->getNext();
         }
     }
 }
@@ -19,7 +22,20 @@ void LinkedList<T, _Node>::append(const T &item)
         first = last;
     } else {
         last->next = new _Node(item, last);
-        last = last->next;
+        last = last->getNext();
+    }
+    _size++;
+}
+
+template <class T, class _Node>
+void LinkedList<T, _Node>::append(T &&item)
+{
+    if (last == 0) {
+        last = new _Node(std::forward<T>(item));
+        first = last;
+    } else {
+        last->next = new _Node(std::forward<T>(item), last);
+        last = last->getNext();
     }
     _size++;
 }
@@ -32,8 +48,22 @@ void LinkedList<T, _Node>::prepend(const T &item)
         first = new _Node(item);
         last = first;
     } else {
-        first->previous = new _Node(item, 0, first);
-        first = first->previous;
+        first->getPrevious() = new _Node(item, 0, first);
+        first = first->getPrevious();
+    }
+    _size++;
+}
+
+template <class T, class _Node>
+void LinkedList<T, _Node>::prepend(T &&item)
+{
+    if (first == 0)
+    {
+        first = new _Node(std::forward<T>(item));
+        last = first;
+    } else {
+        first->previous = new _Node(std::forward<T>(item), 0, first);
+        first = first->getPrevious();
     }
     _size++;
 }
@@ -47,9 +77,25 @@ void LinkedList<T, _Node>::insert(const T &item, unsigned int pos)
     else {
         AbstractNode<T> *previous_node = first;
         for (unsigned int i = 0; i < pos - 1; i++)
-            previous_node = previous_node->next;
-        previous_node->next->previous = new _Node(item, previous_node, previous_node->next);
-        previous_node->next = previous_node->next->previous;
+            previous_node = previous_node->getNext();
+        previous_node->getNext()->getPrevious() = new _Node(item, previous_node, previous_node->getNext());
+        previous_node->getNext() = previous_node->getNext()->getPrevious();
+        _size++;
+    }
+}
+
+template <class T, class _Node>
+void LinkedList<T, _Node>::insert(T &&item, unsigned int pos)
+{
+    if (pos == 0) prepend(std::forward<T>(item));
+    else if (pos == size()) append(std::forward<T>(item));
+    else if (pos > size()) throw 0; //out_of_range
+    else {
+        AbstractNode<T> *previous_node = first;
+        for (unsigned int i = 0; i < pos - 1; i++)
+            previous_node = previous_node->getNext();
+        previous_node->getNext()->previous = new _Node(std::forward<T>(item), previous_node, previous_node->getNext());
+        previous_node->next = previous_node->getNext()->getPrevious();
         _size++;
     }
 }
@@ -59,13 +105,13 @@ void LinkedList<T, _Node>::remove(unsigned int pos)
 {
     if (pos >= size()) throw 0; //out_of_range
     else {
-        AbstractNode<T> *target_node = first;
+        _Node *target_node = first;
         for (unsigned int i = 0; i < pos; i++)
-            target_node = target_node->next;
-        if (target_node->previous != 0) target_node->previous->next = target_node->next;
-        else first = target_node->next;
-        if (target_node->next != 0) target_node->next->previous = target_node->previous;
-        else last = target_node->previous;
+            target_node = target_node->getNext();
+        if (target_node->getPrevious() != 0) target_node->getPrevious()->next = target_node->getNext();
+        else first = target_node->getNext();
+        if (target_node->getNext() != 0) target_node->getNext()->previous = target_node->getPrevious();
+        else last = target_node->getPrevious();
         delete target_node;
         _size--;
     }
@@ -75,8 +121,8 @@ template <class T, class _Node>
 void LinkedList<T, _Node>::clear()
 {
     if (! isEmpty()) {
-        for (AbstractNode<T> *current_node = first->next; current_node != 0; current_node = current_node->next)
-            delete current_node->previous;
+        for (AbstractNode<T> *current_node = first->getNext(); current_node != 0; current_node = current_node->getNext())
+            delete current_node->getPrevious();
         delete last;
     }
     first = 0;
@@ -115,14 +161,14 @@ LinkedList<T, _Node> &LinkedList<T, _Node>::operator +=(const LinkedList &other)
             last = other.first->copy();
             first = last;
         } else {
-            last->next = other.first->copy();
-            last = last->next;
+            last->getNext() = other.first->copy();
+            last = last->getNext();
         }
-        AbstractNode<T> *other_node = other.first->next;
+        AbstractNode<T> *other_node = other.first->getNext();
         for (int i = other.size(); i > 1; i++) {
-            last->next = other_node->copy(last);
-            last = last->next;
-            other_node = other_node->next;
+            last->getNext() = other_node->copy(last);
+            last = last->getNext();
+            other_node = other_node->getNext();
         }
         _size += other.size();
     }

@@ -5,15 +5,25 @@
 
 namespace CAS {
 
-/** Alias for RepetitiveLinkedList (no template typedefs in C++)
-  * @author Alexander Schlüter
-  */
+/** Alias for RepetititveLinkedList (no template aliases for doxygen)
+* @author Alexander Schlüter
+*/
+
+#ifndef DOXYGEN_PREPROCESSOR
+
+template <class T>
+using RepetitiveList = RepetitiveLinkedList<T>;
+
+#else //DOXYGEN_PREPROCESSOR
+
 template <class T>
 class RepetitiveList : public RepetitiveLinkedList<T>
 {
 public:
     using RepetitiveLinkedList<T>::operator=;
 };
+
+#endif //DOXYGEN_PREPROCESSOR
 
 }
 
