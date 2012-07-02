@@ -13,6 +13,7 @@ public:
 
     virtual inline std::unique_ptr<AbstractArithmetic> eval(const EvalInfo &ei) const { return this->copy(); };
     virtual inline ArithmeticType getType() const { return SINUS; };
+    virtual inline std::string getString() const { return std::string("sin(") + operand->getString() + ")"; };
 };
 
 }
