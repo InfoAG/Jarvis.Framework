@@ -14,6 +14,7 @@ public:
 
     virtual std::unique_ptr<AbstractArithmetic> eval(const EvalInfo &ei) const;
     virtual inline ArithmeticType getType() const { return ADDITION; };
+    virtual inline std::string getString() const { return first_op->getString() + "+" + second_op->getString(); };
 };
 
 }

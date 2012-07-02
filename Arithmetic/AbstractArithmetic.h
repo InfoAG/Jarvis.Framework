@@ -3,6 +3,7 @@
 
 #include "EvalInfo.h"
 #include <memory>
+#include <string>
 
 namespace CAS {
 
@@ -30,6 +31,7 @@ public:
 
     virtual std::unique_ptr<AbstractArithmetic> eval(const EvalInfo &ei) const = 0;
     virtual ArithmeticType getType() const = 0;
+    virtual std::string getString() const = 0;
 };
 
 }
