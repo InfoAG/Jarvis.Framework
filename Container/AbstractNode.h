@@ -14,7 +14,7 @@ struct AbstractNode
       * @param previous Pointer to previous node in list
       * @param next Pointer to next node in list
       */
-    inline AbstractNode(AbstractNode *previous = 0, AbstractNode *next = 0) : previous(previous), next(next) {};
+    inline AbstractNode(AbstractNode *previous = nullptr, AbstractNode *next = nullptr) : previous(previous), next(next) {};
     //! Virtual destructor
     virtual inline ~AbstractNode() {};
 

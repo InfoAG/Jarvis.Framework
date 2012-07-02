@@ -23,7 +23,7 @@ private:
           * @param target Pointer to target node
           * @param baseList Pointer to base list
           */
-        inline BaseIterator(AbstractNode<T> *target = 0, const AbstractLinkedList<T> *baseList = 0) : AbstractList<T>::template BaseIterator<AbstractLinkedList>(baseList), target(target) {};
+        inline BaseIterator(AbstractNode<T> *target = nullptr, const AbstractLinkedList<T> *baseList = nullptr) : AbstractList<T>::template BaseIterator<AbstractLinkedList>(baseList), target(target) {};
         /** Copy constructor
           * @param other Reference of the iterator to copy
           */
@@ -63,7 +63,7 @@ public:
           * @param target Pointer to target node
           * @param baseList Pointer to base list
           */
-        inline iterator(AbstractNode<T> *target = 0, const AbstractLinkedList *baseList = 0) : BaseIterator(target, baseList) {};
+        inline iterator(AbstractNode<T> *target = nullptr, const AbstractLinkedList *baseList = nullptr) : BaseIterator(target, baseList) {};
         /** Copy constructor
           * @param other Reference of the iterator to copy
           */
@@ -74,7 +74,7 @@ public:
         inline iterator &operator++() { BaseIterator::operator++(); return *this; };
         inline iterator operator++(int) { return iterator(BaseIterator::operator++(int())); };
         inline iterator &operator--() { BaseIterator::operator--(); return *this;  };
-        inline iterator operator--(int) { return iterator(BaseIterator::operator--(0)); };
+        inline iterator operator--(int) { return iterator(BaseIterator::operator--(int())); };
         inline iterator operator+(int n) const { return iterator(BaseIterator::operator+(n)); };
         inline iterator operator-(int n) const { return iterator(BaseIterator::operator-(n)); };
         inline iterator &operator+=(int n) { BaseIterator::operator+=(n); return *this; };
@@ -89,7 +89,7 @@ public:
           * @param target Pointer to target node
           * @param baseList Pointer to base list
           */
-        inline const_iterator(AbstractNode<T> *target = 0, const AbstractLinkedList *baseList = 0) : BaseIterator(target, baseList) {};
+        inline const_iterator(AbstractNode<T> *target = nullptr, const AbstractLinkedList *baseList = nullptr) : BaseIterator(target, baseList) {};
         /** Copy constructor
           * @param other Reference of the iterator to copy
           */
@@ -100,7 +100,7 @@ public:
         inline const_iterator &operator++() { BaseIterator::operator++(); return *this; };
         inline const_iterator operator++(int) { return BaseIterator::operator++(int()); };
         inline const_iterator &operator--() { BaseIterator::operator--(); return *this; };
-        inline const_iterator operator--(int) { return BaseIterator::operator--(0); };
+        inline const_iterator operator--(int) { return BaseIterator::operator--(int()); };
         inline const_iterator operator+(int n) const { return BaseIterator::operator+(n); };
         inline const_iterator operator-(int n) const { return BaseIterator::operator-(n); };
         inline const_iterator &operator+=(int n) { BaseIterator::operator+=(n); return *this; };
