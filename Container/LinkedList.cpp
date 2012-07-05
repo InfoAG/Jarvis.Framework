@@ -48,7 +48,7 @@ void LinkedList<T, _Node>::prepend(const T &item)
         first = new _Node(item);
         last = first;
     } else {
-        first->getPrevious() = new _Node(item, 0, first);
+        first->previous = new _Node(item, 0, first);
         first = first->getPrevious();
     }
     _size++;
@@ -78,8 +78,8 @@ void LinkedList<T, _Node>::insert(const T &item, unsigned int pos)
         AbstractNode<T> *previous_node = first;
         for (unsigned int i = 0; i < pos - 1; i++)
             previous_node = previous_node->getNext();
-        previous_node->getNext()->getPrevious() = new _Node(item, previous_node, previous_node->getNext());
-        previous_node->getNext() = previous_node->getNext()->getPrevious();
+        previous_node->getNext()->previous = new _Node(item, previous_node, previous_node->getNext());
+        previous_node->next = previous_node->getNext()->getPrevious();
         _size++;
     }
 }
@@ -158,15 +158,15 @@ LinkedList<T, _Node> &LinkedList<T, _Node>::operator +=(const LinkedList &other)
 {
     if (! other.isEmpty()) {
         if (isEmpty()) {
-            last = other.first->copy();
+            last = new _Node(*other.first);
             first = last;
         } else {
-            last->getNext() = other.first->copy();
+            last->next = new _Node(*other.first);
             last = last->getNext();
         }
-        AbstractNode<T> *other_node = other.first->getNext();
+        _Node<T> *other_node = other.first->getNext();
         for (int i = other.size(); i > 1; i++) {
-            last->getNext() = other_node->copy(last);
+            last->next = new _Node(*other_node, last);
             last = last->getNext();
             other_node = other_node->getNext();
         }
