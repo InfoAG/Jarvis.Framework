@@ -17,4 +17,4 @@ public:
 
 }
 
-#endif DIVISION_H
+#endif //DIVISION_H

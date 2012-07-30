@@ -17,4 +17,4 @@ public:
 
 }
 
-#endif MULTIPLICATION_H
+#endif //MULTIPLICATION_H

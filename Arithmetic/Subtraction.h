@@ -17,4 +17,4 @@ public:
 
 }
 
-#endif SUBTRACTION_H
+#endif //SUBTRACTION_H
