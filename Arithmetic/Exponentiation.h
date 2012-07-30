@@ -17,4 +17,4 @@ public:
 
 }
 
-#endif EXPONENTIATION_H
+#endif //EXPONENTIATION_H
