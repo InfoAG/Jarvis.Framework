@@ -165,7 +165,7 @@ LinkedList<T, _Node> &LinkedList<T, _Node>::operator +=(const LinkedList &other)
             last = last->getNext();
         }
         _Node *other_node = other.first->getNext();
-        for (int i = other.size(); i > 1; i++) {
+        for (int i = other.size(); i > 1; i--) {
             last->next = new _Node(*other_node, last);
             last = last->getNext();
             other_node = other_node->getNext();
