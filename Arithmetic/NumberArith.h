@@ -20,6 +20,8 @@ public:
     virtual std::string getString() const;
 
     inline NumberArith operator+(const NumberArith& other) { return NumberArith(value + other.value); };
+    inline NumberArith operator/(const NumberArith& other) { return NumberArith(value / other.value); };
+    inline NumberArith operator*(const NumberArith& other) { return NumberArith(value * other.value); };
 };
 
 }
