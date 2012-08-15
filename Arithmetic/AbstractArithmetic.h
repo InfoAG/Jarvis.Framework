@@ -29,7 +29,8 @@ public:
         TANGENT,
         INTEGRAL,
         NUMBERARITH,
-        VARIABLE
+        VARIABLE,
+        ASSIGNMENT
     };
 
     virtual ~AbstractArithmetic() {} //!< Virtual destructor to prevent slicing
