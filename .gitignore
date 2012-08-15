@@ -11,5 +11,10 @@
 *.la
 *.a
 
-# Editor junk / autosaves
+# other
 *.autosave
+Makefile*
+debug/
+release/
+object_script.*.Debug
+object_script.*.Release
