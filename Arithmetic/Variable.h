@@ -12,11 +12,12 @@ private:
     std::string identifier;
 
 public:
-    inline Variable(const std::string &identifier) : identifier(identifier) {};
-    virtual std::unique_ptr<AbstractArithmetic> copy() const { return std::unique_ptr<AbstractArithmetic>(new Variable(*this)); };
+    Variable(const std::string &identifier) : identifier(identifier) {}
+    virtual std::unique_ptr<AbstractArithmetic> copy() const { return std::unique_ptr<AbstractArithmetic>(new Variable(*this)); }
 
-    virtual std::unique_ptr<AbstractArithmetic> eval(const EvalInfo &ei) const { return copy(); };
-    virtual ArithmeticType getType() const { return VARIABLE; };
+    virtual std::unique_ptr<AbstractArithmetic> eval(const EvalInfo &ei) const;
+    virtual ArithmeticType getType() const { return VARIABLE; }
+    virtual std::string toString() const { return identifier; }
 };
 
 }

@@ -8,11 +8,11 @@ namespace CAS {
 class Exponentiation : public AbstractBinaryOperation
 {
 public:
-    Exponentiation(std::unique_ptr<AbstractArithmetic> first_op, std::unique_ptr<AbstractArithmetic> second_op) : AbstractBinaryOperation(std::move(first_op), std::move(second_op)) {};
-    virtual inline std::unique_ptr<AbstractArithmetic> copy() const { return std::unique_ptr<AbstractArithmetic>(new Exponentiation(*this)); };
+    Exponentiation(std::unique_ptr<AbstractArithmetic> first_op, std::unique_ptr<AbstractArithmetic> second_op) : AbstractBinaryOperation(std::move(first_op), std::move(second_op)) {}
+    virtual std::unique_ptr<AbstractArithmetic> copy() const { return std::unique_ptr<AbstractArithmetic>(new Exponentiation(*this)); }
 
-    virtual inline std::unique_ptr<AbstractArithmetic> eval(const EvalInfo &ei) const { return this->copy(); };
-    virtual inline ArithmeticType getType() const { return EXPONENTIATION; };
+    virtual std::unique_ptr<AbstractArithmetic> eval(const EvalInfo &ei) const { return this->copy(); }
+    virtual ArithmeticType getType() const { return EXPONENTIATION; }
 };
 
 }

@@ -12,11 +12,11 @@ private:
     SmartList<AbstractArithmetic*> arguments;
 
 public:
-    inline Function(const SmartList<AbstractArithmetic*> arguments) : arguments(arguments) {};
-    virtual inline std::unique_ptr<AbstractArithmetic> copy() const { return std::unique_ptr<AbstractArithmetic>(new Function(*this)); };
+    Function(const SmartList<AbstractArithmetic*> arguments) : arguments(arguments) {}
+    virtual std::unique_ptr<AbstractArithmetic> copy() const { return std::unique_ptr<AbstractArithmetic>(new Function(*this)); }
 
     virtual std::unique_ptr<AbstractArithmetic> eval(const EvalInfo &ei) const;
-    virtual inline ArithmeticType getType() const { return ADDITION; };
+    virtual ArithmeticType getType() const { return ADDITION; }
 };
 
 }
