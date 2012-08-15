@@ -5,14 +5,17 @@
 
 namespace CAS {
 
+/**
+ * Abstract base class for all unary operations
+ */
 class AbstractUnaryOperation : public AbstractArithmetic
 {
 protected:
-    std::unique_ptr<AbstractArithmetic> operand;
+    std::unique_ptr<AbstractArithmetic> operand; //!< Pointer to root of the operand's arithmetical tree
 
 public:
-    inline AbstractUnaryOperation(std::unique_ptr<AbstractArithmetic> operand) : operand(std::move(operand)) {};
-    inline AbstractUnaryOperation(const AbstractUnaryOperation &other) : operand(other.operand->copy()) {};
+    AbstractUnaryOperation(std::unique_ptr<AbstractArithmetic> operand) : operand(std::move(operand)) {}
+    AbstractUnaryOperation(const AbstractUnaryOperation &other) : operand(other.operand->copy()) {}
 };
 
 }

@@ -2,7 +2,7 @@
 
 namespace CAS {
 
-std::string NumberArith::getString() const
+std::string NumberArith::toString() const
 {
     std::stringstream ss;
     ss << value;
