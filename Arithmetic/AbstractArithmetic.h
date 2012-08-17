@@ -48,6 +48,7 @@ public:
     virtual std::unique_ptr<AbstractArithmetic> eval(const EvalInfo &ei) const = 0;
     virtual ArithmeticType getType() const = 0; //!< @return Type of the object
     virtual std::string toString() const = 0; //!< @return String representation of the arithmetical tree starting at this node
+    virtual bool isEqual(const AbstractArithmetic *other) const = 0;
 };
 
 }

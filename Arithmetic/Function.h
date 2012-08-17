@@ -9,10 +9,10 @@ namespace CAS {
 class Function : public AbstractArithmetic
 {
 private:
-    SmartList<AbstractArithmetic*> arguments;
+    std::vector<std::shared_ptr<AbstractArithmetic> > arguments;
 
 public:
-    Function(const SmartList<AbstractArithmetic*> arguments) : arguments(arguments) {}
+    Function(const std::vector<std::shared_ptr<AbstractArithmetic> > &arguments) : arguments(arguments) {}
     virtual std::unique_ptr<AbstractArithmetic> copy() const { return std::unique_ptr<AbstractArithmetic>(new Function(*this)); }
 
     virtual std::unique_ptr<AbstractArithmetic> eval(const EvalInfo &ei) const;
