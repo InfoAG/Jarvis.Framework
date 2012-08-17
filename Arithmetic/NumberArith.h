@@ -18,6 +18,8 @@ public:
     virtual std::unique_ptr<AbstractArithmetic> eval(const EvalInfo &ei) const { return copy(); }
     virtual ArithmeticType getType() const { return NUMBERARITH; }
     virtual std::string toString() const;
+    virtual inline bool isEqual(const AbstractArithmetic *other) const;
+    int getValue() const { return value; }
 
     NumberArith operator+(const NumberArith& other) { return NumberArith(value + other.value); }
     NumberArith operator/(const NumberArith& other) { return NumberArith(value / other.value); }

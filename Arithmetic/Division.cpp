@@ -11,4 +11,11 @@ std::unique_ptr<AbstractArithmetic> Division::eval(const EvalInfo &ei) const
         return std::unique_ptr<AbstractArithmetic>(new Division(std::move(first_op_result), std::move(second_op_result)));
 }
 
+bool Division::isEqual(const AbstractArithmetic *other) const
+{
+    if (other->getType() != AbstractArithmetic::DIVISION) return false;
+    const Division *casted = static_cast<const Division*>(other);
+    return first_op->isEqual(casted->getFirstOp()) && second_op->isEqual(casted->getSecondOp());
+}
+
 }
