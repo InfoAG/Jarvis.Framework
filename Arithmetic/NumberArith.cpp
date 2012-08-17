@@ -9,4 +9,9 @@ std::string NumberArith::toString() const
     return ss.str();
 }
 
+bool NumberArith::isEqual(const AbstractArithmetic *other) const
+{
+    return other->getType() == AbstractArithmetic::NUMBERARITH && static_cast<const NumberArith*>(other)->getValue() == value;
+}
+
 }

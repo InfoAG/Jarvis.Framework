@@ -18,6 +18,8 @@ public:
     virtual std::unique_ptr<AbstractArithmetic> eval(const EvalInfo &ei) const;
     virtual ArithmeticType getType() const { return VARIABLE; }
     virtual std::string toString() const { return identifier; }
+    virtual inline bool isEqual(const AbstractArithmetic *other) const;
+    std::string getIdentifier() const { return identifier; }
 };
 
 }

@@ -10,4 +10,11 @@ std::unique_ptr<AbstractArithmetic> Subtraction::eval(const EvalInfo &ei) const
     else return std::unique_ptr<AbstractArithmetic>(new Subtraction(std::move(first_op_result), std::move(second_op_result)));
 }
 
+bool Subtraction::isEqual(const AbstractArithmetic *other) const
+{
+    if (other->getType() != AbstractArithmetic::SUBTRACTION) return false;
+    const Subtraction *casted = static_cast<const Subtraction*>(other);
+    return first_op->isEqual(casted->getFirstOp()) && second_op->isEqual(casted->getSecondOp());
+}
+
 }
