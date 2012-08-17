@@ -36,8 +36,8 @@ std::unique_ptr<AbstractArithmetic> Addition::eval(const EvalInfo &ei) const
             break;
         case AbstractArithmetic::MULTIPLICATION:
             monomOperands = static_cast<Multiplication*>(operand.get())->getOperands();
-            if (monomOperands.front()->getType() == AbstractArithmetic::NUMBERARITH) {
-                accessMonomValue(monomValues, {begin(monomOperands) + 1, monomOperands.end()}) += static_cast<NumberArith*>(monomOperands.front().get())->getValue();
+            if (monomOperands.back()->getType() == AbstractArithmetic::NUMBERARITH) {
+                accessMonomValue(monomValues, {begin(monomOperands), end(monomOperands) - 1}) += static_cast<NumberArith*>(monomOperands.back().get())->getValue();
             } else accessMonomValue(monomValues, monomOperands)++;
             break;
         default:
