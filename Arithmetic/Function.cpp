@@ -14,7 +14,11 @@ std::unique_ptr<AbstractArithmetic> Function::eval(const EvalInfo &ei) const
     } else {
         Operands evaldOps(operands);
         for (auto &operand : evaldOps) operand = operand->eval(ei);
+<<<<<<< HEAD
         return std::unique_ptr<AbstractArithmetic>(new Function(evaldOps));
+=======
+        return std::unique_ptr<AbstractArithmetic>(new Function(identifier, evaldOps));
+>>>>>>> arithmetic
     }
 }
 
