@@ -12,6 +12,7 @@ private:
 
 public:
     Function(const std::string identifier, const Operands &arguments) : AbstractLevelingOperation(arguments), identifier(identifier) {}
+    Function(const Operands &operands) : AbstractLevelingOperation(operands) {}
     virtual std::unique_ptr<AbstractArithmetic> copy() const { return std::unique_ptr<AbstractArithmetic>(new Function(*this)); }
 
     virtual std::unique_ptr<AbstractArithmetic> eval(const EvalInfo &ei) const;
