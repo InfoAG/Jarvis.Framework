@@ -1,22 +1,25 @@
 #ifndef FUNCTION_H
 #define FUNCTION_H
 
-#include "AbstractArithmetic.h"
-#include "../Container/SmartList.h"
+#include "AbstractLevelingOperation.h"
 
 namespace CAS {
 
-class Function : public AbstractArithmetic
+class Function : public AbstractLevelingOperation
 {
 private:
-    std::vector<std::shared_ptr<AbstractArithmetic> > arguments;
+    std::string identifier;
 
 public:
-    Function(const std::vector<std::shared_ptr<AbstractArithmetic> > &arguments) : arguments(arguments) {}
+    Function(const std::string identifier, const Operands &arguments) : AbstractLevelingOperation(arguments), identifier(identifier) {}
     virtual std::unique_ptr<AbstractArithmetic> copy() const { return std::unique_ptr<AbstractArithmetic>(new Function(*this)); }
 
     virtual std::unique_ptr<AbstractArithmetic> eval(const EvalInfo &ei) const;
-    virtual ArithmeticType getType() const { return ADDITION; }
+    virtual ArithmeticType getType() const { return FUNCTION; }
+    virtual bool isEqual(const AbstractArithmetic *other) const;
+    virtual std::string toString() const;
+
+    std::string getIdentifier() const { return identifier; }
 };
 
 }
