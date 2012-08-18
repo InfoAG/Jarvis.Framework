@@ -11,9 +11,9 @@ namespace CAS {
 class Addition : public AbstractLevelingOperation
 {
 private:
-    typedef std::vector<std::pair<std::vector<std::shared_ptr<AbstractArithmetic> >, int> > MonomValues;
+    typedef std::vector<std::pair<Operands, int> > MonomValues;
 
-    int &accessMonomValue(MonomValues &values, const std::vector<std::shared_ptr<AbstractArithmetic> > &monom) const;
+    int &accessMonomValue(MonomValues &values, const Operands &monom) const;
 
 public:
     /**
@@ -22,7 +22,7 @@ public:
      * @param second_op
      */
     Addition(std::unique_ptr<AbstractArithmetic> first_op, std::unique_ptr<AbstractArithmetic> second_op) : AbstractLevelingOperation(std::move(first_op), std::move(second_op)) {}
-    Addition(const std::vector<std::shared_ptr<AbstractArithmetic> > &operands) : AbstractLevelingOperation(operands) {}
+    Addition(const Operands &operands) : AbstractLevelingOperation(operands) {}
     virtual std::unique_ptr<AbstractArithmetic> copy() const { return std::unique_ptr<AbstractArithmetic>(new Addition(*this)); }
 
     virtual std::unique_ptr<AbstractArithmetic> eval(const EvalInfo &ei) const;

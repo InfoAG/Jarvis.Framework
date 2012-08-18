@@ -2,10 +2,10 @@
 
 namespace CAS {
 
-int &Addition::accessMonomValue(MonomValues &values, const std::vector<std::shared_ptr<AbstractArithmetic> > &monom) const
+int &Addition::accessMonomValue(MonomValues &values, const Operands &monom) const
 {
-    std::vector<std::pair<std::vector<std::shared_ptr<AbstractArithmetic> >, int> >::iterator it = std::find_if(begin(values), end(values),
-            [&](const std::pair<std::vector<std::shared_ptr<AbstractArithmetic> >, int> &item) {
+    std::vector<std::pair<Operands, int> >::iterator it = std::find_if(begin(values), end(values),
+            [&](const std::pair<Operands, int> &item) {
                 return equalOperands(item.first, monom);
         });
     if (it != values.end()) return it->second;
@@ -17,18 +17,18 @@ int &Addition::accessMonomValue(MonomValues &values, const std::vector<std::shar
 
 std::unique_ptr<AbstractArithmetic> Addition::eval(const EvalInfo &ei) const
 {
-    std::vector<std::shared_ptr<AbstractArithmetic> > mergedOperands;
+    Operands mergedOperands;
     for (const auto &operand : operands) {
         std::shared_ptr<AbstractArithmetic> evalRes = operand->eval(ei);
         if (evalRes->getType() == AbstractArithmetic::ADDITION) {
-            std::vector<std::shared_ptr<AbstractArithmetic> > childOperands = static_cast<Addition*>(evalRes.get())->getOperands();
+            Operands childOperands = static_cast<Addition*>(evalRes.get())->getOperands();
             mergedOperands.insert(begin(mergedOperands), begin(childOperands), end(childOperands));
         }
         else mergedOperands.push_back(evalRes);
     }
     MonomValues monomValues;
     int numberValue = 0;
-    std::vector<std::shared_ptr<AbstractArithmetic> > monomOperands;
+    Operands monomOperands;
     for (const auto &operand : mergedOperands) {
         switch(operand->getType()) {
         case AbstractArithmetic::NUMBERARITH:
@@ -50,7 +50,7 @@ std::unique_ptr<AbstractArithmetic> Addition::eval(const EvalInfo &ei) const
     for (const auto &item : monomValues) {
         if (item.second != 0) {
             if (item.second != 1) {
-                std::vector<std::shared_ptr<AbstractArithmetic> > resultMultiplication(item.first);
+                Operands resultMultiplication(item.first);
                 resultMultiplication.push_back(std::make_shared<NumberArith>(item.second));
                 mergedOperands.push_back(std::make_shared<Multiplication>(resultMultiplication));
             } else mergedOperands.push_back(std::make_shared<Multiplication>(item.first));
@@ -62,7 +62,7 @@ std::unique_ptr<AbstractArithmetic> Addition::eval(const EvalInfo &ei) const
 std::string Addition::toString() const
 {
     std::string result = operands.front()->toString();
-    for (std::vector<std::shared_ptr<AbstractArithmetic> >::const_iterator it = ++(operands.begin()); it != operands.end(); ++it)
+    for (Operands::const_iterator it = ++(operands.begin()); it != operands.end(); ++it)
         result += "+" + (*it)->toString();
     return result;
 }

@@ -4,6 +4,7 @@
 #include "EvalInfo.h"
 #include <memory>
 #include <string>
+#include <vector>
 
 namespace CAS {
 
@@ -12,6 +13,7 @@ namespace CAS {
 class AbstractArithmetic
 {
 public:
+    typedef std::vector<std::shared_ptr<AbstractArithmetic>> Operands;
     /**
      * Type info returned by getType() to identify arithmetical objects by AbstractArithmetic*
      * withouth using dynamic_cast
@@ -30,7 +32,8 @@ public:
         INTEGRAL,
         NUMBERARITH,
         VARIABLE,
-        ASSIGNMENT
+        ASSIGNMENT,
+        FUNCTION
     };
 
     virtual ~AbstractArithmetic() {} //!< Virtual destructor to prevent slicing
