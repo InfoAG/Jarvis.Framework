@@ -11,7 +11,11 @@ std::unique_ptr<AbstractArithmetic> Function::eval(const EvalInfo &ei) const
         for (const auto &funcVar : it->second.first)
             includeFuncVars.variables[funcVar] = (*(itOperands++))->eval(ei);
         return it->second.second->eval(includeFuncVars);
-    } else return copy();
+    } else {
+        Operands evaldOps(operands);
+        for (auto &operand : evaldOps) operand = operand->eval(ei);
+        return std::unique_ptr<AbstractArithmetic>(new Function(identifier, evaldOps));
+    }
 }
 
 bool Function::isEqual(const AbstractArithmetic *other) const
