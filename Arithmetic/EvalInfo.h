@@ -4,6 +4,7 @@
 #include <map>
 #include <string>
 #include <memory>
+#include <vector>
 
 namespace CAS {
 
@@ -11,9 +12,9 @@ class AbstractArithmetic;
 
 struct EvalInfo
 {
-    typedef std::map<std::string, std::shared_ptr<AbstractArithmetic> > Definitions;
-    Definitions variables;
-    Definitions functions;
+    typedef std::map<std::pair<std::string, unsigned int>, std::pair<std::vector<std::string>, std::shared_ptr<AbstractArithmetic>>> FuncDefs;
+    std::map<std::string, std::shared_ptr<AbstractArithmetic>> variables;
+    FuncDefs functions;
 };
 
 }
