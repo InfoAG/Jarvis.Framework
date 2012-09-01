@@ -85,7 +85,7 @@ namespace CAS{
 		
 		bool operator<(const Natural&);
 		bool operator<=(const Natural&);
-		bool operator==(const Natural&);
+		bool operator==(const Natural&) const;
 		bool operator>=(const Natural&);
 		bool operator>(const Natural&);
 	};
