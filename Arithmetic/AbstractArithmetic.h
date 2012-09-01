@@ -2,7 +2,7 @@
 #define ABSTRACTARITHMETIC_H
 
 #include "EvalInfo.h"
-#include <memory>
+#include "global.h"
 #include <string>
 #include <vector>
 
@@ -13,7 +13,7 @@ namespace CAS {
 class AbstractArithmetic
 {
 public:
-    typedef std::vector<std::shared_ptr<AbstractArithmetic>> Operands;
+    typedef std::vector<std::unique_ptr<AbstractArithmetic>> Operands;
     /**
      * Type info returned by getType() to identify arithmetical objects by AbstractArithmetic*
      * withouth using dynamic_cast

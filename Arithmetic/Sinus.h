@@ -9,7 +9,7 @@ class Sinus : public AbstractUnaryOperation
 {
 public:
     Sinus(std::unique_ptr<AbstractArithmetic> operand) : AbstractUnaryOperation(std::move(operand)) {}
-    virtual std::unique_ptr<AbstractArithmetic> copy() const { return std::unique_ptr<AbstractArithmetic>(new Sinus(*this)); }
+    virtual std::unique_ptr<AbstractArithmetic> copy() const { return make_unique<AbstractArithmetic>(*this); }
 
     virtual std::unique_ptr<AbstractArithmetic> eval(const EvalInfo &ei) const { return this->copy(); }
     virtual ArithmeticType getType() const { return SINUS; }
