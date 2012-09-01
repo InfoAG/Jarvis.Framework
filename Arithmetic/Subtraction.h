@@ -3,6 +3,7 @@
 
 #include "AbstractBinaryOperation.h"
 #include "NumberArith.h"
+#include "Addition.h"
 
 namespace CAS {
 
