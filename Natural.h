@@ -1,30 +1,97 @@
-#ifndef _NATURAL_H_
-#define _NATURAL_H_
+#ifndef NATURAL_H
+#define NATURAL_H
 
-#include <string>
-#include <iostream>
+#include <vector>
+#include <time.h>
 #include "Number.h"
-
+#include "Integer.h"
+#include "Utility.h"
 using namespace std;
 
+
 namespace CAS{
+	class Integer;
+
 	class Natural : public Number{
 	private:
-		ebyte *digits;
-		unsigned int size;
+		vector<fbyte> digits;
+		fbyte size;
 	public:
 		Natural();
+		Natural(char);
+		Natural(unsigned char);
+		Natural(short);
+		Natural(unsigned short);
+		Natural(int);
 		Natural(unsigned int);
+		Natural(long);
+		Natural(unsigned long);
+		Natural(long long);
+		Natural(unsigned long long);
+		Natural(float);
+		Natural(double);
 		Natural(string);
-		Natural(const Natural& rhs);
+
+		Natural(const Natural&);
+		Natural(const Integer&);
+
+
+		vector<fbyte> getDigits()const;
+		fbyte getDigitsAt(unsigned int)const;
+		fbyte getSize()const;
+		string toString()const;
+
+
+		void randomize(unsigned int, unsigned int);
+
+
 		bool isInteger();
-		string toString();
-		void setDigits(ebyte*, unsigned int);
-		unsigned int getSize();
+		bool isEven();
+		bool isOdd();
+		bool isPrime();
+
+		Natural LeftShift(int)const;
+		Natural RightShift(int)const;
+		Natural MSB(unsigned int)const;
+		Natural LSB(unsigned int)const;
+
+		Natural Addition(const Natural&);
+		Natural simpleAddition(const Natural& rhs);
+		Natural Subtraction(const Natural&);
+		Natural simpleSubtraction(const Natural& rhs);
+		Natural Multiplication(const Natural&);
+		Natural simpleMultiplication(const Natural& rhs)const;
+		Natural shortDivision(const Natural& rhs);
+		Natural longDivision(const Natural& rhs);
+		fbyte longDivisionSubRoutine(fbyte,fbyte,fbyte,fbyte,fbyte);
+
+
+		Natural fusedMultiplyAdd(const Natural&, const Natural&);
+
+		Natural Karatsuba(const Natural&);
+		Natural Toom33(const Natural&);
+		Natural Toom44(const Natural&);
+
+		Natural operator+(const Natural&);
+		Natural operator+(const unsigned int&);
+		Natural operator-(const Natural&);
+		Natural operator-(const unsigned int&);
+		Natural operator*(const Natural&);
+		Natural operator*(const unsigned int&);
+		Natural operator/(const Natural&);
+		Natural operator/(const unsigned int&);
+		Natural operator%(const Natural&);
+		Natural operator%(const unsigned int&);
+		Natural operator=(const Natural&);
+		Natural operator=(const unsigned int&);
 		
-		Natural Addition(Natural);
-		Natural operator+(Natural right);
+		bool operator<(const Natural&);
+		bool operator<=(const Natural&);
+		bool operator==(const Natural&);
+		bool operator>=(const Natural&);
+		bool operator>(const Natural&);
 	};
 };
+extern CAS::Natural nfaculty(unsigned int);
 
 #endif

@@ -1,33 +1,17 @@
 #include "Utility.h"
-
 void cropzeros(string* str){
 	while(str->length() > 1 && str->at(0) == '0'){
 		str->erase(0,1);	
 	}
 }
 
+PRG::PRG(fbyte dx, fbyte dy){
+	x=dx;
+	y=dy;
+}
 
-char inttochar(int a){
-	switch(a){
-	case 0:
-		return '0';
-	case 1:
-		return '1';
-	case 2:
-		return '2';
-	case 3:
-		return '3';
-	case 4:
-		return '4';
-	case 5:
-		return '5';
-	case 6:
-		return '6';
-	case 7:
-		return '7';
-	case 8:
-		return '8';
-	case 9:
-		return '9';
-	}
+fbyte PRG::next(){
+	x=(2*x+5)%p;
+	y=(3*y+7)%p;
+	return (x^y)%p;
 }
