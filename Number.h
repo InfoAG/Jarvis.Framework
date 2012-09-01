@@ -1,12 +1,16 @@
 #ifndef NUMBER_H
 #define NUMBER_H
 
-class Number
-{
-private:
+#include "Utility.h"
 
-public:
-
+namespace CAS{
+	
+	class Number{
+	private:
+	public:
+		virtual bool isInteger()=0;
+	};
+	
 };
 
-#endif //NUMBER_H
+#endif
