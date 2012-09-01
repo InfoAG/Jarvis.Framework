@@ -2,7 +2,6 @@
 #define NATURAL_H
 
 #include <vector>
-#include <limits>
 #include "Number.h"
 #include "Integer.h"
 #include "Utility.h"
@@ -82,10 +81,18 @@ namespace CAS{
 		Natural operator%(const unsigned int&);
 		Natural operator=(const Natural&);
 		Natural operator=(const unsigned int&);
+
+        Natural &operator+=(const Natural &other) { *this = *this + other; return *this; }
+        Natural &operator-=(const Natural &other) { *this = *this - other; return *this; }
+        Natural &operator*=(const Natural &other) { *this = *this * other; return *this; }
+        Natural &operator/=(const Natural &other) { *this = *this / other; return *this; }
+        Natural operator--(int) { Natural result(*this); *this -= 1; return result; }
+        Natural operator++(int) { Natural result(*this); *this += 1; return result; }
 		
 		bool operator<(const Natural&);
 		bool operator<=(const Natural&);
 		bool operator==(const Natural&) const;
+        bool operator!=(const Natural &other) const { return ! (*this == other); }
 		bool operator>=(const Natural&);
 		bool operator>(const Natural&);
 	};

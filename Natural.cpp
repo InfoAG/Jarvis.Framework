@@ -157,7 +157,7 @@ void Natural::randomize(unsigned int s, unsigned int seed){
 	digits.resize(size);
 	PRG p(time(NULL)^seed,seed^s);
 	for(fbyte i = 0 ; i < size;i++){
-        digits.at(i)=p.next()%intmod[std::numeric_limits<int>::max()];
+        digits.at(i)=p.next()%intmod[MAX_INT];
 	}
 }
 /****
