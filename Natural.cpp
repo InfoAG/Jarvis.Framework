@@ -594,7 +594,7 @@ bool Natural::operator<(const Natural& rhs){
 bool Natural::operator<=(const Natural& rhs){
 	return !((*this)>rhs);
 }
-bool Natural::operator==(const Natural& rhs){
+bool Natural::operator==(const Natural& rhs) const {
 	if(size != rhs.getSize())
 		return false;
 	for(fbyte i = size-1; i >=1 ; i--){
