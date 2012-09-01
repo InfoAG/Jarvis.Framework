@@ -22,6 +22,7 @@ public:
     double getValue() const { return value; }
 
     NumberArith operator+(const NumberArith& other) { return NumberArith(value + other.value); }
+    NumberArith operator-(const NumberArith& other) { return NumberArith(value - other.value); }
     NumberArith operator/(const NumberArith& other) { return NumberArith(value / other.value); }
     NumberArith operator*(const NumberArith& other) { return NumberArith(value * other.value); }
 };
