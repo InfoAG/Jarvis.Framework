@@ -11,7 +11,7 @@ std::string NumberArith::toString() const
 
 bool NumberArith::isEqual(const AbstractArithmetic *other) const
 {
-    return other->getType() == AbstractArithmetic::NUMBERARITH && static_cast<const NumberArith*>(other)->getValue() == value;
+    return other->getType() == NUMBERARITH && static_cast<const NumberArith*>(other)->getValue() == value;
 }
 
 }

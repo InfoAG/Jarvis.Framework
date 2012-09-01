@@ -9,22 +9,24 @@ namespace CAS {
 class NumberArith : public AbstractArithmetic
 {
 private:
-    int value; //change to CAS::Integer etc.
+    double value; //change to CAS::Integer etc.
 
 public:
-    NumberArith(int value) : value(value) {};
-    virtual std::unique_ptr<AbstractArithmetic> copy() const { return std::unique_ptr<AbstractArithmetic>(new NumberArith(*this)); }
+    NumberArith(double value) : value(value) {};
+    virtual std::unique_ptr<AbstractArithmetic> copy() const { return make_unique<NumberArith>(*this); }
 
     virtual std::unique_ptr<AbstractArithmetic> eval(const EvalInfo &ei) const { return copy(); }
     virtual ArithmeticType getType() const { return NUMBERARITH; }
     virtual std::string toString() const;
     virtual inline bool isEqual(const AbstractArithmetic *other) const;
-    int getValue() const { return value; }
+    double getValue() const { return value; }
 
     NumberArith operator+(const NumberArith& other) { return NumberArith(value + other.value); }
     NumberArith operator/(const NumberArith& other) { return NumberArith(value / other.value); }
     NumberArith operator*(const NumberArith& other) { return NumberArith(value * other.value); }
 };
+
+inline NumberArith pow(const NumberArith &first, const NumberArith &second) { return std::pow(first.getValue(), second.getValue()); }
 
 }
 

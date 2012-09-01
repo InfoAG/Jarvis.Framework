@@ -13,7 +13,7 @@ private:
 
 public:
     Variable(const std::string &identifier) : identifier(identifier) {}
-    virtual std::unique_ptr<AbstractArithmetic> copy() const { return std::unique_ptr<AbstractArithmetic>(new Variable(*this)); }
+    virtual std::unique_ptr<AbstractArithmetic> copy() const { return make_unique<Variable>(*this); }
 
     virtual std::unique_ptr<AbstractArithmetic> eval(const EvalInfo &ei) const;
     virtual ArithmeticType getType() const { return VARIABLE; }
