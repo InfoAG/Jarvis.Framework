@@ -2,15 +2,15 @@
 
 namespace CAS {
 
-int &Addition::accessMonomValue(MonomValues &values, const Operands &monom) const
+double &Addition::accessMonomValue(MonomValues &values, std::vector<std::unique_ptr<AbstractArithmetic>> &monom) const
 {
-    std::vector<std::pair<Operands, int> >::iterator it = std::find_if(begin(values), end(values),
-            [&](const std::pair<Operands, int> &item) {
+    MonomValues::iterator it = std::find_if(begin(values), end(values),
+            [&](const std::pair<Operands, double> &item) {
                 return equalOperands(item.first, monom);
         });
     if (it != values.end()) return it->second;
     else {
-        values.push_back(std::make_pair(monom, 0));
+        values.emplace_back(std::move(monom), 0);
         return values.back().second;
     }
 }
@@ -19,57 +19,63 @@ std::unique_ptr<AbstractArithmetic> Addition::eval(const EvalInfo &ei) const
 {
     Operands mergedOperands;
     for (const auto &operand : operands) {
-        std::shared_ptr<AbstractArithmetic> evalRes = operand->eval(ei);
-        if (evalRes->getType() == AbstractArithmetic::ADDITION) {
-            Operands childOperands = static_cast<Addition*>(evalRes.get())->getOperands();
-            mergedOperands.insert(begin(mergedOperands), begin(childOperands), end(childOperands));
+        auto evalRes = operand->eval(ei);
+        if (evalRes->getType() == ADDITION) {
+            for (auto &childOp : static_cast<Addition*>(evalRes.get())->getOperands())
+                mergedOperands.emplace_back(std::move(childOp));
         }
-        else mergedOperands.push_back(evalRes);
+        else mergedOperands.emplace_back(std::move(evalRes));
     }
     MonomValues monomValues;
-    int numberValue = 0;
-    Operands monomOperands;
-    for (const auto &operand : mergedOperands) {
+    double numberValue = 0;
+    for (auto &operand : mergedOperands) {
         switch(operand->getType()) {
-        case AbstractArithmetic::NUMBERARITH:
+        case NUMBERARITH:
             numberValue += static_cast<NumberArith*>(operand.get())->getValue();
             break;
-        case AbstractArithmetic::MULTIPLICATION:
-            monomOperands = static_cast<Multiplication*>(operand.get())->getOperands();
-            if (monomOperands.back()->getType() == AbstractArithmetic::NUMBERARITH) {
-                accessMonomValue(monomValues, {begin(monomOperands), end(monomOperands) - 1}) += static_cast<NumberArith*>(monomOperands.back().get())->getValue();
-            } else accessMonomValue(monomValues, monomOperands)++;
+        case MULTIPLICATION:
+            if (static_cast<Multiplication*>(operand.get())->getOperands().back()->getType() == NUMBERARITH) {
+                Operands monom;
+                for (auto itChild = begin(static_cast<Multiplication*>(operand.get())->getOperands());
+                     itChild != end(static_cast<Multiplication*>(operand.get())->getOperands()) - 1; ++itChild)
+                    monom.emplace_back(std::move(*itChild));
+                accessMonomValue(monomValues, monom) +=
+                        static_cast<NumberArith*>(static_cast<Multiplication*>(operand.get())->getOperands().back().get())->getValue();
+            } else accessMonomValue(monomValues, static_cast<Multiplication*>(operand.get())->getOperands())++;
             break;
         default:
-            accessMonomValue(monomValues, {operand})++;
+            Operands singleOpVec;
+            singleOpVec.emplace_back(std::move(operand));
+            accessMonomValue(monomValues, singleOpVec)++;
             break;
         }
     }
     mergedOperands.clear();
-    if (numberValue != 0) mergedOperands.push_back(std::make_shared<NumberArith>(numberValue));
-    for (const auto &item : monomValues) {
+    if (numberValue != 0) mergedOperands.emplace_back(make_unique<NumberArith>(numberValue));
+    for (auto &item : monomValues) {
         if (item.second != 0) {
             if (item.second != 1) {
-                Operands resultMultiplication(item.first);
-                resultMultiplication.push_back(std::make_shared<NumberArith>(item.second));
-                mergedOperands.push_back(std::make_shared<Multiplication>(resultMultiplication));
-            } else mergedOperands.push_back(std::make_shared<Multiplication>(item.first));
+                item.first.emplace_back(make_unique<NumberArith>(item.second));
+                mergedOperands.emplace_back(make_unique<Multiplication>(std::move(item.first)));
+            } else mergedOperands.emplace_back(make_unique<Multiplication>(std::move(item.first)));
         }
     }
-    return std::unique_ptr<AbstractArithmetic>(new Addition(mergedOperands));
+    if (mergedOperands.size() == 0) return make_unique<NumberArith>(0);
+    else if (mergedOperands.size() == 1) return std::move(mergedOperands.front());
+    else return make_unique<Addition>(std::move(mergedOperands));
 }
 
 std::string Addition::toString() const
 {
     std::string result = operands.front()->toString();
-    for (Operands::const_iterator it = ++(operands.begin()); it != operands.end(); ++it)
+    for (auto it = ++(operands.cbegin()); it != operands.cend(); ++it)
         result += "+" + (*it)->toString();
     return result;
 }
 
 bool Addition::isEqual(const AbstractArithmetic *other) const
 {
-    if (other->getType() != AbstractArithmetic::ADDITION) return false;
+    if (other->getType() != ADDITION) return false;
     return equalOperands(static_cast<const Addition*>(other)->getOperands(), operands);
 }
 
