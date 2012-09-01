@@ -1,5 +1,8 @@
 #include "Utility.h"
-void cropzeros(string* str){
+
+namespace CAS {
+
+void cropzeros(std::string* str){
 	while(str->length() > 1 && str->at(0) == '0'){
 		str->erase(0,1);	
 	}
@@ -14,4 +17,6 @@ fbyte PRG::next(){
 	x=(2*x+5)%p;
 	y=(3*y+7)%p;
 	return (x^y)%p;
+}
+
 }

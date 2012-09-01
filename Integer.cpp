@@ -1,5 +1,5 @@
 #include "Integer.h"
-using namespace CAS;
+namespace CAS {
 
 Integer::Integer(){
 	size = 1;
@@ -43,7 +43,7 @@ Integer::Integer(float f){
 Integer::Integer(double d){
 
 }
-Integer::Integer(string str){
+Integer::Integer(std::string str){
 
 }
 
@@ -64,7 +64,7 @@ Integer::Integer(const Integer& rhs){
 
 ****/
 
-vector<fbyte> Integer::getDigits()const{
+std::vector<fbyte> Integer::getDigits()const{
 	return digits;
 }
 fbyte Integer::getDigitsAt(unsigned int ui)const{
@@ -76,8 +76,8 @@ fbyte Integer::getSize()const{
 bool Integer::getSign()const{
 	return sign;
 }
-string Integer::toString(){
-	string str;
+std::string Integer::toString(){
+    std::string str;
 	return str;
 }
 
@@ -199,8 +199,7 @@ bool Integer::operator>(const Integer& rhs){
 	}
 }
 
-
-
+}
 
 
 

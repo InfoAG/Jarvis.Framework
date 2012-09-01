@@ -2,19 +2,17 @@
 #define NATURAL_H
 
 #include <vector>
-#include <time.h>
+#include <limits>
 #include "Number.h"
 #include "Integer.h"
 #include "Utility.h"
-using namespace std;
-
 
 namespace CAS{
 	class Integer;
 
 	class Natural : public Number{
 	private:
-		vector<fbyte> digits;
+        std::vector<fbyte> digits;
 		fbyte size;
 	public:
 		Natural();
@@ -30,16 +28,16 @@ namespace CAS{
 		Natural(unsigned long long);
 		Natural(float);
 		Natural(double);
-		Natural(string);
+        Natural(std::string);
 
 		Natural(const Natural&);
 		Natural(const Integer&);
 
 
-		vector<fbyte> getDigits()const;
+        std::vector<fbyte> getDigits()const;
 		fbyte getDigitsAt(unsigned int)const;
 		fbyte getSize()const;
-		string toString()const;
+        std::string toString()const;
 
 
 		void randomize(unsigned int, unsigned int);

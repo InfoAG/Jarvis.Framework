@@ -2,7 +2,9 @@
 #define UTILITY_H
 
 #include <string>
-using namespace std;
+
+namespace CAS {
+
 typedef unsigned int fbyte;
 typedef unsigned long long ebyte;
 
@@ -24,7 +26,7 @@ const fbyte intmod[10]={1,
 const ebyte emod =    1000000000;
 
 const fbyte p = intmod[MAX_INT]+7;
-void cropzeros(string* str);
+void cropzeros(std::string* str);
 
 class PRG{
 private:
@@ -34,5 +36,7 @@ public:
 	PRG(fbyte, fbyte);
 	fbyte next();
 };
+
+}
 
 #endif

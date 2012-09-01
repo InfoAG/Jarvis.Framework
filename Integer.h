@@ -2,17 +2,17 @@
 #define INTEGER_H
 
 #include <vector>
+#include <time.h>
 #include "Number.h"
 #include "Natural.h"
 #include "Utility.h"
-using namespace std;
 
 namespace CAS{
 	class Natural;
 
 	class Integer : public Number{
 	private:
-		vector<fbyte> digits;
+        std::vector<fbyte> digits;
 		fbyte size;
 		bool sign;
 	public:
@@ -29,18 +29,18 @@ namespace CAS{
 		Integer(unsigned long long);
 		Integer(float);
 		Integer(double);
-		Integer(string);
+        Integer(std::string);
 		
 
 		Integer(const Natural&);
 		Integer(const Integer&);
 
-		vector<fbyte> getDigits() const;
+        std::vector<fbyte> getDigits() const;
 		fbyte getDigitsAt(unsigned int)const;
 		fbyte getSize() const;
 		bool getSign() const;
 
-		string toString();
+        std::string toString();
 
 
 		bool isInteger();

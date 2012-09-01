@@ -1,6 +1,6 @@
 #include "Natural.h"
 #include <iostream>
-using namespace CAS;
+namespace CAS {
 
 Natural::Natural(){
 	size=1;
@@ -69,7 +69,7 @@ Natural::Natural(float f){
 Natural::Natural(double d){
 
 }
-Natural::Natural(string str){
+Natural::Natural(std::string str){
 	if(str.find_first_not_of("0123456789")!=str.npos){
 		//throw exception()
 	}
@@ -124,7 +124,7 @@ Natural::Natural(const Natural& rhs){
 
 ****/
 
-vector<fbyte> Natural::getDigits()const{
+std::vector<fbyte> Natural::getDigits()const{
 	return digits;
 }
 
@@ -136,8 +136,8 @@ fbyte Natural::getSize()const{
 	return size;
 }
 
-string Natural::toString()const{
-	string str = "";
+std::string Natural::toString()const{
+    std::string str = "";
 	char c;
 	for(int i=size-1 ; i >= 0 ; i-- ){
 		for( int j = 8 ; j >= 0 ; j-- ){
@@ -157,7 +157,7 @@ void Natural::randomize(unsigned int s, unsigned int seed){
 	digits.resize(size);
 	PRG p(time(NULL)^seed,seed^s);
 	for(fbyte i = 0 ; i < size;i++){
-		digits.at(i)=p.next()%intmod[INT_MAX];
+        digits.at(i)=p.next()%intmod[std::numeric_limits<int>::max()];
 	}
 }
 /****
@@ -249,7 +249,7 @@ Natural Natural::Addition(const Natural& rhs){
 	fbyte max = (size > rhs.getSize())? size : rhs.getSize();
 	fbyte tmp = 0;
 	fbyte buffer = 0;
-	vector<fbyte> c(max);
+    std::vector<fbyte> c(max);
 	for(fbyte i = 0 ; i < min ; i++){
 		tmp	    = buffer + digits.at(i) + rhs.getDigitsAt(i);
 		buffer  = tmp / intmod[MAX_INT];
@@ -304,7 +304,7 @@ Natural Natural::Subtraction(const Natural& rhs){
 	fbyte max = getSize();
 	fbyte carry = 0;
 	int tmp = 0;
-	vector<fbyte> c;
+    std::vector<fbyte> c;
 	c.resize(max);
 	for(fbyte i = 0;i<min;i++){
 		tmp=digits.at(i)-rhs.getDigitsAt(i)-carry;
@@ -350,7 +350,7 @@ Natural Natural::Multiplication(const Natural& rhs){
 	fbyte m = rhs.getSize();
 	fbyte buffer = 0;
 	ebyte tmp = 0;
-	vector<fbyte> c;
+    std::vector<fbyte> c;
 	c.resize(k+m+1);
 
 	for(fbyte i=0;i<k;i++){
@@ -375,7 +375,7 @@ Natural Natural::Multiplication(const Natural& rhs){
 	return result;
 }
 Natural Natural::simpleMultiplication(const Natural& rhs)const{
-	vector<fbyte> c;
+    std::vector<fbyte> c;
 	fbyte s=getSize()+1;
 	ebyte tmp = 0;
 	c.resize(s);
@@ -393,7 +393,7 @@ Natural Natural::simpleMultiplication(const Natural& rhs)const{
 Natural Natural::shortDivision(const Natural& rhs){
 	ebyte r=0;
 	ebyte tmp = 0;
-	vector<fbyte> c;
+    std::vector<fbyte> c;
 	c.resize(getSize());
 	for(fbyte j=getSize()-1;j>=1;j--){
 		tmp     = r * emod + (ebyte)digits.at(j);
@@ -438,8 +438,8 @@ Natural Natural::longDivision(const Natural& rhs){
 			buffer = 0;
 		Buffer = buffer;
 		tmp    = (Buffer * Divisor).LeftShift(j);
-		//cout<<"Dividend:"<<endl<<Dividend.toString()<<endl;
-		//cout<<"TMP:"<<endl<<tmp.toString()<<endl;
+        //cout<<"Dividend:"<<endl<<Dividend.toString()<<endl;
+        //cout<<"TMP:"<<endl<<tmp.toString()<<endl;
 		//cout<<"quotient  "<<j<<" "<<buffer<<endl;
 		if(Dividend >= tmp){
 			//cout<<"true"<<endl;
@@ -639,7 +639,7 @@ Natural nfaculty(unsigned int ui){
 	return result;
 }
 
-
+}
 
 
 
