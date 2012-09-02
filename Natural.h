@@ -74,9 +74,9 @@ namespace CAS{
 		Natural operator/(const Natural&);
 		Natural operator%(const Natural&);
 		Natural operator=(const Natural&);
-        Natural operator+=(const Natural&);
-        Natural operator-=(const Natural&);
-        Natural operator*=(const Natural&);
+        Natural &operator+=(const Natural &other) { *this = *this + other; return *this; }
+        Natural &operator-=(const Natural &other) { *this = *this - other; return *this; }
+        Natural &operator*=(const Natural &other) { *this = *this * other; return *this; }
         Natural operator/=(const Natural&);
 
 		//Integer Operators
@@ -94,9 +94,6 @@ namespace CAS{
         Natural operator--(int) { Natural result(*this); *this -= 1; return result; }
         Natural operator++();
         Natural operator++(int) { Natural result(*this); *this += 1; return result; }
-        Natural &operator+=(const Natural &other) { *this = *this + other; return *this; }
-        Natural &operator-=(const Natural &other) { *this = *this - other; return *this; }
-        Natural &operator*=(const Natural &other) { *this = *this * other; return *this; }
 
 
 		//Bool Operators
