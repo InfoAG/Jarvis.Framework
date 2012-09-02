@@ -86,8 +86,8 @@ namespace CAS{
 		Natural operator/(const unsigned int&);
 		Natural operator%(const unsigned int&);
 		Natural operator=(const unsigned int&);
-        Natural operator+=(const unsigned int&);
-		Natural operator-=(const unsigned int&);
+        Natural &operator+=(unsigned int other) { *this = *this + other; return *this; }
+        Natural &operator-=(unsigned int other) { *this = *this - other; return *this; }
 		Natural operator*=(const unsigned int&);
 		Natural operator/=(const unsigned int&);
         Natural operator--();
