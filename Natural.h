@@ -90,8 +90,10 @@ namespace CAS{
 		Natural operator-=(const unsigned int&);
 		Natural operator*=(const unsigned int&);
 		Natural operator/=(const unsigned int&);
-        Natural operator--();
         Natural operator++();
+        Natural operator--();
+		Natural operator++(int);
+		Natural operator--(int);
 
 
 		//Bool Operators

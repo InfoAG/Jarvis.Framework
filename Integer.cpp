@@ -2,40 +2,27 @@
 namespace CAS {
 
 Integer::Integer(){
-	size = 1;
-	digits.resize(size);
-	digits.at(0)=0;
-	sign = false;
-}
-Integer::Integer(char c){
-
-}
-Integer::Integer(unsigned char uc){
-
+	sign   = false;
 }
 Integer::Integer(short s){
-
+	sign   = false;
 }
 Integer::Integer(unsigned short us){
-
+	sign   = false;
 }
 Integer::Integer(int i){
-
 }
 Integer::Integer(unsigned int ui){
-
+	sign   = false;
 }
 Integer::Integer(long l){
-
 }
 Integer::Integer(unsigned long ul){
-
 }
 Integer::Integer(long long ll){
-
 }
 Integer::Integer(unsigned long long ull){
-
+	sign   = false;
 }
 Integer::Integer(float f){
 
@@ -52,32 +39,26 @@ Integer::Integer(std::string str){
 ****/
 
 Integer::Integer(const Natural& nat){
-	sign=false;
-	digits=nat.getDigits();
-	size=nat.getSize();
+	sign   = false;
 }
 Integer::Integer(const Integer& rhs){
-
 }
 
 /****
 
 ****/
 
-std::vector<fbyte> Integer::getDigits()const{
-	return digits;
+//Natural Integer::getNumber() const{
+//}
+fbyte Integer::getNumberAt(unsigned int ui) const{
 }
-fbyte Integer::getDigitsAt(unsigned int ui)const{
-	return digits.at(ui);
-}
-fbyte Integer::getSize()const{
-	return size;
+fbyte Integer::getSize() const{
 }
 bool Integer::getSign()const{
 	return sign;
 }
 std::string Integer::toString(){
-    std::string str;
+	std::string str;
 	return str;
 }
 
@@ -103,16 +84,16 @@ bool Integer::isPrime(){
 ****/
 
 Integer Integer::leftShift(unsigned int ui)const{
-	return Natural(0);
+	return Integer(0);
 }
 Integer Integer::rightShift(unsigned int ui)const{
-	return Natural(0);
+	return Integer(0);
 }
 Integer Integer::msb(unsigned int ui)const{
-	return Natural(0);
+	return Integer(0);
 }
 Integer Integer::lsb(unsigned int ui)const{
-	return Natural(0);
+	return Integer(0);
 }
 
 /****
@@ -120,19 +101,19 @@ Integer Integer::lsb(unsigned int ui)const{
 ****/
 
 Integer Integer::addition(const Integer& rhs, bool b){
-	return Natural(0);
+	return Integer(0);
 }
 Integer Integer::subtraction(const Integer& rhs, bool b){
-	return Natural(0);
+	return Integer(0);
 }
 Integer Integer::multiplication(const Integer& rhs, bool b){
-	return Natural(0);
+	return Integer(0);
 }
 Integer Integer::division(const Integer& rhs, bool b){
-	return Natural(0);
+	return Integer(0);
 }
 Integer Integer::remainder(const Integer& rhs, bool b){
-	return Natural(0);
+	return Integer(0);
 }
 
 /****
@@ -140,16 +121,16 @@ Integer Integer::remainder(const Integer& rhs, bool b){
 ****/
 
 Integer Integer::karatsuba(const Integer& rhs){
-	return Natural(0);
+	return Integer(0);
 }
 Integer Integer::toom33(const Integer& rhs){
-	return Natural(0);
+	return Integer(0);
 }
 Integer Integer::toom44(const Integer& rhs){
-	return Natural(0);
+	return Integer(0);
 }
 Integer Integer::FFT(const Integer& rhs){
-	return Natural(0);
+	return Integer(0);
 }
 
 /****
@@ -157,21 +138,21 @@ Integer Integer::FFT(const Integer& rhs){
 ****/
 
 Integer Integer::operator+(const Integer& rhs){
-	return Natural(0);
+	return Integer(0);
 
 
 }
 Integer Integer::operator-(const Integer& rhs){
-	return Natural(0);
+	return Integer(0);
 }
 Integer Integer::operator*(const Integer& rhs){
-	return Natural(0);
+	return Integer(0);
 }
 Integer Integer::operator/(const Integer& rhs){
-	return Natural(0);
+	return Integer(0);
 }
 Integer Integer::operator%(const Integer&rhs){
-	return Natural(0);
+	return Integer(0);
 }
 
 /****
