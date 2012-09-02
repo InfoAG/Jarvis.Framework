@@ -2,15 +2,17 @@
 
 namespace CAS {
 
-double &Addition::accessMonomValue(MonomValues &values, std::vector<std::unique_ptr<AbstractArithmetic>> &monom) const
+Natural &Addition::accessMonomValue(MonomValues &values, Operands &monom) const
 {
     MonomValues::iterator it = std::find_if(begin(values), end(values),
-            [&](const std::pair<Operands, double> &item) {
+            [&](const std::pair<std::vector<AbstractArithmetic*>, Natural> &item) {
                 return equalOperands(item.first, monom);
         });
     if (it != values.end()) return it->second;
     else {
-        values.emplace_back(std::move(monom), 0);
+        std::vector<AbstractArithmetic*> pairMoveWorkaround;
+        for (auto &ptr : monom) pairMoveWorkaround.emplace_back(ptr.release());
+        values.emplace_back(std::move(pairMoveWorkaround), 0);
         return values.back().second;
     }
 }
@@ -27,7 +29,7 @@ std::unique_ptr<AbstractArithmetic> Addition::eval(const EvalInfo &ei) const
         else mergedOperands.emplace_back(std::move(evalRes));
     }
     MonomValues monomValues;
-    double numberValue = 0;
+    Natural numberValue = 0;
     for (auto &operand : mergedOperands) {
         switch(operand->getType()) {
         case NUMBERARITH:
@@ -53,11 +55,13 @@ std::unique_ptr<AbstractArithmetic> Addition::eval(const EvalInfo &ei) const
     mergedOperands.clear();
     if (numberValue != 0) mergedOperands.emplace_back(make_unique<NumberArith>(numberValue));
     for (auto &item : monomValues) {
+        Operands workaroundVec;
+        for (const auto &monomItem : item.first) workaroundVec.emplace_back(monomItem);
         if (item.second != 0) {
             if (item.second != 1) {
-                item.first.emplace_back(make_unique<NumberArith>(item.second));
-                mergedOperands.emplace_back(make_unique<Multiplication>(std::move(item.first)));
-            } else mergedOperands.emplace_back(make_unique<Multiplication>(std::move(item.first)));
+                workaroundVec.emplace_back(make_unique<NumberArith>(item.second));
+                mergedOperands.emplace_back(make_unique<Multiplication>(std::move(workaroundVec)));
+            } else mergedOperands.emplace_back(make_unique<Multiplication>(std::move(workaroundVec)));
         }
     }
     if (mergedOperands.size() == 0) return make_unique<NumberArith>(0);

@@ -11,9 +11,9 @@ namespace CAS {
 class Addition : public AbstractLevelingOperation
 {
 private:
-    typedef std::vector<std::pair<std::vector<std::unique_ptr<AbstractArithmetic>>, double>> MonomValues;
+    typedef std::vector<std::pair<std::vector<AbstractArithmetic*>, Natural>> MonomValues;
 
-    double &accessMonomValue(MonomValues &values, std::vector<std::unique_ptr<AbstractArithmetic>> &monom) const;
+    Natural &accessMonomValue(MonomValues &values, Operands &monom) const;
 
 public:
     /**

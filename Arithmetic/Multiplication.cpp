@@ -13,7 +13,7 @@ std::unique_ptr<AbstractArithmetic> Multiplication::eval(const EvalInfo &ei) con
         }
         else mergedOperands.emplace_back(std::move(evalRes));
     }
-    double numberValue = 1;
+    Natural numberValue = 1;
     for (Operands::iterator it = begin(mergedOperands); it != end(mergedOperands);) {
         if ((*it)->getType() == NUMBERARITH) {
             numberValue *= static_cast<NumberArith*>(it->get())->getValue();
@@ -22,8 +22,8 @@ std::unique_ptr<AbstractArithmetic> Multiplication::eval(const EvalInfo &ei) con
     }
     if (numberValue == 0 || mergedOperands.empty()) return make_unique<NumberArith>(numberValue);
     else {
-        if (numberValue != 1) mergedOperands.emplace_back(make_unique<NumberArith>(numberValue));
-        else if (mergedOperands.size() == 1) return std::move(mergedOperands.front());
+        if (! (numberValue == 1)) mergedOperands.emplace_back(make_unique<NumberArith>(numberValue));
+        else if (mergedOperands.size() == 1) return std::unique_ptr<AbstractArithmetic>(mergedOperands.front().release());
         return make_unique<Multiplication>(std::move(mergedOperands));
     }
 }
