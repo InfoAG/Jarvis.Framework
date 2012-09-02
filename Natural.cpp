@@ -1,5 +1,4 @@
 #include "Natural.h"
-#include <iostream>
 namespace CAS {
 
 Natural::Natural(){
@@ -7,68 +6,121 @@ Natural::Natural(){
 	digits.resize(size);
 	digits.at(0)=0;
 }
-Natural::Natural(char c){
-	if(c<0)
-		Natural((unsigned char)(c*-1));
-	else 
-		Natural((unsigned char)c);
-}
-Natural::Natural(unsigned char uc){
-	digits.push_back((int)uc);
-	size=1;
-}
+
 Natural::Natural(short s){
 	if(s<0)
-		Natural((unsigned short)(s*-1));
-	else 
-		Natural((unsigned short)s);
+		s *= -1;
+	size = 1;
+	digits.resize(size);
+	digits.at(0) = s;
 }
-Natural::Natural(unsigned short us){
-	digits.push_back(us);
-	size=1;
 
+Natural::Natural(unsigned short us){
+	size = 1;
+	digits.resize(size);
+	digits.at(0) = us;
 }
+
 Natural::Natural(int i){
 	if(i<0)
-		Natural((unsigned int)(i*-1));
-	else
-		Natural((unsigned int)i);
-}
-Natural::Natural(unsigned int ui){
-	if(ui<intmod[MAX_INT]){
-		digits.push_back(ui);
-		size=1;
+		i *= -1;
+	if(i < intmod[MAX_INT]){
+		size = 1;
+		digits.resize(1);
+		digits.at(0) = i;
 	}else{
-		digits.push_back(ui%intmod[MAX_INT]);
-		digits.push_back(ui/intmod[MAX_INT]);
-		size=2;
+		size = 2;
+		digits.resize(size);
+		digits.at(0) = i % intmod[MAX_INT];
+		digits.at(1) = i % intmod[MAX_INT];
 	}
 }
+
+Natural::Natural(unsigned int ui){
+	if(ui < intmod[MAX_INT]){
+		size = 1;
+		digits.resize(1);
+		digits.at(0) = ui;
+	}else{
+		size = 2;
+		digits.resize(size);
+		digits.at(0) = ui % intmod[MAX_INT];
+		digits.at(1) = ui % intmod[MAX_INT];
+	}
+}
+
 Natural::Natural(long l){
 	if(l<0)
-		Natural((unsigned int)(l*-1));
-	else
-		Natural((unsigned int)l);
-}
-Natural::Natural(unsigned long ul){
-	Natural((unsigned int)ul);
-}
-Natural::Natural(long long ll){
-	if(ll<0){
-		Natural((unsigned long long)(ll*-1));
+		l *= -1;
+	if(l < intmod[MAX_INT]){
+		size = 1;
+		digits.resize(1);
+		digits.at(0) = l;
 	}else{
-		Natural((unsigned long long)ll);
+		size = 2;
+		digits.resize(size);
+		digits.at(0) = l % intmod[MAX_INT];
+		digits.at(1) = l % intmod[MAX_INT];
 	}
 }
-Natural::Natural(unsigned long long ull){ 
 
+Natural::Natural(unsigned long ul){
+	if(ul < intmod[MAX_INT]){
+		size = 1;
+		digits.resize(1);
+		digits.at(0) = ul;
+	}else{
+		size = 2;
+		digits.resize(size);
+		digits.at(0) = ul % intmod[MAX_INT];
+		digits.at(1) = ul % intmod[MAX_INT];
+	}
 }
+
+Natural::Natural(long long ll){
+	if(ll<0)
+		ll *= -1;
+	size = 1;
+	digits.resize(size);
+	digits.at(ll % intmod[MAX_INT]);
+	ll = ll / intmod[MAX_INT];
+	if(ll > 0){
+		digits.push_back(ll % intmod[MAX_INT]);
+		size++;
+		ll = ll / intmod[MAX_INT];
+	}
+	if(ll > 0){
+		digits.push_back(ll % intmod[MAX_INT]);
+		size++;
+		ll = ll / intmod[MAX_INT];
+	}
+}
+
+Natural::Natural(unsigned long long ull){ 
+	size = 1;
+	digits.resize(size);
+	digits.at(ull % intmod[MAX_INT]);
+	ull = ull / intmod[MAX_INT];
+	if(ull > 0){
+		digits.push_back(ull % intmod[MAX_INT]);
+		size++;
+		ull = ull / intmod[MAX_INT];
+	}
+	if(ull > 0){
+		digits.push_back(ull % intmod[MAX_INT]);
+		size++;
+		ull = ull / intmod[MAX_INT];
+	}
+}
+
 Natural::Natural(float f){
 
 }
+
 Natural::Natural(double d){
 
 }
+
 Natural::Natural(std::string str){
 	if(str.find_first_not_of("0123456789")!=str.npos){
 		//throw exception()
@@ -121,7 +173,7 @@ Natural::Natural(const Natural& rhs){
 }*/
 
 /****
-
+GETTER FUNCTIONS
 ****/
 
 std::vector<fbyte> Natural::getDigits()const{
@@ -152,16 +204,8 @@ std::string Natural::toString()const{
 }
 
 
-void Natural::randomize(unsigned int s, unsigned int seed){
-	size=s;
-	digits.resize(size);
-	PRG p(time(NULL)^seed,seed^s);
-	for(fbyte i = 0 ; i < size;i++){
-        digits.at(i)=p.next()%intmod[MAX_INT];
-	}
-}
 /****
-
+PROPERTIES
 ****/
 
 bool Natural::isInteger(){
@@ -171,7 +215,7 @@ bool Natural::isEven(){
 	return !this->isOdd();
 }
 bool Natural::isOdd(){
-	if(digits.at(0)%2==0)
+	if(digits.at(0) % 2 == 0)
 		return false;
 	return true;
 }
@@ -180,69 +224,69 @@ bool Natural::isPrime(){
 }
 
 /****
-
+SHIFT OPERATIONS
 ****/
 
 Natural Natural::LeftShift(int ui)const{
 	Natural result;
-	result.size=size+ui;
+	result.size = size + ui;
 	result.digits.resize(result.size);
-	for(fbyte i=0;i<ui;i++){
-		result.digits.at(i)=0;
-	}for(fbyte i=ui;i<result.size;i++){
-		result.digits.at(i) = digits.at(i-ui);
+	for(fbyte i = 0 ; i < ui ; i++){
+		result.digits.at(i) = 0;
+	}for(fbyte i = ui ; i < result.size ; i++){
+		result.digits.at(i) = digits.at(i - ui);
 	}
 	return result;
 }
 Natural Natural::RightShift(int ui)const{
-	if(ui>=size){
+	if(ui >= size){
 		Natural result(0);
 		return result;
 	}
-	if(ui==0)
+	if(ui == 0)
 		return *this;
 	Natural result;
-	result.size=size-ui;
+	result.size = size - ui;
 	result.digits.resize(result.size);
-	for(fbyte i=0;i<result.size;i++){
-		result.digits.at(i)=digits.at(i+ui);
+	for(fbyte i = 0 ; i < result.size ; i++){
+		result.digits.at(i) = digits.at(i + ui);
 	}
 	return result;
 }
-Natural Natural::MSB(unsigned int ui)const{
-	if(ui==0){
+Natural Natural::MSB(int ui)const{
+	if(ui == 0){
 		Natural result(0);
 		return result;
 	}
-	if(ui>=size)
+	if(ui >= size)
 		return (*this);
 	Natural result;
-	result.size=ui;
+	result.size = ui;
 	result.digits.resize(result.size);
-	for(fbyte i=0;i<ui;i++){
-		result.digits.at(i) = digits.at(size-ui+i);
+	for(fbyte i = 0 ; i < ui ; i++){
+		result.digits.at(i) = digits.at(size - ui + i);
 	}
 	return result;
 }
-Natural Natural::LSB(unsigned int ui)const{
-	if(ui==0){
+Natural Natural::LSB(int ui)const{
+	if(ui <= 0){
 		Natural result(0);
 		return result;
 	}
-	if(ui>=size){
+	if(ui >= size){
 		return (*this);
 	}
 	Natural result;
-	result.size=ui;
+	result.size = ui;
 	result.digits.resize(result.size);
-	for(fbyte i=0;i<ui;i++){
+	for(fbyte i = 0 ; i < ui ; i++){
 		result.digits.at(i) = digits.at(i);
 	}
 	return result;
 }
 
 /****
-
+SCHOOLBOOK ALGORITHMS
 ****/
 Natural Natural::Addition(const Natural& rhs){
 	fbyte min = (size < rhs.getSize())? size : rhs.getSize();
@@ -283,6 +327,7 @@ Natural Natural::Addition(const Natural& rhs){
 	}
 	return result;
 }
+
 Natural Natural::simpleAddition(const Natural& rhs){
 	Natural result;
 	fbyte tmp=getDigitsAt(0)+rhs.getDigitsAt(0);
@@ -639,7 +684,7 @@ Natural nfaculty(unsigned int ui){
 	return result;
 }
 
-}
+}//End of Namespace CAS
 
 
 

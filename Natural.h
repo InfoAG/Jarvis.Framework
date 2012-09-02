@@ -14,9 +14,8 @@ namespace CAS{
         std::vector<fbyte> digits;
 		fbyte size;
 	public:
+		//Constructors
 		Natural();
-		Natural(char);
-		Natural(unsigned char);
 		Natural(short);
 		Natural(unsigned short);
 		Natural(int);
@@ -29,29 +28,29 @@ namespace CAS{
 		Natural(double);
         Natural(std::string);
 
+
 		Natural(const Natural&);
 		Natural(const Integer&);
 
-
+		//Getter Functions
         std::vector<fbyte> getDigits()const;
 		fbyte getDigitsAt(unsigned int)const;
 		fbyte getSize()const;
         std::string toString()const;
 
-
-		void randomize(unsigned int, unsigned int);
-
-
+		//Properties
 		bool isInteger();
 		bool isEven();
 		bool isOdd();
 		bool isPrime();
 
+		//Shift Operations
 		Natural LeftShift(int)const;
 		Natural RightShift(int)const;
-		Natural MSB(unsigned int)const;
-		Natural LSB(unsigned int)const;
+		Natural MSB(int)const;
+		Natural LSB(int)const;
 
+		//Schoolbool Algorithms
 		Natural Addition(const Natural&);
 		Natural simpleAddition(const Natural& rhs);
 		Natural Subtraction(const Natural&);
@@ -62,37 +61,44 @@ namespace CAS{
 		Natural longDivision(const Natural& rhs);
 		fbyte longDivisionSubRoutine(fbyte,fbyte,fbyte,fbyte,fbyte);
 
-
+		//Improved Algorithms
 		Natural fusedMultiplyAdd(const Natural&, const Natural&);
-
 		Natural Karatsuba(const Natural&);
 		Natural Toom33(const Natural&);
 		Natural Toom44(const Natural&);
 
+		//Arbitrary Integer Operators
 		Natural operator+(const Natural&);
-		Natural operator+(const unsigned int&);
 		Natural operator-(const Natural&);
-		Natural operator-(const unsigned int&);
 		Natural operator*(const Natural&);
-		Natural operator*(const unsigned int&);
 		Natural operator/(const Natural&);
-		Natural operator/(const unsigned int&);
 		Natural operator%(const Natural&);
-		Natural operator%(const unsigned int&);
 		Natural operator=(const Natural&);
-		Natural operator=(const unsigned int&);
+        Natural operator+=(const Natural&);
+        Natural operator-=(const Natural&);
+        Natural operator*=(const Natural&);
+        Natural operator/=(const Natural&);
 
-        Natural &operator+=(const Natural &other) { *this = *this + other; return *this; }
-        Natural &operator-=(const Natural &other) { *this = *this - other; return *this; }
-        Natural &operator*=(const Natural &other) { *this = *this * other; return *this; }
-        Natural &operator/=(const Natural &other) { *this = *this / other; return *this; }
-        Natural operator--(int) { Natural result(*this); *this -= 1; return result; }
-        Natural operator++(int) { Natural result(*this); *this += 1; return result; }
-		
+		//Integer Operators
+		Natural operator+(const unsigned int&);
+		Natural operator-(const unsigned int&);
+		Natural operator*(const unsigned int&);
+		Natural operator/(const unsigned int&);
+		Natural operator%(const unsigned int&);
+		Natural operator=(const unsigned int&);
+		Natural operator+=(const unsigned int&);
+		Natural operator-=(const unsigned int&);
+		Natural operator*=(const unsigned int&);
+		Natural operator/=(const unsigned int&);
+        Natural operator--();
+        Natural operator++();
+
+
+		//Bool Operators
 		bool operator<(const Natural&);
 		bool operator<=(const Natural&);
 		bool operator==(const Natural&) const;
-        bool operator!=(const Natural &other) const { return ! (*this == other); }
+        bool operator!=(const Natural&) const;
 		bool operator>=(const Natural&);
 		bool operator>(const Natural&);
 	};
