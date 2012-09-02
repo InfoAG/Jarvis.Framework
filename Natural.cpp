@@ -518,8 +518,12 @@ Natural Natural::fusedMultiplyAdd(const Natural& add, const Natural& rhs){
 	fbyte buffer = 0;
 	ebyte tmp = 0;
 	std::vector<fbyte> c = add.getDigits();
-	if(k + m + 1 > add.getSize())
-		c.resize(k + m + 1,0);
+	fbyte minsize = k + m + 1;
+	fbyte s = add.getSize();
+	if(minsize > s){
+		c.resize(minsize,0);
+		s = minsize;
+	}
 	for(fbyte i = 0 ; i < k ; i++){
 		buffer = 0;
 		for(fbyte j = 0 ; j < m ; j++){
@@ -534,7 +538,7 @@ Natural Natural::fusedMultiplyAdd(const Natural& add, const Natural& rhs){
 		count++;
 	}
 	Natural result;
-	result.size = k + m + 1 - count;
+	result.size = s - count;
 	result.digits.resize(result.size);
 	for(fbyte i = 0 ; i < result.size ; i++){
 		result.digits.at(i) = c.at(i);
