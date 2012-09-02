@@ -91,7 +91,9 @@ namespace CAS{
 		Natural operator*=(const unsigned int&);
 		Natural operator/=(const unsigned int&);
         Natural operator--();
+        Natural operator--(int) { Natural result(*this); *this -= 1; return result; }
         Natural operator++();
+        Natural operator++(int) { Natural result(*this); *this += 1; return result; }
 
 
 		//Bool Operators
