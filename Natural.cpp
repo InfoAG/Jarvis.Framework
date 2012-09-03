@@ -1,4 +1,6 @@
 #include "Natural.h"
+#include <iostream>
+using namespace std;
 
 namespace CAS {
 
@@ -568,12 +570,12 @@ Natural Natural::Toom33(const Natural& rhs){
 	Natural v1 = rhs.RightShift(split).LSB(split);
 	Natural v2 = rhs.MSB(rhs.getSize()-2*split);
 	Natural uat0 = u0;
-	Natural uat1 = u0 + u1 + u2;
+	Natural uat1 = u0 + u1   + u2;
 	Natural uat2 = u0 + u1*2 + u2*4;
 	Natural uat3 = u0 + u1*3 + u2*9;
 	Natural uat4 = u0 + u1*4 + u2*16;
 	Natural vat0 = v0;
-	Natural vat1 = v0 + v1 + v2;
+	Natural vat1 = v0 + v1   + v2;
 	Natural vat2 = v0 + v1*2 + v2*4;
 	Natural vat3 = v0 + v1*3 + v2*9;
 	Natural vat4 = v0 + v1*4 + v2*16;
@@ -607,9 +609,73 @@ Natural Natural::Toom33(const Natural& rhs){
 	Natural result = a0 + a1.LeftShift(split) + a2.LeftShift(2*split) + a3.LeftShift(3*split) + a4.LeftShift(4*split);
 	return result;
 }
-
 Natural Natural::Toom44(const Natural& rhs){
-	return Natural();
+	fbyte split = (getSize() + rhs.getSize())/8;
+	Natural u0 = LSB(split);
+	Natural u1 = RightShift(split);
+	Natural u2 = u1.RightShift(split).LSB(split);
+	Natural u3 = MSB(getSize()-3*split);
+	u1         = u1.LSB(split);
+	Natural v0 = rhs.LSB(split);
+	Natural v1 = rhs.RightShift(split);
+	Natural v2 = v1.RightShift(split).LSB(split);
+	Natural v3 = rhs.MSB(rhs.getSize()-3*split);
+	v1         = v1.LSB(split);
+	
+	Natural uat0 = u0;
+	Natural uat1 = u0 + u1   + u2    + u3;
+	Natural uat2 = u0 + u1*2 + u2*4  + u3*8;
+	Natural uat3 = u0 + u1*3 + u2*9  + u3*27;
+	Natural uat4 = u0 + u1*4 + u2*16 + u3*64;
+	Natural uat5 = u0 + u1*5 + u2*25 + u3*125;
+	Natural uat6 = u0 + u1*6 + u2*36 + u3*216;
+
+	Natural vat0 = v0;
+	Natural vat1 = v0 + v1   + v2    + v3;
+	Natural vat2 = v0 + v1*2 + v2*4  + v3*8;
+	Natural vat3 = v0 + v1*3 + v2*9  + v3*27;
+	Natural vat4 = v0 + v1*4 + v2*16 + v3*64;
+	Natural vat5 = v0 + v1*5 + v2*25 + v3*125;
+	Natural vat6 = v0 + v1*6 + v2*36 + v3*216;
+
+	Natural wat0 = uat0 * vat0;
+	Natural wat1 = uat1 * vat1;
+	Natural wat2 = uat2 * vat2;
+	Natural wat3 = uat3 * vat3;
+	Natural wat4 = uat4 * vat4;
+	Natural wat5 = uat5 * vat5;
+	Natural wat6 = uat6 * vat6;
+
+	Natural a0 = wat0;
+	Natural a1 = wat1 - wat0;
+	Natural a2 = wat2 - wat1;
+	Natural a3 = wat3 - wat2;
+	Natural a4 = wat4 - wat3;
+	Natural a5 = wat5 - wat4;
+	Natural a6 = wat6 - wat5;
+
+	a6 = (a6 - a5)/2;
+	a5 = (a5 - a4)/2;
+	a4 = (a4 - a3)/2;
+	a3 = (a3 - a2)/2;
+	a2 = (a2 - a1)/2;
+
+	a6 = (a6 - a5)/3;
+	a5 = (a5 - a4)/3;
+	a4 = (a4 - a3)/3;
+	a3 = (a3 - a2)/3;
+
+	a6 = (a6 - a5)/4;
+	a5 = (a5 - a4)/4;
+	a4 = (a4 - a3)/4;
+
+	a6 = (a6 - a5)/5;
+	a5 = (a5 - a4)/5;
+
+	a6 = (a6 - a5)/6;
+	
+	Natural result = a0 + a1.LeftShift(split) + a2.LeftShift(2*split) + a3.LeftShift(3*split) + a4.LeftShift(4*split) + a5.LeftShift(5*split) + a6.LeftShift(6*split);
+	return result;
 }
 
 /****
@@ -632,10 +698,10 @@ Natural Natural::operator-(const Natural& rhs){
 	return (*this).Subtraction(rhs);
 }
 Natural Natural::operator*(const Natural& rhs){
-	fbyte min = (getSize()<rhs.getSize())?getSize():rhs.getSize();
-	if(min>=800)
+	fbyte max = (getSize()>rhs.getSize())?getSize():rhs.getSize();
+	if(max>=800)
 		return this->Toom33(rhs);
-	if(min>=200)
+	if(max>=200)
 		return this->Karatsuba(rhs);
 	return this->Multiplication(rhs);
 }
