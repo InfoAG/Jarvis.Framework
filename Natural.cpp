@@ -758,16 +758,20 @@ Natural Natural::operator=(const Natural& rhs){
 	return (*this);
 }
 Natural Natural::operator+=(const Natural& rhs){
-	return (*this)+rhs;
+	*this = *this + rhs;
+	return *this;
 }
 Natural Natural::operator-=(const Natural& rhs){
-	return (*this)-rhs;
+	*this = *this - rhs;
+	return *this;
 }
 Natural Natural::operator*=(const Natural& rhs){
-	return (*this)*rhs;
+	*this = *this * rhs;
+	return *this;
 }
 Natural Natural::operator/=(const Natural& rhs){
-	return (*this)/rhs;
+	*this = *this / rhs;
+	return *this;
 }
 
 
@@ -803,28 +807,38 @@ Natural Natural::operator=(const unsigned int& ui){
 	return (*this);
 }
 Natural Natural::operator+=(const unsigned int& ui){
-	return (*this)+ui;
+	*this = *this + ui;
+	return *this;
 }
 Natural Natural::operator-=(const unsigned int& ui){
-	return (*this)-ui;
+	*this = *this - ui;
+	return *this;
 }
 Natural Natural::operator*=(const unsigned int& ui){
-	return (*this)*ui;
+	*this = *this * ui;
+	return *this;
 }
 Natural Natural::operator/=(const unsigned int& ui){
-	return (*this)/ui;
+	*this = *this / ui;
+	return *this;
 }
 Natural Natural::operator++(){
-
+	*this += 1;
+	return *this;
 }
 Natural Natural::operator--(){
-
+	*this -= 1;
+	return *this;
 }
 Natural Natural::operator++(int){
-
+	Natural result(*this);
+	*this += 1;
+	return result;
 }
 Natural Natural::operator--(int){
-
+	Natural result(*this);
+	*this -= 1;
+	return result;
 }
 /****
 
