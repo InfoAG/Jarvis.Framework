@@ -17,9 +17,9 @@ public:
     virtual std::unique_ptr<AbstractArithmetic> copy() const { return make_unique<NumberArith>(*this); }
 
     virtual std::unique_ptr<AbstractArithmetic> eval(const EvalInfo &ei) const { return copy(); }
-    virtual ArithmeticType getType() const { return NUMBERARITH; }
+    virtual ArithmeticType type() const { return NUMBERARITH; }
     virtual std::string toString() const { return value.toString(); }
-    virtual bool isEqual(const AbstractArithmetic *other) const;
+    virtual bool equals(const AbstractArithmetic *other) const;
     const Natural &getValue() const { return value; }
 
     NumberArith operator+(const NumberArith& other) { return NumberArith(value + other.value); }

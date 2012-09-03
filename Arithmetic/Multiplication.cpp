@@ -7,7 +7,7 @@ std::unique_ptr<AbstractArithmetic> Multiplication::eval(const EvalInfo &ei) con
     Operands mergedOperands;
     for (const auto &operand : operands) {
         auto evalRes = operand->eval(ei);
-        if (evalRes->getType() == MULTIPLICATION) {
+        if (evalRes->type() == MULTIPLICATION) {
             for (auto &childOp : static_cast<Multiplication*>(evalRes.get())->getOperands())
                 mergedOperands.emplace_back(std::move(childOp));
         }
@@ -15,7 +15,7 @@ std::unique_ptr<AbstractArithmetic> Multiplication::eval(const EvalInfo &ei) con
     }
     Natural numberValue = 1;
     for (Operands::iterator it = begin(mergedOperands); it != end(mergedOperands);) {
-        if ((*it)->getType() == NUMBERARITH) {
+        if ((*it)->type() == NUMBERARITH) {
             numberValue *= static_cast<NumberArith*>(it->get())->getValue();
             it = mergedOperands.erase(it);
         } else ++it;
@@ -36,9 +36,9 @@ std::string Multiplication::toString() const
     return result;
 }
 
-bool Multiplication::isEqual(const AbstractArithmetic *other) const
+bool Multiplication::equals(const AbstractArithmetic *other) const
 {
-    if (other->getType() != MULTIPLICATION) return false;
+    if (other->type() != MULTIPLICATION) return false;
     return equalOperands(static_cast<const Multiplication*>(other)->getOperands(), operands);
 }
 

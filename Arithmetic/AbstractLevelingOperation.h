@@ -21,7 +21,7 @@ protected:
             for (const auto &firstItem : first){
                 deleted = false;
                 for (OperandRefs::iterator secondIt = spareSecondOps.begin(); secondIt != spareSecondOps.end(); ++secondIt) {
-                    if (firstItem->isEqual(*secondIt)) {
+                    if (firstItem->equals(*secondIt)) {
                         spareSecondOps.erase(secondIt);
                         deleted = true;
                         break;

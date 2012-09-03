@@ -14,9 +14,9 @@ public:
     Multiplication(Operands &&operands) : AbstractLevelingOperation(std::forward<Operands>(operands)) {}
 
     virtual std::unique_ptr<AbstractArithmetic> eval(const EvalInfo &ei) const;
-    virtual ArithmeticType getType() const { return MULTIPLICATION; }
+    virtual ArithmeticType type() const { return MULTIPLICATION; }
     virtual std::string toString() const;
-    virtual bool isEqual(const AbstractArithmetic *other) const;
+    virtual bool equals(const AbstractArithmetic *other) const;
 };
 
 }

@@ -12,7 +12,7 @@ public:
     virtual std::unique_ptr<AbstractArithmetic> copy() const { return make_unique<AbstractArithmetic>(*this); }
 
     virtual std::unique_ptr<AbstractArithmetic> eval(const EvalInfo &ei) const { return this->copy(); }
-    virtual ArithmeticType getType() const { return COSINUS; }
+    virtual ArithmeticType type() const { return COSINUS; }
 };
 
 }

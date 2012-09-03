@@ -9,9 +9,9 @@ std::unique_ptr<AbstractArithmetic> Variable::eval(const EvalInfo &ei) const
     else return it->second->eval(ei);
 }
 
-bool Variable::isEqual(const AbstractArithmetic *other) const
+bool Variable::equals(const AbstractArithmetic *other) const
 {
-    return other->getType() == VARIABLE && static_cast<const Variable*>(other)->getIdentifier() == identifier;
+    return other->type() == VARIABLE && static_cast<const Variable*>(other)->getIdentifier() == identifier;
 }
 
 }

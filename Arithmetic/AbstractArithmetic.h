@@ -15,7 +15,7 @@ class AbstractArithmetic
 public:
     typedef std::vector<std::unique_ptr<AbstractArithmetic>> Operands;
     /**
-     * Type info returned by getType() to identify arithmetical objects by AbstractArithmetic*
+     * Type info returned by type() to identify arithmetical objects by AbstractArithmetic*
      * withouth using dynamic_cast
      */
     enum ArithmeticType {
@@ -49,9 +49,9 @@ public:
      * @return AbstractArithmetic* pointing to the root of an arithmetical tree representing the result
      */
     virtual std::unique_ptr<AbstractArithmetic> eval(const EvalInfo &ei) const = 0;
-    virtual ArithmeticType getType() const = 0; //!< @return Type of the object
+    virtual ArithmeticType type() const = 0; //!< @return Type of the object
     virtual std::string toString() const = 0; //!< @return String representation of the arithmetical tree starting at this node
-    virtual bool isEqual(const AbstractArithmetic *other) const = 0;
+    virtual bool equals(const AbstractArithmetic *other) const = 0;
 };
 
 }
