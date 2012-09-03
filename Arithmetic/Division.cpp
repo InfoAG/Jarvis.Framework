@@ -9,10 +9,9 @@ std::unique_ptr<AbstractArithmetic> Division::eval(const EvalInfo &ei) const
         return make_unique<NumberArith>(1);
     else if (first_op_result->getType() == NUMBERARITH && second_op_result->getType() == NUMBERARITH)
         return make_unique<NumberArith>(*(static_cast<NumberArith*>(first_op_result.get())) / *(static_cast<NumberArith*>(second_op_result.get())));
-    else if (first_op_result->getType() == NUMBERARITH && static_cast<NumberArith*>(first_op_result.get())->getValue() == 0)
+    else if ((first_op_result->getType() == NUMBERARITH && static_cast<NumberArith*>(first_op_result.get())->getValue() == 0)
+             || (second_op_result->getType() == NUMBERARITH && static_cast<NumberArith*>(second_op_result.get())->getValue() == 1))
         return first_op_result;
-    else if (second_op_result->getType() == NUMBERARITH && static_cast<NumberArith*>(second_op_result.get())->getValue() == 1)
-        return second_op_result;
     else return make_unique<Division>(std::move(first_op_result), std::move(second_op_result));
 }
 
