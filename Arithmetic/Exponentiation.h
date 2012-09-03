@@ -3,6 +3,7 @@
 
 #include "AbstractBinaryOperation.h"
 #include "NumberArith.h"
+#include "Multiplication.h"
 
 namespace CAS {
 
@@ -13,9 +14,9 @@ public:
     virtual std::unique_ptr<AbstractArithmetic> copy() const { return make_unique<Exponentiation>(*this); }
 
     virtual std::unique_ptr<AbstractArithmetic> eval(const EvalInfo &ei) const;
-    virtual ArithmeticType getType() const { return EXPONENTIATION; }
+    virtual ArithmeticType type() const { return EXPONENTIATION; }
     virtual std::string toString() const { return first_op->toString() + "^" + second_op->toString(); }
-    virtual bool isEqual(const AbstractArithmetic *other) const;
+    virtual bool equals(const AbstractArithmetic *other) const;
 };
 
 }

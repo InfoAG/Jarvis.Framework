@@ -12,7 +12,7 @@ public:
     virtual std::unique_ptr<AbstractArithmetic> copy() const { return make_unique<AbstractArithmetic>(*this); }
 
     virtual std::unique_ptr<AbstractArithmetic> eval(const EvalInfo &ei) const { return this->copy(); }
-    virtual ArithmeticType getType() const { return SINUS; }
+    virtual ArithmeticType type() const { return SINUS; }
     virtual std::string toString() const { return std::string("sin(") + operand->toString() + ")"; }
 };
 

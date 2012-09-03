@@ -19,9 +19,9 @@ std::unique_ptr<AbstractArithmetic> Function::eval(const EvalInfo &ei) const
     }
 }
 
-bool Function::isEqual(const AbstractArithmetic *other) const
+bool Function::equals(const AbstractArithmetic *other) const
 {
-    if (other->getType() != FUNCTION) return false;
+    if (other->type() != FUNCTION) return false;
     return equalOperands(static_cast<const Function*>(other)->getOperands(), operands);
 }
 

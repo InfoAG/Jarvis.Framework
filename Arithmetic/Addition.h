@@ -26,9 +26,9 @@ public:
     virtual std::unique_ptr<AbstractArithmetic> copy() const { return make_unique<Addition>(*this); }
 
     virtual std::unique_ptr<AbstractArithmetic> eval(const EvalInfo &ei) const;
-    virtual ArithmeticType getType() const { return ADDITION; }
+    virtual ArithmeticType type() const { return ADDITION; }
     virtual std::string toString() const;
-    virtual bool isEqual(const AbstractArithmetic *other) const;
+    virtual bool equals(const AbstractArithmetic *other) const;
 };
 
 }

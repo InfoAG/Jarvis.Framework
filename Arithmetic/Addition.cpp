@@ -20,7 +20,7 @@ std::unique_ptr<AbstractArithmetic> Addition::eval(const EvalInfo &ei) const
     Operands mergedOperands;
     for (const auto &operand : operands) {
         auto evalRes = operand->eval(ei);
-        if (evalRes->getType() == ADDITION) {
+        if (evalRes->type() == ADDITION) {
             for (auto &childOp : static_cast<Addition*>(evalRes.get())->getOperands())
                 mergedOperands.emplace_back(std::move(childOp));
         }
@@ -29,12 +29,12 @@ std::unique_ptr<AbstractArithmetic> Addition::eval(const EvalInfo &ei) const
     MonomValues monomValues;
     double numberValue = 0;
     for (auto &operand : mergedOperands) {
-        switch(operand->getType()) {
+        switch(operand->type()) {
         case NUMBERARITH:
             numberValue += static_cast<NumberArith*>(operand.get())->getValue();
             break;
         case MULTIPLICATION:
-            if (static_cast<Multiplication*>(operand.get())->getOperands().back()->getType() == NUMBERARITH) {
+            if (static_cast<Multiplication*>(operand.get())->getOperands().back()->type() == NUMBERARITH) {
                 Operands monom;
                 for (auto itChild = begin(static_cast<Multiplication*>(operand.get())->getOperands());
                      itChild != end(static_cast<Multiplication*>(operand.get())->getOperands()) - 1; ++itChild)
@@ -73,9 +73,9 @@ std::string Addition::toString() const
     return result;
 }
 
-bool Addition::isEqual(const AbstractArithmetic *other) const
+bool Addition::equals(const AbstractArithmetic *other) const
 {
-    if (other->getType() != ADDITION) return false;
+    if (other->type() != ADDITION) return false;
     return equalOperands(static_cast<const Addition*>(other)->getOperands(), operands);
 }
 
