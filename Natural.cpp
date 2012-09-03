@@ -707,12 +707,12 @@ Natural Natural::Toom44(const Natural& rhs)const{
 /****
 ARBITRARY INTEGER OPERATORS
 ****/
-Natural Natural::operator+(const Natural& rhs)const{
+const Natural Natural::operator+(const Natural& rhs)const{
 	if(this->getSize()==1&&rhs.getSize()==1)
 		return this->simpleAddition(rhs);
 	return this->Addition(rhs);
 }
-Natural Natural::operator-(const Natural& rhs)const{
+const Natural Natural::operator-(const Natural& rhs)const{
 	if(this->operator<(rhs)){
 		//trow Exception
 		Natural result(0);
@@ -723,7 +723,7 @@ Natural Natural::operator-(const Natural& rhs)const{
 	}
 	return (*this).Subtraction(rhs);
 }
-Natural Natural::operator*(const Natural& rhs)const{
+const Natural Natural::operator*(const Natural& rhs)const{
 	fbyte max = (getSize()<rhs.getSize())?getSize():rhs.getSize();
 	if(max>=2000)
 		return this->Toom44(rhs);
@@ -733,7 +733,7 @@ Natural Natural::operator*(const Natural& rhs)const{
 		return this->Karatsuba(rhs);
 	return this->Multiplication(rhs);
 }
-Natural Natural::operator/(const Natural& rhs)const{
+const Natural Natural::operator/(const Natural& rhs)const{
 	Natural result(0);
 	if(result==rhs){
 		return result;
@@ -746,10 +746,10 @@ Natural Natural::operator/(const Natural& rhs)const{
 	}
 	return this->longDivision(rhs);
 }
-Natural Natural::operator%(const Natural& rhs)const{
+const Natural Natural::operator%(const Natural& rhs)const{
 	return Natural(0);
 }
-Natural Natural::operator=(const Natural& rhs){
+Natural &Natural::operator=(const Natural& rhs){
 	size=rhs.getSize();
 	digits.resize(size);
 	for(fbyte i=0;i<size;i++){
@@ -779,28 +779,28 @@ Natural &Natural::operator/=(const Natural& rhs){
 INTEGER OPERATIONS
 ****/
 
-Natural Natural::operator+(const unsigned int& ui)const{
+const Natural Natural::operator+(const unsigned int& ui)const{
 	Natural su(ui);
 	return this->Addition(su);
 }
-Natural Natural::operator-(const unsigned int& ui)const{
+const Natural Natural::operator-(const unsigned int& ui)const{
 	Natural subtrahend(ui);
 	return this->Subtraction(subtrahend);
 }
-Natural Natural::operator*(const unsigned int& ui)const{
+const Natural Natural::operator*(const unsigned int& ui)const{
 	Natural multiplicant(ui);
 	return this->simpleMultiplication(multiplicant);
 }
-Natural Natural::operator/(const unsigned int& ui)const{
+const Natural Natural::operator/(const unsigned int& ui)const{
 	Natural divisor(ui);
 	if(divisor.getSize()==1)
 		return this->shortDivision(divisor);
 	return this->longDivision(divisor);
 }
-Natural Natural::operator%(const unsigned int& ui)const{
+const Natural Natural::operator%(const unsigned int& ui)const{
 	return Natural(0);
 }
-Natural Natural::operator=(const unsigned int& ui){
+Natural &Natural::operator=(const unsigned int& ui){
 	digits.resize(1);
 	digits.at(0)=ui;
 	size=1;
@@ -830,12 +830,12 @@ Natural &Natural::operator--(){
 	*this -= 1;
 	return *this;
 }
-Natural &Natural::operator++(int){
+Natural Natural::operator++(int){
 	Natural result(*this);
 	*this += 1;
 	return result;
 }
-Natural &Natural::operator--(int){
+Natural Natural::operator--(int){
 	Natural result(*this);
 	*this -= 1;
 	return result;

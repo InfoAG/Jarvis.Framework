@@ -30,6 +30,7 @@ namespace CAS{
 
 
 		Natural(const Natural&);
+        Natural(Natural &&other) : digits(other.digits), size(other.size) {}
 		Natural(const Integer&);
 
 		//Getter Functions
@@ -68,32 +69,32 @@ namespace CAS{
 		Natural Toom44(const Natural&)const;
 
 		//Arbitrary Integer Operators
-		Natural operator+(const Natural&)const;
-		Natural operator-(const Natural&)const;
-		Natural operator*(const Natural&)const;
-		Natural operator/(const Natural&)const;
-		Natural operator%(const Natural&)const;
-		Natural operator=(const Natural&);
+        const Natural operator+(const Natural&)const;
+        const Natural operator-(const Natural&)const;
+        const Natural operator*(const Natural&)const;
+        const Natural operator/(const Natural&)const;
+        const Natural operator%(const Natural&)const;
+        Natural &operator=(const Natural&);
         Natural &operator+=(const Natural&);
         Natural &operator-=(const Natural&);
         Natural &operator*=(const Natural&);
         Natural &operator/=(const Natural&);
 
 		//Integer Operators
-		Natural operator+(const unsigned int&)const;
-		Natural operator-(const unsigned int&)const;
-		Natural operator*(const unsigned int&)const;
-		Natural operator/(const unsigned int&)const;
-		Natural operator%(const unsigned int&)const;
-		Natural operator=(const unsigned int&);
+        const Natural operator+(const unsigned int&)const;
+        const Natural operator-(const unsigned int&)const;
+        const Natural operator*(const unsigned int&)const;
+        const Natural operator/(const unsigned int&)const;
+        const Natural operator%(const unsigned int&)const;
+        Natural &operator=(const unsigned int&);
 		Natural &operator+=(const unsigned int&);
 		Natural &operator-=(const unsigned int&);
 		Natural &operator*=(const unsigned int&);
 		Natural &operator/=(const unsigned int&);
         Natural &operator++();
         Natural &operator--();
-		Natural &operator++(int);
-		Natural &operator--(int);
+        Natural operator++(int);
+        Natural operator--(int);
 
 
 		//Bool Operators
