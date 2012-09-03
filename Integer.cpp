@@ -51,8 +51,10 @@ Integer::Integer(const Integer& rhs){
 //Natural Integer::getNumber() const{
 //}
 fbyte Integer::getNumberAt(unsigned int ui) const{
+	return 0;
 }
 fbyte Integer::getSize() const{
+	return 0;
 }
 bool Integer::getSign()const{
 	return sign;
@@ -139,8 +141,6 @@ Integer Integer::FFT(const Integer& rhs){
 
 Integer Integer::operator+(const Integer& rhs){
 	return Integer(0);
-
-
 }
 Integer Integer::operator-(const Integer& rhs){
 	return Integer(0);

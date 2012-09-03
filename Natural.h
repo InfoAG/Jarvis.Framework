@@ -51,58 +51,58 @@ namespace CAS{
 		Natural LSB(int)const;
 
 		//Schoolbool Algorithms
-		Natural Addition(const Natural&);
-		Natural simpleAddition(const Natural& rhs);
-		Natural Subtraction(const Natural&);
-		Natural simpleSubtraction(const Natural& rhs);
-		Natural Multiplication(const Natural&);
+		Natural Addition(const Natural&)const;
+		Natural simpleAddition(const Natural& rhs)const;
+		Natural Subtraction(const Natural&)const;
+		Natural simpleSubtraction(const Natural& rhs)const;
+		Natural Multiplication(const Natural&)const;
 		Natural simpleMultiplication(const Natural& rhs)const;
-		Natural shortDivision(const Natural& rhs);
-		Natural longDivision(const Natural& rhs);
-		fbyte longDivisionSubRoutine(fbyte,fbyte,fbyte,fbyte,fbyte);
+		Natural shortDivision(const Natural& rhs)const;
+		Natural longDivision(const Natural& rhs)const;
+		fbyte longDivisionSubRoutine(fbyte,fbyte,fbyte,fbyte,fbyte)const;
 
 		//Improved Algorithms
-		Natural fusedMultiplyAdd(const Natural&, const Natural&);
-		Natural Karatsuba(const Natural&);
-		Natural Toom33(const Natural&);
-		Natural Toom44(const Natural&);
+		Natural fusedMultiplyAdd(const Natural&, const Natural&)const;
+		Natural Karatsuba(const Natural&)const;
+		Natural Toom33(const Natural&)const;
+		Natural Toom44(const Natural&)const;
 
 		//Arbitrary Integer Operators
-		Natural operator+(const Natural&);
-		Natural operator-(const Natural&);
-		Natural operator*(const Natural&);
-		Natural operator/(const Natural&);
-		Natural operator%(const Natural&);
+		Natural operator+(const Natural&)const;
+		Natural operator-(const Natural&)const;
+		Natural operator*(const Natural&)const;
+		Natural operator/(const Natural&)const;
+		Natural operator%(const Natural&)const;
 		Natural operator=(const Natural&);
-        Natural operator+=(const Natural&);
-        Natural operator-=(const Natural&);
-        Natural operator*=(const Natural&);
-        Natural operator/=(const Natural&);
+        Natural &operator+=(const Natural&);
+        Natural &operator-=(const Natural&);
+        Natural &operator*=(const Natural&);
+        Natural &operator/=(const Natural&);
 
 		//Integer Operators
-		Natural operator+(const unsigned int&);
-		Natural operator-(const unsigned int&);
-		Natural operator*(const unsigned int&);
-		Natural operator/(const unsigned int&);
-		Natural operator%(const unsigned int&);
+		Natural operator+(const unsigned int&)const;
+		Natural operator-(const unsigned int&)const;
+		Natural operator*(const unsigned int&)const;
+		Natural operator/(const unsigned int&)const;
+		Natural operator%(const unsigned int&)const;
 		Natural operator=(const unsigned int&);
-		Natural operator+=(const unsigned int&);
-		Natural operator-=(const unsigned int&);
-		Natural operator*=(const unsigned int&);
-		Natural operator/=(const unsigned int&);
-        Natural operator++();
-        Natural operator--();
-		Natural operator++(int);
-		Natural operator--(int);
+		Natural &operator+=(const unsigned int&);
+		Natural &operator-=(const unsigned int&);
+		Natural &operator*=(const unsigned int&);
+		Natural &operator/=(const unsigned int&);
+        Natural &operator++();
+        Natural &operator--();
+		Natural &operator++(int);
+		Natural &operator--(int);
 
 
 		//Bool Operators
-		bool operator<(const Natural&);
-		bool operator<=(const Natural&);
-		bool operator==(const Natural&) const;
-        bool operator!=(const Natural&) const;
-		bool operator>=(const Natural&);
-		bool operator>(const Natural&);
+		bool operator<(const Natural&)const;
+		bool operator<=(const Natural&)const;
+		bool operator==(const Natural&)const;
+        bool operator!=(const Natural&)const;
+		bool operator>=(const Natural&)const;
+		bool operator>(const Natural&)const;
 	};
 };
 extern CAS::Natural nfaculty(unsigned int);
