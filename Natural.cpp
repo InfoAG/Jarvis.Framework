@@ -199,7 +199,7 @@ std::string Natural::toString()const{
 			c=(digits.at(i)/intmod[j])%10+48;
 			str.push_back(c);
 		}
-		//str.push_back(' ');
+		str.push_back(' ');
 	}
 	
 	cropzeros(&str);
@@ -425,13 +425,18 @@ Natural Natural::simpleMultiplication(const Natural& rhs)const{
     std::vector<fbyte> c;
 	fbyte s   = getSize() + 1;
 	ebyte tmp = 0;
-	c.resize(s);
+	c.resize(s,0);
 	for(fbyte i = 0 ; i < getSize() ; i++){
 		tmp     = tmp + (ebyte)getDigitsAt(i)*(ebyte)rhs.getDigitsAt(0);
 		c.at(i) = (fbyte) (tmp % emod);
 		tmp     = (fbyte) (tmp / emod);
 	}
-	c.at(getSize()) = tmp;
+	if(tmp!=0)
+		c.at(getSize()) = tmp;
+	else{
+		c.pop_back();
+		s--;
+	}
 	Natural result;
 	result.digits=c;
 	result.size=s;
@@ -585,19 +590,21 @@ Natural Natural::Toom33(const Natural& rhs){
 	Natural wat2 = uat2 * vat2;
 	Natural wat3 = uat3 * vat3;
 	Natural wat4 = uat4 * vat4;
-
+	//////////////////////////////////////
 	Natural a0 = wat0;
-	Natural a1 = wat1 - wat0;
-	Natural a2 = wat2 - wat1;
-	Natural a3 = wat3 - wat2;
 	Natural a4 = wat4 - wat3;
+	Natural a3 = wat3 - wat2;
+	Natural a2 = wat2 - wat1;
+	Natural a1 = wat1 - wat0;
 	a4 = (a4 - a3)/2;
 	a3 = (a3 - a2)/2;
 	a2 = (a2 - a1)/2;
+	
 	a4 = (a4 - a3)/3;
 	a3 = (a3 - a2)/3;
-	a4 = (a4 - a3)/4;
 
+	a4 = (a4 - a3)/4;
+	///////////////
 	//Resolve Horner Scheme
 	a3 = a3 - (a4*3);
 	a2 = a2 - (a3*2);
@@ -605,7 +612,6 @@ Natural Natural::Toom33(const Natural& rhs){
 	a3 = a3 - (a4*2);
 	a2 = a2 - a3;
 	a3 = a3 - a4;
-
 	Natural result = a0 + a1.LeftShift(split) + a2.LeftShift(2*split) + a3.LeftShift(3*split) + a4.LeftShift(4*split);
 	return result;
 }
@@ -673,6 +679,26 @@ Natural Natural::Toom44(const Natural& rhs){
 	a5 = (a5 - a4)/5;
 
 	a6 = (a6 - a5)/6;
+
+	a5 = a5 - a6*5;
+	a4 = a4 - a5*4;
+	a3 = a3 - a4*3;
+	a2 = a2 - a3*2;
+	a1 = a1 - a2;
+
+	a5 = a5 - a6*4;
+	a4 = a4 - a5*3;
+	a3 = a3 - a4*2;
+	a2 = a2 - a3;
+
+	a5 = a5 - a6*3;
+	a4 = a4 - a5*2;
+	a3 = a3 - a4;
+
+	a5 = a5 - a6*2;
+	a4 = a4 - a5;
+
+	a5 = a5 - a6;
 	
 	Natural result = a0 + a1.LeftShift(split) + a2.LeftShift(2*split) + a3.LeftShift(3*split) + a4.LeftShift(4*split) + a5.LeftShift(5*split) + a6.LeftShift(6*split);
 	return result;
@@ -698,7 +724,9 @@ Natural Natural::operator-(const Natural& rhs){
 	return (*this).Subtraction(rhs);
 }
 Natural Natural::operator*(const Natural& rhs){
-	fbyte max = (getSize()>rhs.getSize())?getSize():rhs.getSize();
+	fbyte max = (getSize()<rhs.getSize())?getSize():rhs.getSize();
+	if(max>=2000)
+		return this->Toom44(rhs);
 	if(max>=800)
 		return this->Toom33(rhs);
 	if(max>=200)
