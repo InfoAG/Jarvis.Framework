@@ -1,4 +1,5 @@
 #include "Natural.h"
+
 namespace CAS {
 
 Natural::Natural(){
@@ -32,7 +33,7 @@ Natural::Natural(int i){
 		size = 2;
 		digits.resize(size);
 		digits.at(0) = i % intmod[MAX_INT];
-		digits.at(1) = i % intmod[MAX_INT];
+		digits.at(1) = i / intmod[MAX_INT];
 	}
 }
 
@@ -45,7 +46,7 @@ Natural::Natural(unsigned int ui){
 		size = 2;
 		digits.resize(size);
 		digits.at(0) = ui % intmod[MAX_INT];
-		digits.at(1) = ui % intmod[MAX_INT];
+		digits.at(1) = ui / intmod[MAX_INT];
 	}
 }
 
@@ -60,7 +61,7 @@ Natural::Natural(long l){
 		size = 2;
 		digits.resize(size);
 		digits.at(0) = l % intmod[MAX_INT];
-		digits.at(1) = l % intmod[MAX_INT];
+		digits.at(1) = l / intmod[MAX_INT];
 	}
 }
 
@@ -73,7 +74,7 @@ Natural::Natural(unsigned long ul){
 		size = 2;
 		digits.resize(size);
 		digits.at(0) = ul % intmod[MAX_INT];
-		digits.at(1) = ul % intmod[MAX_INT];
+		digits.at(1) = ul / intmod[MAX_INT];
 	}
 }
 
@@ -425,8 +426,8 @@ Natural Natural::simpleMultiplication(const Natural& rhs)const{
 	c.resize(s);
 	for(fbyte i = 0 ; i < getSize() ; i++){
 		tmp     = tmp + (ebyte)getDigitsAt(i)*(ebyte)rhs.getDigitsAt(0);
-		c.at(i) = (fbyte) (tmp / emod);
-		tmp     = (fbyte) (tmp % emod);
+		c.at(i) = (fbyte) (tmp % emod);
+		tmp     = (fbyte) (tmp / emod);
 	}
 	c.at(getSize()) = tmp;
 	Natural result;
@@ -558,9 +559,53 @@ Natural Natural::Karatsuba(const Natural& rhs){
 	Natural result = z2.LeftShift(split + split) + z1.LeftShift(split) + z0;
 	return result;
 }
-
 Natural Natural::Toom33(const Natural& rhs){
-	return Natural();
+	fbyte split = (getSize() + rhs.getSize())/6;
+	Natural u0 = LSB(split);
+	Natural u1 = RightShift(split).LSB(split);
+	Natural u2 = MSB(getSize()-split*2);
+	Natural v0 = rhs.LSB(split);
+	Natural v1 = rhs.RightShift(split).LSB(split);
+	Natural v2 = rhs.MSB(rhs.getSize()-2*split);
+	Natural uat0 = u0;
+	Natural uat1 = u0 + u1 + u2;
+	Natural uat2 = u0 + u1*2 + u2*4;
+	Natural uat3 = u0 + u1*3 + u2*9;
+	Natural uat4 = u0 + u1*4 + u2*16;
+	Natural vat0 = v0;
+	Natural vat1 = v0 + v1 + v2;
+	Natural vat2 = v0 + v1*2 + v2*4;
+	Natural vat3 = v0 + v1*3 + v2*9;
+	Natural vat4 = v0 + v1*4 + v2*16;
+
+	Natural wat0 = uat0 * vat0;
+	Natural wat1 = uat1 * vat1;
+	Natural wat2 = uat2 * vat2;
+	Natural wat3 = uat3 * vat3;
+	Natural wat4 = uat4 * vat4;
+
+	Natural a0 = wat0;
+	Natural a1 = wat1 - wat0;
+	Natural a2 = wat2 - wat1;
+	Natural a3 = wat3 - wat2;
+	Natural a4 = wat4 - wat3;
+	a4 = (a4 - a3)/2;
+	a3 = (a3 - a2)/2;
+	a2 = (a2 - a1)/2;
+	a4 = (a4 - a3)/3;
+	a3 = (a3 - a2)/3;
+	a4 = (a4 - a3)/4;
+
+	//Resolve Horner Scheme
+	a3 = a3 - (a4*3);
+	a2 = a2 - (a3*2);
+	a1 = a1 - a2;
+	a3 = a3 - (a4*2);
+	a2 = a2 - a3;
+	a3 = a3 - a4;
+
+	Natural result = a0 + a1.LeftShift(split) + a2.LeftShift(2*split) + a3.LeftShift(3*split) + a4.LeftShift(4*split);
+	return result;
 }
 
 Natural Natural::Toom44(const Natural& rhs){
@@ -588,7 +633,9 @@ Natural Natural::operator-(const Natural& rhs){
 }
 Natural Natural::operator*(const Natural& rhs){
 	fbyte min = (getSize()<rhs.getSize())?getSize():rhs.getSize();
-	if(min>=100)
+	if(min>=800)
+		return this->Toom33(rhs);
+	if(min>=200)
 		return this->Karatsuba(rhs);
 	return this->Multiplication(rhs);
 }
@@ -662,16 +709,16 @@ Natural Natural::operator=(const unsigned int& ui){
 	return (*this);
 }
 Natural Natural::operator+=(const unsigned int& ui){
-
+	return (*this)+ui;
 }
 Natural Natural::operator-=(const unsigned int& ui){
-
+	return (*this)-ui;
 }
 Natural Natural::operator*=(const unsigned int& ui){
-
+	return (*this)*ui;
 }
 Natural Natural::operator/=(const unsigned int& ui){
-
+	return (*this)/ui;
 }
 Natural Natural::operator++(){
 
