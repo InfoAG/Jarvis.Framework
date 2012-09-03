@@ -4,7 +4,6 @@
 #include <vector>
 #include <time.h>
 #include "Number.h"
-#include "Natural.h"
 #include "Utility.h"
 
 namespace CAS{
@@ -12,13 +11,11 @@ namespace CAS{
 
 	class Integer : public Number{
 	private:
-        std::vector<fbyte> digits;
+		std::vector<fbyte> digits;
 		fbyte size;
 		bool sign;
 	public:
 		Integer();
-		Integer(char);
-		Integer(unsigned char);
 		Integer(short);
 		Integer(unsigned short);
 		Integer(int);
@@ -35,8 +32,8 @@ namespace CAS{
 		Integer(const Natural&);
 		Integer(const Integer&);
 
-        std::vector<fbyte> getDigits() const;
-		fbyte getDigitsAt(unsigned int)const;
+		//Natural getNumber() const;
+		fbyte getNumberAt(unsigned int) const;
 		fbyte getSize() const;
 		bool getSign() const;
 

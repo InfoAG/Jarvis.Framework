@@ -12,9 +12,8 @@
 *.a
 
 # other
-*.autosave
 Makefile*
 debug/
 release/
-object_script.*.Debug
-object_script.*.Release
+object_script.*
+main.cpp
