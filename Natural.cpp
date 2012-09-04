@@ -517,16 +517,17 @@ fbyte Natural::longDivisionSubRoutine(fbyte a1, fbyte a2, fbyte a3, fbyte b1, fb
 	return q;
 }
 Natural Natural::shortRemainder(const Natural& rhs)const{
+	Natural Dividend(*this);
 	ebyte r   = 0;
 	ebyte tmp = 0;
 	for(fbyte j = getSize()-1 ; j >= 1 ; j--){
-		tmp     = r * emod + (ebyte)digits.at(j);
-		//c.at(j) = tmp / rhs.getDigitsAt(0);
+		tmp     = r * emod + (ebyte)getDigitsAt(j);
 		r       = tmp % rhs.getDigitsAt(0);
 	}
-	tmp     = r * emod + (ebyte)digits.at(0);
+	tmp     = r * emod + (ebyte)getDigitsAt(0);
+	Natural R((fbyte)(tmp % rhs.getDigitsAt(0)));
 
-	return Natural(0);	
+	return R;	
 }
 Natural Natural::longRemainder(const Natural& rhs)const{
 	fbyte buffer;
@@ -564,7 +565,6 @@ Natural Natural::longRemainder(const Natural& rhs)const{
 	}
 	Natural R = Dividend / Normalization;
 	return R;
-
 }
 /****
 
@@ -803,6 +803,8 @@ const Natural Natural::operator/(const Natural& rhs)const{
 	return this->longDivision(rhs);
 }
 const Natural Natural::operator%(const Natural& rhs)const{
+	if(rhs.getSize() == 1)
+		return this->shortRemainder(rhs);
 	return this->longRemainder(rhs);
 }
 Natural &Natural::operator=(const Natural& rhs){
