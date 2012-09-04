@@ -1,6 +1,4 @@
 #include "Natural.h"
-#include <iostream>
-using namespace std;
 
 namespace CAS {
 
@@ -199,7 +197,6 @@ std::string Natural::toString()const{
 			c=(digits.at(i)/intmod[j])%10+48;
 			str.push_back(c);
 		}
-		str.push_back(' ');
 	}
 	
 	cropzeros(&str);
@@ -517,7 +514,6 @@ Natural Natural::longDivision(const Natural& rhs)const{
 			buffer -= 1;
 		}
 		Q.digits.at(j) = buffer;
-		//cin>>buffer;
 	}
 	return Q;
 }
@@ -535,9 +531,6 @@ fbyte Natural::longDivisionSubRoutine(fbyte a1, fbyte a2, fbyte a3, fbyte b1, fb
 			r += b1;
 		}
 	}
-	cout<<q<<endl;
-	int a;
-	cin>>a;
 	return q;
 }
 Natural Natural::shortRemainder(const Natural& rhs)const{
