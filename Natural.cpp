@@ -445,18 +445,22 @@ Natural Natural::simpleMultiplication(const Natural& rhs)const{
 Natural Natural::shortDivision(const Natural& rhs)const{
 	ebyte r   = 0;
 	ebyte tmp = 0;
+	fbyte s   = getSize();
     std::vector<fbyte> c;
-	c.resize(getSize());
-	for(fbyte j = getSize()-1 ; j >= 1 ; j--){
+	c.resize(s);
+	for(fbyte j = s-1 ; j >= 1 ; j--){
 		tmp     = r * emod + (ebyte)digits.at(j);
 		c.at(j) = tmp / rhs.getDigitsAt(0);
 		r       = tmp % rhs.getDigitsAt(0);
 	}
 	tmp     = r * emod + (ebyte)digits.at(0);
 	c.at(0) = tmp / rhs.getDigitsAt(0);
-
+	if(c.at(s-1)==0){
+		c.pop_back();
+		s--;
+	}
 	Natural result;
-	result.size   = getSize();
+	result.size   = s;
 	result.digits = c;
 	return result;
 }
@@ -470,9 +474,25 @@ Natural Natural::longDivision(const Natural& rhs)const{
 	Natural Divisor(rhs);
 	Dividend = Dividend * Normalization;
 	Divisor  = Divisor  * Normalization;
+	fbyte d = (getSize() == Dividend.getSize())? 1 : 0;
 	fbyte difference = Dividend.getSize() - Divisor.getSize();
-	Q.size   = difference;
-	Q.digits.resize(difference);
+	Q.size   = difference+d;
+	Q.digits.resize(difference+d);
+	if(d){
+		buffer = longDivisionSubRoutine(0,
+										Dividend.getDigitsAt(Dividend.getSize()-1),
+										Dividend.digits.at(Dividend.getSize()-2),
+										Divisor.digits.at(Divisor.getSize()-1),
+										Divisor.digits.at(Divisor.getSize()-2));
+		tmp = (Divisor * buffer).LeftShift(difference);
+		if(Dividend >= tmp){
+			Dividend = Dividend - tmp;
+		}else{
+			Dividend = (Dividend + Divisor.LeftShift(difference)) - tmp;
+			buffer -= 1;
+		}
+		Q.digits.at(difference) = buffer;
+	}
 	for(int j = difference-1 ; j >= 0 ; j--){
 		if(Dividend.getSize() >= 3)
 			buffer = longDivisionSubRoutine(Dividend.digits.at(Dividend.getSize()-1),
@@ -497,6 +517,7 @@ Natural Natural::longDivision(const Natural& rhs)const{
 			buffer -= 1;
 		}
 		Q.digits.at(j) = buffer;
+		//cin>>buffer;
 	}
 	return Q;
 }
@@ -514,6 +535,9 @@ fbyte Natural::longDivisionSubRoutine(fbyte a1, fbyte a2, fbyte a3, fbyte b1, fb
 			r += b1;
 		}
 	}
+	cout<<q<<endl;
+	int a;
+	cin>>a;
 	return q;
 }
 Natural Natural::shortRemainder(const Natural& rhs)const{
