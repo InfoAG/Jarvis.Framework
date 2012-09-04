@@ -396,7 +396,7 @@ Natural Natural::simpleSubtraction(const Natural& rhs)const{
 Natural Natural::Multiplication(const Natural& rhs)const{
 	fbyte k = size;
 	fbyte m = rhs.getSize();
-	fbyte buffer = 0;
+	ebyte buffer = 0;
 	ebyte tmp = 0;
     std::vector<fbyte> c;
 	c.resize(k + m + 1);
@@ -405,7 +405,7 @@ Natural Natural::Multiplication(const Natural& rhs)const{
 		for(fbyte j = 0 ; j < m ; j++){
 			tmp = (ebyte)c.at(i + j) + (ebyte)buffer + (ebyte)digits.at(i) * (ebyte)rhs.getDigitsAt(j);
 			c.at(i + j) = (fbyte)(tmp % emod);
-			buffer = (fbyte)(tmp / emod);
+			buffer = tmp / emod;
 		}
 		c.at(i + m)=buffer;
 	}
@@ -515,6 +515,56 @@ fbyte Natural::longDivisionSubRoutine(fbyte a1, fbyte a2, fbyte a3, fbyte b1, fb
 		}
 	}
 	return q;
+}
+Natural Natural::shortRemainder(const Natural& rhs)const{
+	ebyte r   = 0;
+	ebyte tmp = 0;
+	for(fbyte j = getSize()-1 ; j >= 1 ; j--){
+		tmp     = r * emod + (ebyte)digits.at(j);
+		//c.at(j) = tmp / rhs.getDigitsAt(0);
+		r       = tmp % rhs.getDigitsAt(0);
+	}
+	tmp     = r * emod + (ebyte)digits.at(0);
+
+	return Natural(0);	
+}
+Natural Natural::longRemainder(const Natural& rhs)const{
+	fbyte buffer;
+	Natural Normalization((unsigned int)(emod/(rhs.getDigitsAt(rhs.getSize()-1)+1)));
+	Natural tmp;
+	Natural Buffer;
+	Natural Dividend(*this);
+	Natural Divisor(rhs);
+	Dividend = Dividend * Normalization;
+	Divisor  = Divisor  * Normalization;
+	fbyte difference = Dividend.getSize() - Divisor.getSize();
+	for(int j = difference-1 ; j >= 0 ; j--){
+		if(Dividend.getSize() >= 3)
+			buffer = longDivisionSubRoutine(Dividend.digits.at(Dividend.getSize()-1),
+											Dividend.digits.at(Dividend.getSize()-2),
+											Dividend.digits.at(Dividend.getSize()-3),
+											Divisor.digits.at(Divisor.getSize()-1),
+											Divisor.digits.at(Divisor.getSize()-2));
+		else if(Dividend.getSize() == 2)
+			buffer = longDivisionSubRoutine(Dividend.digits.at(Dividend.getSize()-1),
+											Dividend.digits.at(Dividend.getSize()-2),
+											0,
+											Divisor.digits.at(Divisor.getSize()-1),
+											Divisor.digits.at(Divisor.getSize()-2));
+		else
+			buffer = 0;
+		Buffer = buffer;
+		tmp    = (Buffer * Divisor).LeftShift(j);
+		if(Dividend >= tmp){
+			Dividend = Dividend - tmp;
+		}else{
+			Dividend = (Dividend + Divisor.LeftShift(j)) - tmp;
+			buffer -= 1;
+		}
+	}
+	Natural R = Dividend / Normalization;
+	return R;
+
 }
 /****
 
@@ -703,6 +753,12 @@ Natural Natural::Toom44(const Natural& rhs)const{
 	Natural result = a0 + a1.LeftShift(split) + a2.LeftShift(2*split) + a3.LeftShift(3*split) + a4.LeftShift(4*split) + a5.LeftShift(5*split) + a6.LeftShift(6*split);
 	return result;
 }
+Natural Natural::longDivisionDaC2by1(const Natural& rhs)const{
+	return Natural(0);
+}
+Natural Natural::longDivisionDaC3by2(const Natural& rhs)const{
+	return Natural(0);
+}
 
 /****
 ARBITRARY INTEGER OPERATORS
@@ -747,7 +803,7 @@ const Natural Natural::operator/(const Natural& rhs)const{
 	return this->longDivision(rhs);
 }
 const Natural Natural::operator%(const Natural& rhs)const{
-	return Natural(0);
+	return this->longRemainder(rhs);
 }
 Natural &Natural::operator=(const Natural& rhs){
 	size=rhs.getSize();

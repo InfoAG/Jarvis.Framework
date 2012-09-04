@@ -61,17 +61,21 @@ namespace CAS{
 		Natural shortDivision(const Natural& rhs)const;
 		Natural longDivision(const Natural& rhs)const;
 		fbyte longDivisionSubRoutine(fbyte,fbyte,fbyte,fbyte,fbyte)const;
+		Natural shortRemainder(const Natural&)const;
+		Natural longRemainder(const Natural&)const;
 
 		//Improved Algorithms
 		Natural fusedMultiplyAdd(const Natural&, const Natural&)const;
 		Natural Karatsuba(const Natural&)const;
 		Natural Toom33(const Natural&)const;
 		Natural Toom44(const Natural&)const;
+		Natural longDivisionDaC2by1(const Natural&)const;
+		Natural longDivisionDaC3by2(const Natural&)const;
 
 		//Arbitrary Integer Operators
         const Natural operator+(const Natural&)const;
         const Natural operator-(const Natural&)const;
-        const Natural operator*(const Natural&)const;
+        const Natural operator*(const Natural& rhs)const;
         const Natural operator/(const Natural&)const;
         const Natural operator%(const Natural&)const;
         Natural &operator=(const Natural&);
