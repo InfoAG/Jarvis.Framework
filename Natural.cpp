@@ -555,7 +555,22 @@ Natural Natural::longRemainder(const Natural& rhs)const{
 	Natural Divisor(rhs);
 	Dividend = Dividend * Normalization;
 	Divisor  = Divisor  * Normalization;
+	fbyte d = (getSize() == Dividend.getSize())? 1 : 0;
 	fbyte difference = Dividend.getSize() - Divisor.getSize();
+	if(d){
+		buffer = longDivisionSubRoutine(0,
+										Dividend.getDigitsAt(Dividend.getSize()-1),
+										Dividend.digits.at(Dividend.getSize()-2),
+										Divisor.digits.at(Divisor.getSize()-1),
+										Divisor.digits.at(Divisor.getSize()-2));
+		tmp = (Divisor * buffer).LeftShift(difference);
+		if(Dividend >= tmp){
+			Dividend = Dividend - tmp;
+		}else{
+			Dividend = (Dividend + Divisor.LeftShift(difference)) - tmp;
+			buffer -= 1;
+		}
+	}
 	for(int j = difference-1 ; j >= 0 ; j--){
 		if(Dividend.getSize() >= 3)
 			buffer = longDivisionSubRoutine(Dividend.digits.at(Dividend.getSize()-1),
