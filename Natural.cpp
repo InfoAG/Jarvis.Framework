@@ -672,7 +672,7 @@ Natural Natural::Toom33(const Natural& rhs)const{
 	Natural wat2 = uat2 * vat2;
 	Natural wat3 = uat3 * vat3;
 	Natural wat4 = uat4 * vat4;
-	//////////////////////////////////////
+
 	Natural a0 = wat0;
 	Natural a4 = wat4 - wat3;
 	Natural a3 = wat3 - wat2;
@@ -686,7 +686,7 @@ Natural Natural::Toom33(const Natural& rhs)const{
 	a3 = (a3 - a2)/3;
 
 	a4 = (a4 - a3)/4;
-	///////////////
+
 	//Resolve Horner Scheme
 	a3 = a3 - (a4*3);
 	a2 = a2 - (a3*2);
@@ -786,10 +786,41 @@ Natural Natural::Toom44(const Natural& rhs)const{
 	return result;
 }
 Natural Natural::longDivisionDaC2by1(const Natural& rhs)const{
-	return Natural(0);
+	fbyte split = rhs.getSize()/2;
+	Natural A0  = LSB(split);
+	Natural A1  = RightShift(split);
+	Natural Q1  = A1/rhs;
+	Natural R1  = A1%rhs;
+	Natural Q0  = (R1.LeftShift(split)+A0).longDivision(rhs);
+	return Q1.LeftShift(split)+Q0;
 }
 Natural Natural::longDivisionDaC3by2(const Natural& rhs)const{
-	return Natural(0);
+	fbyte split = rhs.getSize()/2;
+	Natural A0  = LSB(split);
+	Natural A1  = RightShift(split).LSB(split);
+	Natural A2  = A1.MSB(getSize()-2*split);
+	Natural B0  = rhs.LSB(split);
+	Natural B1  = rhs.MSB(rhs.getSize()-split);
+	Natural Q;
+	Natural R = RightShift(split);
+	if(A2 < B1){
+		Q = R / B1;
+		R = R % B1;
+	}else{
+		Q = Natural(1).LeftShift(split)-1;
+		R = (A2 - B1).LeftShift(split) + A1 + B1;
+	}
+	Natural D = B0*Q;
+	R = R.LeftShift(split) + A0;
+	if(R < D){
+		R += rhs;
+		Q--;
+	}
+	if(R < D){
+		R += rhs;
+		Q--;
+	}
+	return Q;
 }
 
 /****
@@ -822,7 +853,7 @@ const Natural Natural::operator*(const Natural& rhs)const{
 	return this->Multiplication(rhs);
 }
 const Natural Natural::operator/(const Natural& rhs)const{
-	Natural result(0);
+	Natural result = 0;
 	if(result==rhs){
 		return result;
 	}
