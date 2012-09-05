@@ -1,4 +1,6 @@
 #include "Natural.h"
+#include <iostream>
+using namespace std;
 
 namespace CAS {
 
@@ -83,7 +85,7 @@ Natural::Natural(long long ll){
 		ll *= -1;
 	size = 1;
 	digits.resize(size);
-	digits.at(ll % intmod[MAX_INT]);
+	digits.at(0)=ll % intmod[MAX_INT];
 	ll = ll / intmod[MAX_INT];
 	if(ll > 0){
 		digits.push_back(ll % intmod[MAX_INT]);
@@ -100,7 +102,7 @@ Natural::Natural(long long ll){
 Natural::Natural(unsigned long long ull){ 
 	size = 1;
 	digits.resize(size);
-	digits.at(ull % intmod[MAX_INT]);
+	digits.at(0)=ull % intmod[MAX_INT];
 	ull = ull / intmod[MAX_INT];
 	if(ull > 0){
 		digits.push_back(ull % intmod[MAX_INT]);
@@ -126,37 +128,23 @@ Natural::Natural(std::string str){
 	if(str.find_first_not_of("0123456789")!=str.npos){
 		//throw exception()
 	}
-	if(str.length()%9==0)
-		size=str.length()/9;
-	else
-		size=str.length()/9+1;
-	digits.resize(size);
-	fbyte t=0;
-	fbyte buffer=0;
-	unsigned int i = str.length() - 1;
-	if(i>9){
-		for(;i>8;i-=9){
-			for(int j=0;j<9;j++){
-				buffer+=(str.at(i-j)-48)*intmod[j];
-			}
-			digits.at(t)=buffer%intmod[MAX_INT];
-			t++;
-			buffer=0;
+	int i = str.size() - 1;
+	fbyte tmp = 0;
+	size=0;
+	for( ; i >= 9 ; i-=9){
+		for(int j = 0 ; j <= 8 ; j++){
+			tmp += (str.at(i-j)-48)*intmod[j];
 		}
-		if(i!=0){
-			for(fbyte j=0;j<=i;j++){
-				buffer+=(str.at(i-j)-48)*intmod[j];
-			}
-			digits.at(t)=buffer;
-		}else{
-			digits.at(t)=(str.at(0)-48);
-		}
-	}else{
-		for(int j=0;j<=i;j++){
-			buffer+=(str.at(i-j)-48)*intmod[j];
-		}	
-		digits.at(t)=buffer;	
+		size++;
+		digits.push_back(tmp);
+		tmp = 0;
 	}
+	for(int j = 0 ; j <= i ; j++){
+		tmp += (str.at(i-j)-48)*intmod[j];
+	}
+	size++;
+	digits.push_back(tmp);
+	tmp = 0;
 }
 
 /****
@@ -197,7 +185,7 @@ std::string Natural::toString()const{
 			c=(digits.at(i)/intmod[j])%10+48;
 			str.push_back(c);
 		}
-		//str.push_back(' ');
+		str.push_back(' ');
 	}
 	
 	cropzeros(&str);
