@@ -197,6 +197,7 @@ std::string Natural::toString()const{
 			c=(digits.at(i)/intmod[j])%10+48;
 			str.push_back(c);
 		}
+		//str.push_back(' ');
 	}
 	
 	cropzeros(&str);
@@ -465,7 +466,6 @@ Natural Natural::longDivision(const Natural& rhs)const{
 	fbyte buffer;
 	Natural Normalization((unsigned int)(emod/(rhs.getDigitsAt(rhs.getSize()-1)+1)));
 	Natural tmp;
-	Natural Buffer;
 	Natural Q;
 	Natural Dividend(*this);
 	Natural Divisor(rhs);
@@ -503,15 +503,17 @@ Natural Natural::longDivision(const Natural& rhs)const{
 											0,
 											Divisor.digits.at(Divisor.getSize()-1),
 											Divisor.digits.at(Divisor.getSize()-2));
-		else
+		else{
 			buffer = 0;
-		Buffer = buffer;
-		tmp    = (Buffer * Divisor).LeftShift(j);
-		if(Dividend >= tmp){
-			Dividend = Dividend - tmp;
-		}else{
-			Dividend = (Dividend + Divisor.LeftShift(j)) - tmp;
-			buffer -= 1;
+		}
+		tmp    = (Divisor * buffer).LeftShift(j);
+		if(buffer != 0){
+			if(Dividend >= tmp){
+				Dividend = Dividend - tmp;
+			}else{
+				Dividend = (Dividend + Divisor.LeftShift(j)) - tmp;
+				buffer -= 1;
+			}
 		}
 		Q.digits.at(j) = buffer;
 	}
@@ -550,7 +552,6 @@ Natural Natural::longRemainder(const Natural& rhs)const{
 	fbyte buffer;
 	Natural Normalization((unsigned int)(emod/(rhs.getDigitsAt(rhs.getSize()-1)+1)));
 	Natural tmp;
-	Natural Buffer;
 	Natural Dividend(*this);
 	Natural Divisor(rhs);
 	Dividend = Dividend * Normalization;
@@ -584,15 +585,17 @@ Natural Natural::longRemainder(const Natural& rhs)const{
 											0,
 											Divisor.digits.at(Divisor.getSize()-1),
 											Divisor.digits.at(Divisor.getSize()-2));
-		else
+		else{
 			buffer = 0;
-		Buffer = buffer;
-		tmp    = (Buffer * Divisor).LeftShift(j);
-		if(Dividend >= tmp){
-			Dividend = Dividend - tmp;
-		}else{
-			Dividend = (Dividend + Divisor.LeftShift(j)) - tmp;
-			buffer -= 1;
+		}
+		tmp    = (Divisor * buffer).LeftShift(j);
+		if(buffer != 0){
+			if(Dividend >= tmp){
+				Dividend = Dividend - tmp;
+			}else{
+				Dividend = (Dividend + Divisor.LeftShift(j)) - tmp;
+				buffer -= 1;
+			}
 		}
 	}
 	Natural R = Dividend / Normalization;
