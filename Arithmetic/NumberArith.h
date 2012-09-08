@@ -21,6 +21,7 @@ public:
     virtual std::string toString() const { return value.toString(); }
     virtual bool equals(const AbstractArithmetic *other) const;
     const Natural &getValue() const { return value; }
+    Natural &getValue() { return value; }
 
     NumberArith operator+(const NumberArith& other) { return NumberArith(value + other.value); }
     NumberArith operator-(const NumberArith& other) { return NumberArith(value - other.value); }

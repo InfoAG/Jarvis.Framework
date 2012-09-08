@@ -2,6 +2,16 @@
 
 namespace CAS {
 
+void Multiplication::addToBasisValue(BasisValues &values, std::unique_ptr<AbstractArithmetic> basis, std::unique_ptr<AbstractArithmetic> exponent) const
+{
+    BasisValues::iterator it = std::find_if(begin(values), end(values),
+            [&](const std::pair<std::unique_ptr<AbstractArithmetic>, std::unique_ptr<AbstractArithmetic>> &item) {
+                return item.first->equals(basis.get());
+        });
+    if (it != values.end()) it->second = make_unique<Addition>(std::move(it->second), std::move(exponent));
+    else values.emplace_back(std::move(basis), std::move(exponent));
+}
+
 std::unique_ptr<AbstractArithmetic> Multiplication::eval(const EvalInfo &ei) const
 {
     Operands mergedOperands;
@@ -14,12 +24,22 @@ std::unique_ptr<AbstractArithmetic> Multiplication::eval(const EvalInfo &ei) con
         else mergedOperands.emplace_back(std::move(evalRes));
     }
     Natural numberValue = 1;
-    for (Operands::iterator it = begin(mergedOperands); it != end(mergedOperands);) {
-        if ((*it)->type() == NUMBERARITH) {
-            numberValue *= static_cast<NumberArith*>(it->get())->getValue();
-            it = mergedOperands.erase(it);
-        } else ++it;
+    BasisValues basisValues;
+    for (auto &operand : mergedOperands) {
+        switch (operand->type()) {
+        case NUMBERARITH:
+            numberValue *= static_cast<NumberArith*>(operand.get())->getValue();
+            break;
+        case EXPONENTIATION:
+            addToBasisValue(basisValues, std::move(static_cast<Exponentiation*>(operand.get())->getFirstOp()), std::move(static_cast<Exponentiation*>(operand.get())->getSecondOp()));
+            break;
+        default:
+            addToBasisValue(basisValues, std::move(operand), make_unique<NumberArith>(1));
+        }
     }
+    mergedOperands.clear();
+    for (auto &basisValue : basisValues)
+        mergedOperands.emplace_back(Exponentiation(std::move(basisValue.first), std::move(basisValue.second)).eval(ei));
     if (numberValue == 0 || mergedOperands.empty()) return make_unique<NumberArith>(numberValue);
     else {
         if (! (numberValue == 1)) mergedOperands.emplace_back(make_unique<NumberArith>(numberValue));

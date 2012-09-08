@@ -13,7 +13,7 @@ class Addition : public AbstractLevelingOperation
 private:
     typedef std::vector<std::pair<std::vector<AbstractArithmetic*>, Natural>> MonomValues;
 
-    Natural &accessMonomValue(MonomValues &values, Operands &monom) const;
+    Natural &accessMonomValue(MonomValues &values, Operands monom) const;
 
 public:
     /**

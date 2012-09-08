@@ -2,7 +2,7 @@
 
 namespace CAS {
 
-Natural &Addition::accessMonomValue(MonomValues &values, Operands &monom) const
+Natural &Addition::accessMonomValue(MonomValues &values, Operands monom) const
 {
     MonomValues::iterator it = std::find_if(begin(values), end(values),
             [&](const std::pair<std::vector<AbstractArithmetic*>, Natural> &item) {
@@ -20,6 +20,7 @@ Natural &Addition::accessMonomValue(MonomValues &values, Operands &monom) const
 std::unique_ptr<AbstractArithmetic> Addition::eval(const EvalInfo &ei) const
 {
     Operands mergedOperands;
+    mergedOperands.reserve(operands.size());
     for (const auto &operand : operands) {
         auto evalRes = operand->eval(ei);
         if (evalRes->type() == ADDITION) {
@@ -31,24 +32,25 @@ std::unique_ptr<AbstractArithmetic> Addition::eval(const EvalInfo &ei) const
     MonomValues monomValues;
     Natural numberValue = 0;
     for (auto &operand : mergedOperands) {
-        switch(operand->type()) {
+        switch (operand->type()) {
         case NUMBERARITH:
             numberValue += static_cast<NumberArith*>(operand.get())->getValue();
             break;
         case MULTIPLICATION:
             if (static_cast<Multiplication*>(operand.get())->getOperands().back()->type() == NUMBERARITH) {
-                Operands monom;
+                /*Operands monom;
                 for (auto itChild = begin(static_cast<Multiplication*>(operand.get())->getOperands());
                      itChild != end(static_cast<Multiplication*>(operand.get())->getOperands()) - 1; ++itChild)
-                    monom.emplace_back(std::move(*itChild));
-                accessMonomValue(monomValues, monom) +=
-                        static_cast<NumberArith*>(static_cast<Multiplication*>(operand.get())->getOperands().back().get())->getValue();
-            } else accessMonomValue(monomValues, static_cast<Multiplication*>(operand.get())->getOperands())++;
+                    monom.emplace_back(std::move(*itChild));*/
+                Natural monomValue = std::move(static_cast<NumberArith*>(static_cast<Multiplication*>(operand.get())->getOperands().back().get())->getValue());
+                static_cast<Multiplication*>(operand.get())->getOperands().erase(end(static_cast<Multiplication*>(operand.get())->getOperands()));
+                accessMonomValue(monomValues, std::move(static_cast<Multiplication*>(operand.get())->getOperands())) += monomValue;
+            } else accessMonomValue(monomValues, std::move(static_cast<Multiplication*>(operand.get())->getOperands()))++;
             break;
         default:
-            Operands singleOpVec;
-            singleOpVec.emplace_back(std::move(operand));
-            accessMonomValue(monomValues, singleOpVec)++;
+            Operands singleOpVec(1);
+            singleOpVec.at(0) = std::move(operand);
+            accessMonomValue(monomValues, std::move(singleOpVec))++;
             break;
         }
     }

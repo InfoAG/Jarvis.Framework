@@ -36,7 +36,7 @@ protected:
 public:
     AbstractLevelingOperation(std::unique_ptr<AbstractArithmetic> first_op, std::unique_ptr<AbstractArithmetic> second_op);
     AbstractLevelingOperation(const AbstractLevelingOperation &other);
-    AbstractLevelingOperation(Operands &&operands) : operands(std::forward<Operands>(operands)) {}
+    AbstractLevelingOperation(Operands operands) : operands(std::move(operands)) {}
     const Operands &getOperands() const { return operands; }
     Operands &getOperands() { return operands; }
 };

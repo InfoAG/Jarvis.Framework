@@ -3,11 +3,18 @@
 
 #include "AbstractLevelingOperation.h"
 #include "NumberArith.h"
+#include "Exponentiation.h"
+#include "Addition.h"
 
 namespace CAS {
 
 class Multiplication : public AbstractLevelingOperation
 {
+private:
+    typedef std::vector<std::pair<std::unique_ptr<AbstractArithmetic>, std::unique_ptr<AbstractArithmetic>>> BasisValues;
+
+    void addToBasisValue(BasisValues &values, std::unique_ptr<AbstractArithmetic> basis, std::unique_ptr<AbstractArithmetic> exponent) const;
+
 public:
     Multiplication(std::unique_ptr<AbstractArithmetic> first_op, std::unique_ptr<AbstractArithmetic> second_op) : AbstractLevelingOperation(std::move(first_op), std::move(second_op)) {}
     virtual std::unique_ptr<AbstractArithmetic> copy() const { return make_unique<Multiplication>(*this); }
