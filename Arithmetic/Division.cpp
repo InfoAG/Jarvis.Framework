@@ -15,6 +15,17 @@ std::unique_ptr<AbstractArithmetic> Division::eval(const EvalInfo &ei) const
     else return make_unique<Division>(std::move(first_op_result), std::move(second_op_result));
 }
 
+std::string Division::toString() const
+{
+    std::string result;
+    if (first_op->type() == ADDITION || first_op->type() == SUBTRACTION)
+        result = "(" + first_op->toString() + ")";
+    else result = first_op->toString();
+    result += "/";
+    if (second_op->type() == ADDITION || second_op->type() == MULTIPLICATION || second_op->type() == DIVISION || second_op->type() == SUBTRACTION) return result + "(" + second_op->toString() + ")";
+    else return result + second_op->toString();
+}
+
 bool Division::equals(const AbstractArithmetic *other) const
 {
     if (other->type() != DIVISION) return false;

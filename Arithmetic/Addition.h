@@ -22,7 +22,7 @@ public:
      * @param second_op
      */
     Addition(std::unique_ptr<AbstractArithmetic> first_op, std::unique_ptr<AbstractArithmetic> second_op) : AbstractLevelingOperation(std::move(first_op), std::move(second_op)) {}
-    Addition(Operands &&operands) : AbstractLevelingOperation(std::forward<Operands>(operands)) {}
+    Addition(Operands operands) : AbstractLevelingOperation(std::move(operands)) {}
     virtual std::unique_ptr<AbstractArithmetic> copy() const { return make_unique<Addition>(*this); }
 
     virtual std::unique_ptr<AbstractArithmetic> eval(const EvalInfo &ei) const;

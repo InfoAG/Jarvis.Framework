@@ -50,9 +50,12 @@ std::unique_ptr<AbstractArithmetic> Multiplication::eval(const EvalInfo &ei) con
 
 std::string Multiplication::toString() const
 {
-    std::string result = operands.front()->toString();
-    for (auto it = ++(operands.cbegin()); it != operands.cend(); ++it)
-        result += "*" + (*it)->toString();
+    std::string result;
+    for (auto it = operands.cbegin(); it != operands.cend(); ++it) {
+        if ((*it)->type() == SUBTRACTION || (*it)->type() == ADDITION) result += "(" + (*it)->toString() + ")";
+        else result += (*it)->toString();
+        if (it != operands.cend() - 1) result += "*";
+    }
     return result;
 }
 

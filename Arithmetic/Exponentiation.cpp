@@ -21,6 +21,20 @@ std::unique_ptr<CAS::AbstractArithmetic> Exponentiation::eval(const EvalInfo &ei
     }
     return make_unique<Exponentiation>(std::move(firstOpResult), std::move(secondOpResult));
 }
+
+
+std::string Exponentiation::toString() const
+{
+    std::string result;
+    if (first_op->type() == ADDITION || first_op->type() == MULTIPLICATION || first_op->type() == DIVISION || first_op->type() == SUBTRACTION || first_op->type() == EXPONENTIATION)
+        result = "(" + first_op->toString() + ")";
+    else result = first_op->toString();
+    result += "^";
+    if (second_op->type() == ADDITION || second_op->type() == MULTIPLICATION || second_op->type() == DIVISION || second_op->type() == SUBTRACTION) return result + "(" + second_op->toString() + ")";
+    else return result + second_op->toString();
+}
+
+
 bool Exponentiation::equals(const AbstractArithmetic *other) const
 {
     if (other->type() != EXPONENTIATION) return false;

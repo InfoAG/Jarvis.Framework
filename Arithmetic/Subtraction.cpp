@@ -10,6 +10,17 @@ std::unique_ptr<AbstractArithmetic> Subtraction::eval(const EvalInfo &ei) const
     else return Addition(std::move(first_op_result), make_unique<Multiplication>(make_unique<NumberArith>(-1), std::move(second_op_result))).eval(ei);
 }
 
+std::string Subtraction::toString() const
+{
+    std::string result;
+    if (first_op->type() == ADDITION)
+        result = "(" + first_op->toString() + ")";
+    else result = first_op->toString();
+    result += "-";
+    if (second_op->type() == ADDITION || second_op->type() == SUBTRACTION) return result + "(" + second_op->toString() + ")";
+    else return result + second_op->toString();
+}
+
 bool Subtraction::equals(const AbstractArithmetic *other) const
 {
     if (other->type() != SUBTRACTION) return false;

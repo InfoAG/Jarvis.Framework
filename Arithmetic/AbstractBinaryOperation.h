@@ -22,10 +22,10 @@ public:
     //! Copy constructor
     AbstractBinaryOperation(const AbstractBinaryOperation &other) : first_op(other.first_op->copy()), second_op(other.second_op->copy()) {}
 
-    inline std::unique_ptr<AbstractArithmetic> &getFirstOp() { return first_op; }
-    inline const std::unique_ptr<AbstractArithmetic> &getFirstOp() const { return first_op; }
-    inline std::unique_ptr<AbstractArithmetic> &getSecondOp() { return second_op; }
-    inline const std::unique_ptr<AbstractArithmetic> &getSecondOp() const { return second_op; }
+    std::unique_ptr<AbstractArithmetic> &getFirstOp() { return first_op; }
+    const std::unique_ptr<AbstractArithmetic> &getFirstOp() const { return first_op; }
+    std::unique_ptr<AbstractArithmetic> &getSecondOp() { return second_op; }
+    const std::unique_ptr<AbstractArithmetic> &getSecondOp() const { return second_op; }
 };
 
 }

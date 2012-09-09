@@ -14,7 +14,7 @@ public:
 
     virtual std::unique_ptr<AbstractArithmetic> eval(const EvalInfo &ei) const;
     virtual ArithmeticType type() const { return DIVISION; }
-    virtual std::string toString() const { return first_op->toString() + "/" + second_op->toString(); }
+    virtual std::string toString() const;
     virtual bool equals(const AbstractArithmetic *other) const;
 };
 
