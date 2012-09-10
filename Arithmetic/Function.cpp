@@ -6,10 +6,10 @@ std::unique_ptr<AbstractArithmetic> Function::eval(const EvalInfo &ei) const
 {
     EvalInfo::FuncDefs::const_iterator it = ei.functions.find(std::make_pair(identifier, operands.size()));
     if (it != ei.functions.end()) {
-        EvalInfo includeFuncVars(ei);
+        EvalInfo includeFuncVars{ei.variables, ei.functions};
         auto itOperands = operands.cbegin();
         for (const auto &funcVar : it->second.first)
-            includeFuncVars.variables[funcVar] = (*(itOperands++))->eval(ei);
+            includeFuncVars.funcVars[funcVar] = (*(itOperands++))->eval(ei);
         return it->second.second->eval(includeFuncVars);
     } else {
         Operands evaldOps;

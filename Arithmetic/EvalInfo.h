@@ -1,20 +1,16 @@
 #ifndef EVALINFO_H
 #define EVALINFO_H
 
-#include <map>
-#include <string>
-#include <memory>
-#include <vector>
+#include "ScopeInfo.h"
 
 namespace CAS {
 
-class AbstractArithmetic;
-
-struct EvalInfo
+struct EvalInfo : public ScopeInfo
 {
-    typedef std::map<std::pair<std::string, unsigned int>, std::pair<std::vector<std::string>, std::shared_ptr<AbstractArithmetic>>> FuncDefs;
-    std::map<std::string, std::shared_ptr<AbstractArithmetic>> variables;
-    FuncDefs functions;
+    VarDefs funcVars;
+
+    EvalInfo(const ScopeInfo &scopeInfo) : ScopeInfo(scopeInfo) {}
+    EvalInfo(const VarDefs &variables, const FuncDefs &functions) : ScopeInfo{variables, functions} {}
 };
 
 }
