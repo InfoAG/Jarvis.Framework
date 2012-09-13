@@ -33,7 +33,9 @@ public:
         NUMBERARITH,
         VARIABLE,
         ASSIGNMENT,
-        FUNCTION
+        FUNCTION,
+        MATRIX,
+        DATACELL
     };
 
     virtual ~AbstractArithmetic() {} //!< Virtual destructor to prevent slicing
