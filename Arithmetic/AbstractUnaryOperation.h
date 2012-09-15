@@ -16,6 +16,9 @@ protected:
 public:
     AbstractUnaryOperation(std::unique_ptr<AbstractArithmetic> operand) : operand(std::move(operand)) {}
     AbstractUnaryOperation(const AbstractUnaryOperation &other) : operand(other.operand->copy()) {}
+
+    const std::unique_ptr<AbstractArithmetic> &getOperand() const { return operand; }
+    std::unique_ptr<AbstractArithmetic> &getOperand() { return operand; }
 };
 
 }

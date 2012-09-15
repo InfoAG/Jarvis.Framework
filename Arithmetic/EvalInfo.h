@@ -9,6 +9,7 @@ struct EvalInfo : public ScopeInfo
 {
     VarDefs funcVars;
 
+    EvalInfo() {};
     EvalInfo(const ScopeInfo &scopeInfo) : ScopeInfo(scopeInfo) {}
     EvalInfo(const VarDefs &variables, const FuncDefs &functions) : ScopeInfo{variables, functions} {}
 };

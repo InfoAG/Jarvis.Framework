@@ -35,7 +35,7 @@ public:
         ASSIGNMENT,
         FUNCTION,
         MATRIX,
-        DATACELL
+        LAZYEVAL
     };
 
     virtual ~AbstractArithmetic() {} //!< Virtual destructor to prevent slicing
