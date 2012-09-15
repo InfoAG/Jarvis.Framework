@@ -33,7 +33,8 @@ public:
         NUMBERARITH,
         VARIABLE,
         ASSIGNMENT,
-        FUNCTION
+        FUNCTION,
+        LAZYEVAL
     };
 
     virtual ~AbstractArithmetic() {} //!< Virtual destructor to prevent slicing
