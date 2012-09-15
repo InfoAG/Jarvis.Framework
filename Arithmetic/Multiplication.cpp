@@ -25,6 +25,9 @@ std::unique_ptr<AbstractArithmetic> Multiplication::eval(const EvalInfo &ei) con
     }
     Natural numberValue = 1;
     BasisValues basisValues;
+
+    // http://www.iaeng.org/publication/WCE2010/WCE2010_pp1829-1833.pdf
+
     for (auto &operand : mergedOperands) {
         switch (operand->type()) {
         case NUMBERARITH:

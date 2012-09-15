@@ -6,7 +6,8 @@ std::unique_ptr<AbstractArithmetic> Matrix::eval(const EvalInfo &ei) const
 {
     Operands result;
     for (const auto &operand : operands) result.emplace_back(operand->eval(ei));
-    return make_unique<Matrix>(std::move(result));
+    if (result.size() == 1) return std::move(result.front());
+    else return make_unique<Matrix>(std::move(result));
 }
 
 std::string Matrix::toString() const

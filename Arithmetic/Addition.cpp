@@ -31,6 +31,7 @@ std::unique_ptr<AbstractArithmetic> Addition::eval(const EvalInfo &ei) const
     }
     MonomValues monomValues;
     Natural numberValue = 0;
+    std::map<unsigned int, Operands> matrixByDimension;
     for (auto &operand : mergedOperands) {
         switch (operand->type()) {
         case NUMBERARITH:
@@ -47,6 +48,17 @@ std::unique_ptr<AbstractArithmetic> Addition::eval(const EvalInfo &ei) const
                 accessMonomValue(monomValues, std::move(static_cast<Multiplication*>(operand.get())->getOperands())) += monomValue;
             } else accessMonomValue(monomValues, std::move(static_cast<Multiplication*>(operand.get())->getOperands()))++;
             break;
+        case MATRIX: {
+                auto findRes = matrixByDimension.find(static_cast<Matrix*>(operand.get())->getOperands().size());
+                if (findRes == matrixByDimension.end())
+                    matrixByDimension[static_cast<Matrix*>(operand.get())->getOperands().size()] = std::move(static_cast<Matrix*>(operand.get())->getOperands());
+                else {
+                    auto matrixIt = static_cast<Matrix*>(operand.get())->getOperands().begin();
+                    for (auto &cell : findRes->second)
+                        cell = make_unique<Addition>(std::move(cell), std::move(*matrixIt++));
+                }
+            }
+            break;
         default:
             Operands singleOpVec(1);
             singleOpVec.at(0) = std::move(operand);
@@ -55,7 +67,14 @@ std::unique_ptr<AbstractArithmetic> Addition::eval(const EvalInfo &ei) const
         }
     }
     mergedOperands.clear();
-    if (numberValue != 0) mergedOperands.emplace_back(make_unique<NumberArith>(numberValue));
+    if (numberValue != 0) {
+        if (matrixByDimension.empty()) mergedOperands.emplace_back(make_unique<NumberArith>(numberValue));
+        else {
+            for (auto &cell : matrixByDimension.begin()->second)
+                cell = make_unique<Addition>(std::move(cell), make_unique<NumberArith>(numberValue));
+        }
+    }
+    for (auto &matrix : matrixByDimension) mergedOperands.emplace_back(Matrix(std::move(matrix.second)).eval(ei));
     for (auto &item : monomValues) {
         Operands workaroundVec;
         for (const auto &monomItem : item.first) workaroundVec.emplace_back(monomItem);

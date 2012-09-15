@@ -4,6 +4,7 @@
 #include "AbstractLevelingOperation.h"
 #include "NumberArith.h"
 #include "Multiplication.h"
+#include "Matrix.h"
 #include <algorithm>
 
 namespace CAS {
