@@ -11,7 +11,7 @@ public:
     LazyEval(std::unique_ptr<AbstractArithmetic> operand) : AbstractUnaryOperation(std::move(operand)) {}
     virtual std::unique_ptr<AbstractArithmetic> copy() const { return make_unique<LazyEval>(*this); }
 
-    virtual std::unique_ptr<AbstractArithmetic> eval(const EvalInfo &ei) const { return operand->eval(EvalInfo()); }
+    virtual std::unique_ptr<AbstractArithmetic> eval(const EvalInfo &) const { return operand->eval(EvalInfo()); }
     virtual ArithmeticType type() const { return LAZYEVAL; }
     virtual bool equals(const AbstractArithmetic *other) const;
     virtual std::string toString() const { return "lazy(" + operand->toString() + ")"; }

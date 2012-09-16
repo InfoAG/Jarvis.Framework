@@ -36,7 +36,9 @@ public:
         FUNCTION,
         MATRIX,
         LAZYEVAL,
-        MODULO
+        MODULO,
+        MIN,
+        MAX
     };
 
     virtual ~AbstractArithmetic() {} //!< Virtual destructor to prevent slicing
