@@ -30,7 +30,7 @@ namespace CAS{
 
 
 		Natural(const Natural&);
-        Natural(Natural &&other) : digits(other.digits), size(other.size) {}
+        Natural(Natural &&other) : digits(std::move(other.digits)), size(other.size) {}
 		Natural(const Integer&);
 
 		//Getter Functions
@@ -63,6 +63,8 @@ namespace CAS{
 		fbyte longDivisionSubRoutine(fbyte,fbyte,fbyte,fbyte,fbyte)const;
 		Natural shortRemainder(const Natural&)const;
 		Natural longRemainder(const Natural&)const;
+		Natural min(const Natural&)const;
+		Natural max(const Natural&)const;
 
 		//Improved Algorithms
 		Natural fusedMultiplyAdd(const Natural&, const Natural&)const;
