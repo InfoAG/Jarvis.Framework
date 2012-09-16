@@ -17,3 +17,4 @@ debug/
 release/
 object_script.*
 main.cpp
+*.autosave
