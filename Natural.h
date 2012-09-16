@@ -46,10 +46,10 @@ namespace CAS{
 		bool isPrime();
 
 		//Shift Operations
-		Natural LeftShift(int)const;
-		Natural RightShift(int)const;
-		Natural MSB(int)const;
-		Natural LSB(int)const;
+        Natural LeftShift(unsigned int)const;
+        Natural RightShift(unsigned int)const;
+        Natural MSB(unsigned int)const;
+        Natural LSB(unsigned int)const;
 
 		//Schoolbool Algorithms
 		Natural Addition(const Natural&)const;

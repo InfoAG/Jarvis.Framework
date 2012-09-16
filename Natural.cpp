@@ -26,7 +26,7 @@ Natural::Natural(unsigned short us){
 Natural::Natural(int i){
 	if(i<0)
 		i *= -1;
-	if(i < intmod[MAX_INT]){
+    if(static_cast<unsigned int>(i) < intmod[MAX_INT]){
 		size = 1;
 		digits.resize(1);
 		digits.at(0) = i;
@@ -54,7 +54,7 @@ Natural::Natural(unsigned int ui){
 Natural::Natural(long l){
 	if(l<0)
 		l *= -1;
-	if(l < intmod[MAX_INT]){
+    if(static_cast<unsigned int>(l) < intmod[MAX_INT]){
 		size = 1;
 		digits.resize(1);
 		digits.at(0) = l;
@@ -115,11 +115,11 @@ Natural::Natural(unsigned long long ull){
 	}
 }
 
-Natural::Natural(float f){
+Natural::Natural(float){
 
 }
 
-Natural::Natural(double d){
+Natural::Natural(double){
 
 }
 
@@ -214,7 +214,7 @@ bool Natural::isPrime(){
 SHIFT OPERATIONS
 ****/
 
-Natural Natural::LeftShift(int ui)const{
+Natural Natural::LeftShift(unsigned int ui)const{
 	Natural result;
 	result.size = size + ui;
 	result.digits.resize(result.size);
@@ -225,7 +225,7 @@ Natural Natural::LeftShift(int ui)const{
 	}
 	return result;
 }
-Natural Natural::RightShift(int ui)const{
+Natural Natural::RightShift(unsigned int ui)const{
 	if(ui >= size){
 		Natural result(0);
 		return result;
@@ -240,12 +240,12 @@ Natural Natural::RightShift(int ui)const{
 	}
 	return result;
 }
-Natural Natural::MSB(int ui)const{
+Natural Natural::MSB(unsigned int ui)const{
 	if(ui == 0){
 		Natural result(0);
 		return result;
 	}
-	if(ui >= size)
+    if(ui >= size)
 		return (*this);
 	Natural result;
 	result.size = ui;
@@ -255,7 +255,7 @@ Natural Natural::MSB(int ui)const{
 	}
 	return result;
 }
-Natural Natural::LSB(int ui)const{
+Natural Natural::LSB(unsigned int ui)const{
 	if(ui <= 0){
 		Natural result(0);
 		return result;
@@ -366,7 +366,7 @@ Natural Natural::Subtraction(const Natural& rhs)const{
 	result.digits.resize(result.size);
 	return result;
 }
-Natural Natural::simpleSubtraction(const Natural& rhs)const{
+Natural Natural::simpleSubtraction(const Natural&)const{
 	return Natural(0);
 }
 Natural Natural::Multiplication(const Natural& rhs)const{
@@ -899,7 +899,7 @@ const Natural Natural::operator/(const unsigned int& ui)const{
 		return this->shortDivision(divisor);
 	return this->longDivision(divisor);
 }
-const Natural Natural::operator%(const unsigned int& ui)const{
+const Natural Natural::operator%(const unsigned int&)const{
 	return Natural(0);
 }
 Natural &Natural::operator=(const unsigned int& ui){
