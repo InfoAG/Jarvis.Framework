@@ -177,17 +177,17 @@ fbyte Natural::getSize()const{
 }
 
 std::string Natural::toString()const{
-    std::string str = "";
+    std::string str;
 	char c;
 	for(int i=size-1 ; i >= 0 ; i-- ){
 		for( int j = 8 ; j >= 0 ; j-- ){
 			c=(digits.at(i)/intmod[j])%10+48;
-			str.push_back(c);
+            if (! (str.empty() && c == '0')) str.push_back(c);
 		}
-		//str.push_back(' ');
 	}
-	cropzeros(&str);
-	return str;
+
+    if (str.empty()) return "0";
+    else return str;
 }
 
 
