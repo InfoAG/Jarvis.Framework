@@ -30,7 +30,7 @@ namespace CAS{
 
 
 		Natural(const Natural&);
-        Natural(Natural &&other) : digits(other.digits), size(other.size) {}
+        Natural(Natural &&other) : digits(std::move(other.digits)), size(other.size) {}
 		Natural(const Integer&);
 
 		//Getter Functions
