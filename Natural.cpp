@@ -1,6 +1,4 @@
 #include "Natural.h"
-#include <iostream>
-using namespace std;
 
 namespace CAS {
 
@@ -185,7 +183,7 @@ std::string Natural::toString()const{
 			c=(digits.at(i)/intmod[j])%10+48;
 			str.push_back(c);
 		}
-		str.push_back(' ');
+		//str.push_back(' ');
 	}
 	
 	cropzeros(&str);
@@ -588,6 +586,18 @@ Natural Natural::longRemainder(const Natural& rhs)const{
 	}
 	Natural R = Dividend / Normalization;
 	return R;
+}
+Natural Natural::min(const Natural& rhs)const{
+	if((*this)>rhs)
+		return Natural(rhs);
+	else 
+		return Natural(*this);
+}
+Natural Natural::max(const Natural& rhs)const{
+	if((*this)<rhs)
+		return Natural(rhs);
+	else
+		return Natural(*this);
 }
 /****
 
