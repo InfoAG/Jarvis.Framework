@@ -1,5 +1,5 @@
 #include "Natural.h"
-
+//lol
 
 namespace CAS {
 
@@ -26,7 +26,7 @@ Natural::Natural(unsigned short us){
 Natural::Natural(int i){
 	if(i<0)
 		i *= -1;
-	if(i < intmod[MAX_INT]){
+    if(static_cast<unsigned int>(i) < intmod[MAX_INT]){
 		size = 1;
 		digits.resize(1);
 		digits.at(0) = i;
@@ -54,7 +54,7 @@ Natural::Natural(unsigned int ui){
 Natural::Natural(long l){
 	if(l<0)
 		l *= -1;
-	if(l < intmod[MAX_INT]){
+    if(static_cast<unsigned int>(l) < intmod[MAX_INT]){
 		size = 1;
 		digits.resize(1);
 		digits.at(0) = l;
@@ -115,11 +115,11 @@ Natural::Natural(unsigned long long ull){
 	}
 }
 
-Natural::Natural(float f){
+Natural::Natural(float){
 
 }
 
-Natural::Natural(double d){
+Natural::Natural(double){
 
 }
 
@@ -177,19 +177,22 @@ fbyte Natural::getSize()const{
 }
 
 std::string Natural::toString()const{
-    std::string str = "";
+    std::string str;
+    str.reserve(size*9);
 	char c;
-	for(int i=size-1 ; i >= 0 ; i-- ){
+    for(int j = 8 ; j >= 0 ; j-- ){
+        c=(digits.at(size-1)/intmod[j])%10+48;
+        if (! (str.empty() && c == '0')) str.push_back(c);
+    }
+	for(int i=size-2 ; i >= 0 ; i-- ){
 		for( int j = 8 ; j >= 0 ; j-- ){
 			c=(digits.at(i)/intmod[j])%10+48;
-			str.push_back(c);
+            str.push_back(c);
 		}
-		//str.push_back(' ');
 	}
-	cropzeros(&str);
-	return str;
+    if (str.empty()) return "0";
+    else return str;
 }
-
 
 /****
 PROPERTIES
@@ -214,7 +217,7 @@ bool Natural::isPrime(){
 SHIFT OPERATIONS
 ****/
 
-Natural Natural::LeftShift(int ui)const{
+Natural Natural::LeftShift(unsigned int ui)const{
 	Natural result;
 	result.size = size + ui;
 	result.digits.resize(result.size);
@@ -225,7 +228,7 @@ Natural Natural::LeftShift(int ui)const{
 	}
 	return result;
 }
-Natural Natural::RightShift(int ui)const{
+Natural Natural::RightShift(unsigned int ui)const{
 	if(ui >= size){
 		Natural result(0);
 		return result;
@@ -240,12 +243,12 @@ Natural Natural::RightShift(int ui)const{
 	}
 	return result;
 }
-Natural Natural::MSB(int ui)const{
+Natural Natural::MSB(unsigned int ui)const{
 	if(ui == 0){
 		Natural result(0);
 		return result;
 	}
-	if(ui >= size)
+    if(ui >= size)
 		return (*this);
 	Natural result;
 	result.size = ui;
@@ -255,7 +258,7 @@ Natural Natural::MSB(int ui)const{
 	}
 	return result;
 }
-Natural Natural::LSB(int ui)const{
+Natural Natural::LSB(unsigned int ui)const{
 	if(ui <= 0){
 		Natural result(0);
 		return result;
@@ -280,37 +283,37 @@ Natural Natural::Addition(const Natural& rhs)const{
 	fbyte max    = (size > rhs.getSize())? size : rhs.getSize();
 	fbyte tmp    = 0;
 	fbyte buffer = 0;
-	Natural result;
-    result.digits.resize(max);
+    std::vector<fbyte> c(max);
 	for(fbyte i = 0 ; i < min ; i++){
 		tmp	    = buffer + digits.at(i) + rhs.getDigitsAt(i);
 		buffer  = tmp / intmod[MAX_INT];
-		result.digits.at(i) = tmp % intmod[MAX_INT];
+		c.at(i) = tmp % intmod[MAX_INT];
 	}
 	if(size >= max){
 		for(fbyte i = min ; i < max ; i++){
 			tmp     = buffer + digits.at(i);
 			buffer  = tmp / intmod[MAX_INT];
-			result.digits.at(i) = tmp % intmod[MAX_INT];
-			//if(buffer == 0){
-			//}
+			c.at(i) = tmp % intmod[MAX_INT];
 		}	
 	}
 	if(rhs.getSize() >= max){
 		for(fbyte i = min ; i < max ; i++){
 			tmp		= buffer + rhs.getDigitsAt(i);
 			buffer  = tmp / intmod[MAX_INT];
-			result.digits.at(i) = tmp % intmod[MAX_INT];
-			//if(buffer == 0){
-			//}
+			c.at(i) = tmp % intmod[MAX_INT];
 		}
 	}
-	if(buffer != 0){
-		result.size           = max + 1;
-		result.digits.resize(result.size);
-		result.digits.at(max) = buffer;
+	Natural result;
+	if(buffer == 0){
+		result.digits = c;
+		result.size   = max;
 	}else{
-		result.size = max;
+		result.size = max + 1;
+		result.digits.resize(result.size);
+		for(fbyte i = 0 ; i < max ; i++){
+			result.digits.at(i) = c.at(i);
+		}
+		result.digits.at(max) = buffer;
 	}
 	return result;
 }
@@ -336,38 +339,46 @@ Natural Natural::Subtraction(const Natural& rhs)const{
 	fbyte max   = getSize();
 	fbyte carry = 0;
 	int tmp     = 0;
-	Natural result;
-	result.digits.resize(max);
+    std::vector<fbyte> c;
+	c.resize(max);
 	for(fbyte i = 0 ; i < min ; i++){
 		tmp = digits.at(i) - rhs.getDigitsAt(i) - carry;
 		if(tmp >= 0){
-			result.digits.at(i) = tmp % intmod[MAX_INT];
+			c.at(i) = tmp % intmod[MAX_INT];
 			carry   = 0;
 		}else{
-			result.digits.at(i) = (intmod[MAX_INT] + tmp) % intmod[MAX_INT];
+			c.at(i) = (intmod[MAX_INT] + tmp) % intmod[MAX_INT];
 			carry   = 1;
 		}
 	}
 	for(fbyte i = min ; i < max ; i++){
 		tmp = digits.at(i) - carry;
 		if(tmp >= 0){
-			result.digits.at(i) = tmp % intmod[MAX_INT];
+			c.at(i) = tmp % intmod[MAX_INT];
 			carry   = 0;
 		}else{
-			result.digits.at(i) = (intmod[MAX_INT] + tmp) % intmod[MAX_INT];
+			c.at(i) = (intmod[MAX_INT] + tmp) % intmod[MAX_INT];
 			carry   = 1;
 		}
 	}
 	fbyte count = 0;
-	for(int i = max-1 ; i >= 1 && result.digits.at(i) == 0; i--){
+	for(int i = max-1 ; i >= 1 && c.at(i) == 0; i--){
 		count++;
 	}
+	Natural result;
 	result.size = max - count;
 	result.digits.resize(result.size);
+	for(fbyte i = 0 ; i < result.size ; i++){
+		result.digits.at(i) = c.at(i);
+	}
 	return result;
 }
 Natural Natural::simpleSubtraction(const Natural& rhs)const{
-	return Natural(0);
+	Natural result;
+	result.size = 1;
+	result.digits.resize(result.size);
+	result.digits.at(0) = getDigitsAt(0) - rhs.getDigitsAt(0);
+	return result;
 }
 Natural Natural::Multiplication(const Natural& rhs)const{
 	fbyte k = size;
@@ -578,6 +589,18 @@ Natural Natural::longRemainder(const Natural& rhs)const{
 	}
 	Natural R = Dividend / Normalization;
 	return R;
+}
+Natural Natural::min(const Natural& rhs)const{
+	if((*this)>rhs)
+		return Natural(rhs);
+	else 
+		return Natural(*this);
+}
+Natural Natural::max(const Natural& rhs)const{
+	if((*this)<rhs)
+		return Natural(rhs);
+	else
+		return Natural(*this);
 }
 /****
 
@@ -806,7 +829,7 @@ Natural Natural::longDivisionDaC3by2(const Natural& rhs)const{
 
 /****
 ARBITRARY INTEGER OPERATORS
-****/ 
+****/
 const Natural Natural::operator+(const Natural& rhs)const{
 	if(this->getSize()==1&&rhs.getSize()==1)
 		return this->simpleAddition(rhs);
@@ -818,9 +841,9 @@ const Natural Natural::operator-(const Natural& rhs)const{
 		Natural result(0);
 		return result;
 	}
-	/*if(this->getSize()==1&&rhs.getSize()==1){
+	if(this->getSize()==1&&rhs.getSize()==1){
 		return (*this).simpleSubtraction(rhs);
-	}*/
+	}
 	return (*this).Subtraction(rhs);
 }
 const Natural Natural::operator*(const Natural& rhs)const{
@@ -899,7 +922,7 @@ const Natural Natural::operator/(const unsigned int& ui)const{
 		return this->shortDivision(divisor);
 	return this->longDivision(divisor);
 }
-const Natural Natural::operator%(const unsigned int& ui)const{
+const Natural Natural::operator%(const unsigned int&)const{
 	return Natural(0);
 }
 Natural &Natural::operator=(const unsigned int& ui){
@@ -1010,29 +1033,4 @@ Natural nfaculty(unsigned int ui){
 }
 
 }//End of Namespace CAS
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 

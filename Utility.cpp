@@ -3,9 +3,12 @@
 namespace CAS {
 
 void cropzeros(std::string* str){
-	while(str->length() > 1 && str->at(0) == '0'){
-		str->erase(0,1);	
+	int i=0;
+	for( ; i < str->size() - 1 && str->at(i)=='0';)
+	{
+		i++;
 	}
+	str->erase(0,i);
 }
 
 PRG::PRG(fbyte dx, fbyte dy){

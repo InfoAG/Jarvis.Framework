@@ -2,7 +2,6 @@
 #define INTEGER_H
 
 #include <vector>
-#include <time.h>
 #include "Number.h"
 #include "Utility.h"
 
@@ -66,12 +65,13 @@ namespace CAS{
 		Integer operator*(const Integer&);
 		Integer operator/(const Integer&);
 		Integer operator%(const Integer&);
-
+        /*
 		bool operator<(const Integer&);
 		bool operator<=(const Integer&);
 		bool operator==(const Integer&);
 		bool operator>=(const Integer&);
 		bool operator>(const Integer&);
+        */
 	};
 };
 

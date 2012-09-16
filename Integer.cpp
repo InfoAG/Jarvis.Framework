@@ -4,33 +4,33 @@ namespace CAS {
 Integer::Integer(){
 	sign   = false;
 }
-Integer::Integer(short s){
+Integer::Integer(short){
 	sign   = false;
 }
-Integer::Integer(unsigned short us){
+Integer::Integer(unsigned short){
 	sign   = false;
 }
-Integer::Integer(int i){
+Integer::Integer(int){
 }
-Integer::Integer(unsigned int ui){
+Integer::Integer(unsigned int){
 	sign   = false;
 }
-Integer::Integer(long l){
+Integer::Integer(long){
 }
-Integer::Integer(unsigned long ul){
+Integer::Integer(unsigned long){
 }
-Integer::Integer(long long ll){
+Integer::Integer(long long){
 }
-Integer::Integer(unsigned long long ull){
+Integer::Integer(unsigned long long){
 	sign   = false;
 }
-Integer::Integer(float f){
+Integer::Integer(float){
 
 }
-Integer::Integer(double d){
+Integer::Integer(double){
 
 }
-Integer::Integer(std::string str){
+Integer::Integer(std::string){
 
 }
 
@@ -38,10 +38,10 @@ Integer::Integer(std::string str){
 
 ****/
 
-Integer::Integer(const Natural& nat){
+Integer::Integer(const Natural&){
 	sign   = false;
 }
-Integer::Integer(const Integer& rhs){
+Integer::Integer(const Integer&){
 }
 
 /****
@@ -50,7 +50,7 @@ Integer::Integer(const Integer& rhs){
 
 //Natural Integer::getNumber() const{
 //}
-fbyte Integer::getNumberAt(unsigned int ui) const{
+fbyte Integer::getNumberAt(unsigned int) const{
 	return 0;
 }
 fbyte Integer::getSize() const{
@@ -85,36 +85,16 @@ bool Integer::isPrime(){
 
 ****/
 
-Integer Integer::leftShift(unsigned int ui)const{
+Integer Integer::leftShift(unsigned int)const{
 	return Integer(0);
 }
-Integer Integer::rightShift(unsigned int ui)const{
+Integer Integer::rightShift(unsigned int)const{
 	return Integer(0);
 }
-Integer Integer::msb(unsigned int ui)const{
+Integer Integer::msb(unsigned int)const{
 	return Integer(0);
 }
-Integer Integer::lsb(unsigned int ui)const{
-	return Integer(0);
-}
-
-/****
-
-****/
-
-Integer Integer::addition(const Integer& rhs, bool b){
-	return Integer(0);
-}
-Integer Integer::subtraction(const Integer& rhs, bool b){
-	return Integer(0);
-}
-Integer Integer::multiplication(const Integer& rhs, bool b){
-	return Integer(0);
-}
-Integer Integer::division(const Integer& rhs, bool b){
-	return Integer(0);
-}
-Integer Integer::remainder(const Integer& rhs, bool b){
+Integer Integer::lsb(unsigned int)const{
 	return Integer(0);
 }
 
@@ -122,36 +102,19 @@ Integer Integer::remainder(const Integer& rhs, bool b){
 
 ****/
 
-Integer Integer::karatsuba(const Integer& rhs){
+Integer Integer::addition(const Integer&, bool){
 	return Integer(0);
 }
-Integer Integer::toom33(const Integer& rhs){
+Integer Integer::subtraction(const Integer&, bool){
 	return Integer(0);
 }
-Integer Integer::toom44(const Integer& rhs){
+Integer Integer::multiplication(const Integer&, bool){
 	return Integer(0);
 }
-Integer Integer::FFT(const Integer& rhs){
+Integer Integer::division(const Integer&, bool){
 	return Integer(0);
 }
-
-/****
-
-****/
-
-Integer Integer::operator+(const Integer& rhs){
-	return Integer(0);
-}
-Integer Integer::operator-(const Integer& rhs){
-	return Integer(0);
-}
-Integer Integer::operator*(const Integer& rhs){
-	return Integer(0);
-}
-Integer Integer::operator/(const Integer& rhs){
-	return Integer(0);
-}
-Integer Integer::operator%(const Integer&rhs){
+Integer Integer::remainder(const Integer&, bool){
 	return Integer(0);
 }
 
@@ -159,6 +122,43 @@ Integer Integer::operator%(const Integer&rhs){
 
 ****/
 
+Integer Integer::karatsuba(const Integer&){
+	return Integer(0);
+}
+Integer Integer::toom33(const Integer&){
+	return Integer(0);
+}
+Integer Integer::toom44(const Integer&){
+	return Integer(0);
+}
+Integer Integer::FFT(const Integer&){
+	return Integer(0);
+}
+
+/****
+
+****/
+
+Integer Integer::operator+(const Integer&){
+	return Integer(0);
+}
+Integer Integer::operator-(const Integer&){
+	return Integer(0);
+}
+Integer Integer::operator*(const Integer&){
+	return Integer(0);
+}
+Integer Integer::operator/(const Integer&){
+	return Integer(0);
+}
+Integer Integer::operator%(const Integer&){
+	return Integer(0);
+}
+
+/****
+
+****/
+/*
 bool Integer::operator<(const Integer& rhs){
 	if(sign!=rhs.getSign()){
 		return sign;
@@ -179,7 +179,7 @@ bool Integer::operator>(const Integer& rhs){
 		return rhs.getSign();
 	}
 }
-
+*/
 }
 
 
