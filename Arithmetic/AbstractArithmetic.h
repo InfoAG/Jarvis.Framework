@@ -35,7 +35,8 @@ public:
         ASSIGNMENT,
         FUNCTION,
         MATRIX,
-        LAZYEVAL
+        LAZYEVAL,
+        MODULO
     };
 
     virtual ~AbstractArithmetic() {} //!< Virtual destructor to prevent slicing

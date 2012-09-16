@@ -23,10 +23,11 @@ public:
     const Natural &getValue() const { return value; }
     Natural &getValue() { return value; }
 
-    NumberArith operator+(const NumberArith& other) { return NumberArith(value + other.value); }
-    NumberArith operator-(const NumberArith& other) { return NumberArith(value - other.value); }
-    NumberArith operator/(const NumberArith& other) { return NumberArith(value / other.value); }
-    NumberArith operator*(const NumberArith& other) { return NumberArith(value * other.value); }
+    NumberArith operator+(const NumberArith &other) { return NumberArith(value + other.value); }
+    NumberArith operator-(const NumberArith &other) { return NumberArith(value - other.value); }
+    NumberArith operator/(const NumberArith &other) { return NumberArith(value / other.value); }
+    NumberArith operator*(const NumberArith &other) { return NumberArith(value * other.value); }
+    NumberArith operator%(const NumberArith &other) { return NumberArith(value % other.value); }
 };
 
 inline NumberArith pow(const NumberArith &first, const NumberArith &second) { Natural res = 1; for (Natural exp = second.getValue(); exp != 0;exp--) res *= first.getValue(); return res; }
