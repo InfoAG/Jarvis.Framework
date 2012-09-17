@@ -1,18 +1,17 @@
 #ifndef INTEGER_H
 #define INTEGER_H
 
-#include <vector>
 #include <time.h>
+#include <string>
 #include "Number.h"
-#include "Utility.h"
+#include "Natural.h"
 
 namespace CAS{
 	class Natural;
 
 	class Integer : public Number{
 	private:
-		std::vector<fbyte> digits;
-		fbyte size;
+		Natural nat;
 		bool sign;
 	public:
 		Integer();
@@ -30,42 +29,59 @@ namespace CAS{
 		
 
 		Integer(const Natural&);
+		Integer(Natural &&other) : nat(std::move(other)){} 
+		Integer(Integer &&other) : nat(std::move(other.nat)),sign(other.sign) {}
 		Integer(const Integer&);
 
-		//Natural getNumber() const;
+
+		//Getter Functions;
+		Natural getNat()const;
 		fbyte getNumberAt(unsigned int) const;
 		fbyte getSize() const;
 		bool getSign() const;
+        std::string toString()const;
 
-        std::string toString();
-
-
+		//Properties
 		bool isInteger();
 		bool isEven();
 		bool isOdd();
 		bool isPrime();
+		
+		//Arbitrary Natural Operators
+		const Integer operator+(const Natural&)const;
+		const Integer operator-(const Natural&)const;
+		const Integer operator*(const Natural&)const;
+		const Integer operator/(const Natural&)const;
+		const Integer operator%(const Natural&)const;
+		Integer &operator=(const Natural&);
+		Integer &operator+=(const Natural&);
+		Integer &operator-=(const Natural&);
+		Integer &operator*=(const Natural&);
+		Integer &operator/=(const Natural&);
 
-		Integer leftShift(unsigned int)const;
-		Integer rightShift(unsigned int)const;
-		Integer msb(unsigned int)const;
-		Integer lsb(unsigned int)const;
+		//Arbitrary Integer Operators
+		const Integer operator+(const Integer&)const;
+		const Integer operator-(const Integer&)const;
+		const Integer operator*(const Integer&)const;
+		const Integer operator/(const Integer&)const;
+		const Integer operator%(const Integer&)const;
+		Integer &operator=(const Integer&);
+		Integer &operator+=(const Integer&);
+		Integer &operator-=(const Integer&);
+		Integer &operator*=(const Integer&);
+		Integer &operator/=(const Integer&);
 
-		Integer addition(const Integer&,bool);
-		Integer subtraction(const Integer&,bool);
-		Integer multiplication(const Integer&,bool);
-		Integer division(const Integer&,bool);
-		Integer remainder(const Integer&,bool);
-
-		Integer karatsuba(const Integer&);
-		Integer toom33(const Integer&);
-		Integer toom44(const Integer&);
-		Integer FFT(const Integer&);
-
-		Integer operator+(const Integer&);
-		Integer operator-(const Integer&);
-		Integer operator*(const Integer&);
-		Integer operator/(const Integer&);
-		Integer operator%(const Integer&);
+		//Integer Operators
+		const Integer operator+(const int&)const;
+		const Integer operator-(const int&)const;
+		const Integer operator*(const int&)const;
+		const Integer operator/(const int&)const;
+		const Integer operator%(const int&)const;
+		Integer& operator=(const int&);
+		Integer& operator+=(const int&);
+		Integer& operator-=(const int&);
+		Integer& operator*=(const int&);
+		Integer& operator/=(const int&);
 
 		bool operator<(const Integer&);
 		bool operator<=(const Integer&);

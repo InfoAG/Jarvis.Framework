@@ -1,5 +1,4 @@
 #include "Natural.h"
-//lol
 
 namespace CAS {
 
@@ -602,6 +601,7 @@ Natural Natural::max(const Natural& rhs)const{
 	else
 		return Natural(*this);
 }
+
 /****
 
 ****/
