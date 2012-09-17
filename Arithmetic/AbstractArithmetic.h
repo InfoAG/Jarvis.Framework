@@ -38,7 +38,8 @@ public:
         LAZYEVAL,
         MODULO,
         MIN,
-        MAX
+        MAX,
+        SELECTION
     };
 
     virtual ~AbstractArithmetic() {} //!< Virtual destructor to prevent slicing
