@@ -70,6 +70,10 @@ namespace CAS{
 		Integer &operator-=(const Integer&);
 		Integer &operator*=(const Integer&);
 		Integer &operator/=(const Integer&);
+        Integer &operator++() { *this += 1; return *this; }
+        Integer &operator--() { *this -= 1; return *this; }
+        Integer operator++(int) { Integer result(*this); *this += 1; return result; }
+        Integer operator--(int) { Integer result(*this); *this -= 1; return result; }
 
 		//Integer Operators
 		const Integer operator+(const int&)const;
@@ -83,11 +87,12 @@ namespace CAS{
 		Integer& operator*=(const int&);
 		Integer& operator/=(const int&);
 
-		bool operator<(const Integer&);
-		bool operator<=(const Integer&);
-		bool operator==(const Integer&);
-		bool operator>=(const Integer&);
-		bool operator>(const Integer&);
+        bool operator<(const Integer&) const;
+        bool operator<=(const Integer&) const;
+        bool operator==(const Integer&) const;
+        bool operator!=(const Integer &other) const { return ! (*this == other); }
+        bool operator>=(const Integer&) const;
+        bool operator>(const Integer&) const;
 	};
 };
 
