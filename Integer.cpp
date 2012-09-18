@@ -74,10 +74,6 @@ Integer::Integer(const Natural& rhs){
 	nat  = rhs;
 	sign = false;
 }
-Integer::Integer(const Integer& rhs){
-	nat = rhs.getNat();
-
-}
 /****
 
 ****/

@@ -31,7 +31,7 @@ namespace CAS{
 		Integer(const Natural&);
 		Integer(Natural &&other) : nat(std::move(other)){} 
 		Integer(Integer &&other) : nat(std::move(other.nat)),sign(other.sign) {}
-		Integer(const Integer&);
+        Integer(const Integer &other) : nat(other.nat), sign(other.sign) {}
 
 
 		//Getter Functions;
