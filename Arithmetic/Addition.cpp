@@ -2,10 +2,10 @@
 
 namespace CAS {
 
-Natural &Addition::accessMonomValue(MonomValues &values, Operands monom) const
+Integer &Addition::accessMonomValue(MonomValues &values, Operands monom) const
 {
     MonomValues::iterator it = std::find_if(begin(values), end(values),
-            [&](const std::pair<std::vector<AbstractArithmetic*>, Natural> &item) {
+            [&](const std::pair<std::vector<AbstractArithmetic*>, Integer> &item) {
                 return equalOperands(item.first, monom);
         });
     if (it != values.end()) return it->second;
@@ -30,7 +30,7 @@ std::unique_ptr<AbstractArithmetic> Addition::eval(const EvalInfo &ei) const
         else mergedOperands.emplace_back(std::move(evalRes));
     }
     MonomValues monomValues;
-    Natural numberValue = 0;
+    Integer numberValue = 0;
     std::map<unsigned int, Operands> matrixByDimension;
     for (auto &operand : mergedOperands) {
         switch (operand->type()) {
@@ -43,7 +43,7 @@ std::unique_ptr<AbstractArithmetic> Addition::eval(const EvalInfo &ei) const
                 for (auto itChild = begin(static_cast<Multiplication*>(operand.get())->getOperands());
                      itChild != end(static_cast<Multiplication*>(operand.get())->getOperands()) - 1; ++itChild)
                     monom.emplace_back(std::move(*itChild));*/
-                Natural monomValue = std::move(static_cast<NumberArith*>(static_cast<Multiplication*>(operand.get())->getOperands().back().get())->getValue());
+                Integer monomValue = std::move(static_cast<NumberArith*>(static_cast<Multiplication*>(operand.get())->getOperands().back().get())->getValue());
                 static_cast<Multiplication*>(operand.get())->getOperands().erase(end(static_cast<Multiplication*>(operand.get())->getOperands()));
                 accessMonomValue(monomValues, std::move(static_cast<Multiplication*>(operand.get())->getOperands())) += monomValue;
             } else accessMonomValue(monomValues, std::move(static_cast<Multiplication*>(operand.get())->getOperands()))++;

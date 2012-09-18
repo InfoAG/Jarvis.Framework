@@ -8,13 +8,13 @@ std::unique_ptr<AbstractArithmetic> Selection::eval(const EvalInfo &ei) const
 
     if (opResult->type() == MATRIX && firstSelectRes->type() == NUMBERARITH && static_cast<const NumberArith*>(firstSelectRes.get())->getValue() < static_cast<const Matrix*>(opResult.get())->getOperands().size()) {
         if (operands.size() == 1)
-            return std::move(static_cast<Matrix*>(opResult.get())->getOperands().at(static_cast<const NumberArith*>(firstSelectRes.get())->getValue().getDigitsAt(0)));
+            return std::move(static_cast<Matrix*>(opResult.get())->getOperands().at(static_cast<const NumberArith*>(firstSelectRes.get())->getValue().getNumberAt(0)));
         else {
             Operands newOps;
             newOps.reserve(operands.size());
             for (auto it = operands.cbegin() + 1; it != operands.cend(); ++it)
                 newOps.emplace_back((*it)->copy());
-            return Selection(std::move(static_cast<Matrix*>(opResult.get())->getOperands().at(static_cast<const NumberArith*>(firstSelectRes.get())->getValue().getDigitsAt(0))), std::move(newOps)).eval(ei);
+            return Selection(std::move(static_cast<Matrix*>(opResult.get())->getOperands().at(static_cast<const NumberArith*>(firstSelectRes.get())->getValue().getNumberAt(0))), std::move(newOps)).eval(ei);
         }
     } else {
         Operands newOps;

@@ -23,7 +23,7 @@ std::unique_ptr<AbstractArithmetic> Multiplication::eval(const EvalInfo &ei) con
         }
         else mergedOperands.emplace_back(std::move(evalRes));
     }
-    Natural numberValue = 1;
+    Integer numberValue = 1;
     BasisValues basisValues;
 
     // http://www.iaeng.org/publication/WCE2010/WCE2010_pp1829-1833.pdf
