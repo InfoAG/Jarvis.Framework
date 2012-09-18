@@ -3,7 +3,6 @@
 
 #include <vector>
 #include "Number.h"
-#include "Integer.h"
 #include "Utility.h"
 
 namespace CAS{
@@ -31,7 +30,7 @@ namespace CAS{
 
 		Natural(const Natural&);
         Natural(Natural &&other) : digits(std::move(other.digits)), size(other.size) {}
-		Natural(const Integer&);
+		//Natural(const Integer&);
 
 		//Getter Functions
         std::vector<fbyte> getDigits()const;
@@ -62,9 +61,10 @@ namespace CAS{
 		Natural longDivision(const Natural& rhs)const;
 		fbyte longDivisionSubRoutine(fbyte,fbyte,fbyte,fbyte,fbyte)const;
 		Natural shortRemainder(const Natural&)const;
-		Natural longRemainder(const Natural&)const;
+		Natural longRemainder(const Natural&)const; 
 		Natural min(const Natural&)const;
 		Natural max(const Natural&)const;
+
 
 		//Improved Algorithms
 		Natural fusedMultiplyAdd(const Natural&, const Natural&)const;
@@ -74,10 +74,10 @@ namespace CAS{
 		Natural longDivisionDaC2by1(const Natural&)const;
 		Natural longDivisionDaC3by2(const Natural&)const;
 
-		//Arbitrary Integer Operators
+		//Arbitrary Natural Operators
         const Natural operator+(const Natural&)const;
         const Natural operator-(const Natural&)const;
-        const Natural operator*(const Natural& rhs)const;
+        const Natural operator*(const Natural&)const;
         const Natural operator/(const Natural&)const;
         const Natural operator%(const Natural&)const;
         Natural &operator=(const Natural&);
