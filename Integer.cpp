@@ -311,7 +311,7 @@ Integer& Integer::operator/=(const int& ui){
 
 
 ****/
-bool Integer::operator<(const Integer& rhs){
+bool Integer::operator<(const Integer& rhs) const {
 	if(sign != rhs.sign){
 		if(sign)
 			return false;
@@ -323,7 +323,7 @@ bool Integer::operator<(const Integer& rhs){
 	else 
 		return false;
 }
-bool Integer::operator<=(const Integer& rhs){
+bool Integer::operator<=(const Integer& rhs) const {
 	if(sign != rhs.sign){
 		if(sign)
 			return false;
@@ -335,14 +335,14 @@ bool Integer::operator<=(const Integer& rhs){
 	else 
 		return false;
 }
-bool Integer::operator==(const Integer& rhs){
+bool Integer::operator==(const Integer& rhs) const {
 	if(sign != rhs.sign)
 		return false;
 	if(nat == rhs.nat)
 		return true;
 	return false;
 }
-bool Integer::operator>=(const Integer& rhs){
+bool Integer::operator>=(const Integer& rhs) const {
 	if(sign != rhs.sign){
 		if(sign)
 			return true;
@@ -354,7 +354,7 @@ bool Integer::operator>=(const Integer& rhs){
 	else 
 		return false;
 }
-bool Integer::operator>(const Integer& rhs){
+bool Integer::operator>(const Integer& rhs) const {
 	if(sign != rhs.sign){
 		if(sign)
 			return true;
