@@ -39,7 +39,8 @@ public:
         MODULO,
         MIN,
         MAX,
-        SELECTION
+        SELECTION,
+        RANGE
     };
 
     virtual ~AbstractArithmetic() {} //!< Virtual destructor to prevent slicing
