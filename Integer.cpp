@@ -292,16 +292,20 @@ Integer& Integer::operator=(const int& ui){
 	return *this;
 }
 Integer& Integer::operator+=(const int& ui){
-	return Integer(0);
+    *this = *this + ui;
+    return *this;
 }
 Integer& Integer::operator-=(const int& ui){
-	return Integer(0);
+    *this = *this - ui;
+    return *this;
 }
 Integer& Integer::operator*=(const int& ui){
-	return Integer(0);
+    *this = *this * ui;
+    return *this;
 }
 Integer& Integer::operator/=(const int& ui){
-	return Integer(0);
+    *this = *this / ui;
+    return *this;
 }
 /****
 
