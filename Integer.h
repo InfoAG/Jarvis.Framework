@@ -1,7 +1,6 @@
 #ifndef INTEGER_H
 #define INTEGER_H
 
-#include <time.h>
 #include <string>
 #include "Number.h"
 #include "Natural.h"
@@ -29,7 +28,7 @@ namespace CAS{
 		
 
 		Integer(const Natural&);
-		Integer(Natural &&other) : nat(std::move(other)){} 
+		Integer(Natural &&other) : nat(std::move(other)),sign(false){} 
 		Integer(Integer &&other) : nat(std::move(other.nat)),sign(other.sign) {}
         Integer(const Integer &other) : nat(other.nat), sign(other.sign) {}
 
