@@ -2,9 +2,9 @@
 
 namespace CAS {
 
-bool LazyEval::equals(const AbstractArithmetic *other) const
+bool LazyEval::equals(const AbstractExpression *other) const
 {
-    return other->type() == LAZYEVAL && static_cast<const LazyEval*>(other)->getOperand()->equals(operand.get());
+    return typeid(*other) == typeid(LazyEval) && static_cast<const LazyEval*>(other)->getOperand()->equals(operand.get());
 }
 
 }

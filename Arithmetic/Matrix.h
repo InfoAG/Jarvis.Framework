@@ -13,11 +13,10 @@ public:
     Matrix(Operands operands) : AbstractLevelingOperation(std::move(operands)) {}
     Matrix(const Matrix &other) : AbstractLevelingOperation(other) {}
 
-    virtual std::unique_ptr<AbstractArithmetic> copy() const { return make_unique<Matrix>(*this); }
-    virtual std::unique_ptr<AbstractArithmetic> eval(const EvalInfo &ei) const;
-    virtual ArithmeticType type() const { return MATRIX; }
+    virtual std::unique_ptr<AbstractExpression> copy() const { return make_unique<Matrix>(*this); }
+    virtual std::unique_ptr<AbstractExpression> eval(Scope &scope, bool lazy) const;
     virtual std::string toString() const;
-    virtual bool equals(const AbstractArithmetic *other) const;
+    virtual bool equals(const AbstractExpression *other) const;
 };
 
 }

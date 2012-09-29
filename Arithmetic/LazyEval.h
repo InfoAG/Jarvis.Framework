@@ -8,12 +8,11 @@ namespace CAS {
 class LazyEval : public AbstractUnaryOperation
 {
 public:
-    LazyEval(std::unique_ptr<AbstractArithmetic> operand) : AbstractUnaryOperation(std::move(operand)) {}
-    virtual std::unique_ptr<AbstractArithmetic> copy() const { return make_unique<LazyEval>(*this); }
+    LazyEval(std::unique_ptr<AbstractExpression> operand) : AbstractUnaryOperation(std::move(operand)) {}
+    virtual std::unique_ptr<AbstractExpression> copy() const { return make_unique<LazyEval>(*this); }
 
-    virtual std::unique_ptr<AbstractArithmetic> eval(const EvalInfo &) const { return operand->eval(EvalInfo()); }
-    virtual ArithmeticType type() const { return LAZYEVAL; }
-    virtual bool equals(const AbstractArithmetic *other) const;
+    virtual std::unique_ptr<AbstractExpression> eval(Scope &scope, bool) const { return operand->eval(scope, true); }
+    virtual bool equals(const AbstractExpression *other) const;
     virtual std::string toString() const { return "lazy(" + operand->toString() + ")"; }
 };
 

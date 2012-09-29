@@ -2,6 +2,9 @@
 #define ASSIGNMENT_H
 
 #include "AbstractBinaryOperation.h"
+#include "Variable.h"
+#include "Function.h"
+#include "LazyEval.h"
 
 namespace CAS {
 
@@ -13,13 +16,12 @@ public:
      * @param first_op
      * @param second_op
      */
-    Assignment(std::unique_ptr<AbstractArithmetic> first_op, std::unique_ptr<AbstractArithmetic> second_op) : AbstractBinaryOperation(std::move(first_op), std::move(second_op)) {}
-    virtual std::unique_ptr<AbstractArithmetic> copy() const { return make_unique<Assignment>(*this); }
+    Assignment(std::unique_ptr<AbstractExpression> first_op, std::unique_ptr<AbstractExpression> second_op) : AbstractBinaryOperation(std::move(first_op), std::move(second_op)) {}
+    virtual std::unique_ptr<AbstractExpression> copy() const { return make_unique<Assignment>(*this); }
 
-    virtual std::unique_ptr<AbstractArithmetic> eval(const EvalInfo &ei) const { return second_op->eval(ei); }
-    virtual ArithmeticType type() const { return ASSIGNMENT; }
+    virtual std::unique_ptr<AbstractExpression> eval(Scope &scope, bool lazy) const;
     virtual std::string toString() const { return first_op->toString() + "=" + second_op->toString(); }
-    virtual bool equals(const AbstractArithmetic *other) const;
+    virtual bool equals(const AbstractExpression *other) const;
 };
 
 }

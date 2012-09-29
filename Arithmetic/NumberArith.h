@@ -1,25 +1,24 @@
 #ifndef NUMBERARITH_H
 #define NUMBERARITH_H
 
-#include "AbstractArithmetic.h"
+#include "AbstractExpression.h"
 #include "Integer.h"
 #include <sstream>
 
 namespace CAS {
 
-class NumberArith : public AbstractArithmetic
+class NumberArith : public AbstractExpression
 {
 private:
     Integer value; //change to CAS::Integer etc.
 
 public:
     NumberArith(const Integer &value) : value(value) {};
-    virtual std::unique_ptr<AbstractArithmetic> copy() const { return make_unique<NumberArith>(*this); }
+    virtual std::unique_ptr<AbstractExpression> copy() const { return make_unique<NumberArith>(*this); }
 
-    virtual std::unique_ptr<AbstractArithmetic> eval(const EvalInfo &) const { return copy(); }
-    virtual ArithmeticType type() const { return NUMBERARITH; }
+    virtual std::unique_ptr<AbstractExpression> eval(Scope &, bool) const { return copy(); }
     virtual std::string toString() const { return value.toString(); }
-    virtual bool equals(const AbstractArithmetic *other) const;
+    virtual bool equals(const AbstractExpression *other) const;
     const Integer &getValue() const { return value; }
     Integer &getValue() { return value; }
 

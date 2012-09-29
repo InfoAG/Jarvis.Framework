@@ -7,26 +7,25 @@
 
 namespace CAS {
 
-class Range : public AbstractArithmetic
+class Range : public AbstractExpression
 {
 private:
-    std::unique_ptr<AbstractArithmetic> start;
-    std::unique_ptr<AbstractArithmetic> end;
-    std::unique_ptr<AbstractArithmetic> step;
+    std::unique_ptr<AbstractExpression> start;
+    std::unique_ptr<AbstractExpression> end;
+    std::unique_ptr<AbstractExpression> step;
 
 public:
-    Range(std::unique_ptr<AbstractArithmetic> start, std::unique_ptr<AbstractArithmetic> end, std::unique_ptr<AbstractArithmetic> step) : start(std::move(start)), end(std::move(end)), step(std::move(step)) {}
+    Range(std::unique_ptr<AbstractExpression> start, std::unique_ptr<AbstractExpression> end, std::unique_ptr<AbstractExpression> step) : start(std::move(start)), end(std::move(end)), step(std::move(step)) {}
     Range(const Range &other) : start(other.start->copy()), end(other.end->copy()), step(other.step->copy()) {}
 
-    virtual std::unique_ptr<AbstractArithmetic> copy() const { return make_unique<Range>(*this); }
-    virtual std::unique_ptr<AbstractArithmetic> eval(const EvalInfo &ei) const;
-    virtual ArithmeticType type() const { return RANGE; }
+    virtual std::unique_ptr<AbstractExpression> copy() const { return make_unique<Range>(*this); }
+    virtual std::unique_ptr<AbstractExpression> eval(Scope &scope, bool lazy) const;
     virtual std::string toString() const;
-    virtual bool equals(const AbstractArithmetic *other) const;
+    virtual bool equals(const AbstractExpression *other) const;
 
-    const std::unique_ptr<AbstractArithmetic> &getStart() const { return start; }
-    const std::unique_ptr<AbstractArithmetic> &getEnd() const { return end; }
-    const std::unique_ptr<AbstractArithmetic> &getStep() const { return step; }
+    const std::unique_ptr<AbstractExpression> &getStart() const { return start; }
+    const std::unique_ptr<AbstractExpression> &getEnd() const { return end; }
+    const std::unique_ptr<AbstractExpression> &getStep() const { return step; }
 };
 
 }

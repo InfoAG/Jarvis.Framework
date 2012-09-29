@@ -2,11 +2,11 @@
 
 namespace CAS {
 
-std::unique_ptr<AbstractArithmetic> Selection::eval(const EvalInfo &ei) const
+std::unique_ptr<AbstractExpression> Selection::eval(Scope &scope, bool lazy) const
 {
-    std::unique_ptr<AbstractArithmetic> opResult = operand->eval(ei), firstSelectRes = operands.front()->eval(ei);
+    std::unique_ptr<AbstractExpression> opResult = operand->eval(scope, lazy), firstSelectRes = operands.front()->eval(scope, lazy);
 
-    if (opResult->type() == MATRIX && firstSelectRes->type() == NUMBERARITH && static_cast<const NumberArith*>(firstSelectRes.get())->getValue() < static_cast<const Matrix*>(opResult.get())->getOperands().size()) {
+    if (typeid(opResult) == typeid(Matrix) && typeid(firstSelectRes) == typeid(NumberArith) && static_cast<const NumberArith*>(firstSelectRes.get())->getValue() < static_cast<const Matrix*>(opResult.get())->getOperands().size()) {
         if (operands.size() == 1)
             return std::move(static_cast<Matrix*>(opResult.get())->getOperands().at(static_cast<const NumberArith*>(firstSelectRes.get())->getValue().getNumberAt(0)));
         else {
@@ -14,13 +14,13 @@ std::unique_ptr<AbstractArithmetic> Selection::eval(const EvalInfo &ei) const
             newOps.reserve(operands.size());
             for (auto it = operands.cbegin() + 1; it != operands.cend(); ++it)
                 newOps.emplace_back((*it)->copy());
-            return Selection(std::move(static_cast<Matrix*>(opResult.get())->getOperands().at(static_cast<const NumberArith*>(firstSelectRes.get())->getValue().getNumberAt(0))), std::move(newOps)).eval(ei);
+            return Selection(std::move(static_cast<Matrix*>(opResult.get())->getOperands().at(static_cast<const NumberArith*>(firstSelectRes.get())->getValue().getNumberAt(0))), std::move(newOps)).eval(scope, lazy);
         }
     } else {
         Operands newOps;
         newOps.emplace_back(std::move(firstSelectRes));
         for (auto it = operands.cbegin() + 1; it != operands.cend(); ++it)
-            newOps.emplace_back((*it)->eval(ei));
+            newOps.emplace_back((*it)->eval(scope, lazy));
         return make_unique<Selection>(std::move(opResult), std::move(newOps));
     }
 }
@@ -33,9 +33,9 @@ std::string Selection::toString() const
     return result + operands.back()->toString() + "}";
 }
 
-bool Selection::equals(const AbstractArithmetic *other) const
+bool Selection::equals(const AbstractExpression *other) const
 {
-    return other->type() == SELECTION && operand->equals(static_cast<const Selection*>(other)->getOperand().get()) && equalOperands(operands, static_cast<const Selection*>(other)->getOperands());
+    return typeid(*other) == typeid(Selection) && operand->equals(static_cast<const Selection*>(other)->getOperand().get()) && equalOperands(operands, static_cast<const Selection*>(other)->getOperands());
 }
 
 }

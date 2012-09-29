@@ -1,11 +1,11 @@
 #ifndef ABSTRACTLEVELINGOPERATION_H
 #define ABSTRACTLEVELINGOPERATION_H
 
-#include "AbstractArithmetic.h"
+#include "AbstractExpression.h"
 
 namespace CAS {
 
-class AbstractLevelingOperation : public AbstractArithmetic
+class AbstractLevelingOperation : public AbstractExpression
 {
 protected:
     Operands operands;
@@ -13,7 +13,7 @@ protected:
     template <class T>
     bool equalOperands(const T &first, const Operands &second) const
     {
-        typedef std::vector<const AbstractArithmetic*> OperandRefs;
+        typedef std::vector<const AbstractExpression*> OperandRefs;
         bool deleted;
         if (second.size() == first.size()) {
             OperandRefs spareSecondOps;
@@ -34,7 +34,7 @@ protected:
     }
 
 public:
-    AbstractLevelingOperation(std::unique_ptr<AbstractArithmetic> first_op, std::unique_ptr<AbstractArithmetic> second_op);
+    AbstractLevelingOperation(std::unique_ptr<AbstractExpression> first_op, std::unique_ptr<AbstractExpression> second_op);
     AbstractLevelingOperation(const AbstractLevelingOperation &other);
     AbstractLevelingOperation(Operands operands) : operands(std::move(operands)) {}
     const Operands &getOperands() const { return operands; }

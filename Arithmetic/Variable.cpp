@@ -2,17 +2,18 @@
 
 namespace CAS {
 
-std::unique_ptr<AbstractArithmetic> Variable::eval(const EvalInfo &ei) const
+std::unique_ptr<AbstractExpression> Variable::eval(Scope &scope, bool lazy) const
 {
-    ScopeInfo::VarDefs::const_iterator it;
-    if (((it = ei.funcVars.find(identifier)) != ei.funcVars.end()) || ((it = ei.variables.find(identifier)) != ei.variables.end()))
-        return it->second->eval({ei.variables, ei.functions});
-    else return copy();
+    if (! lazy && scope.hasVar(identifier)) {
+        auto varDef = scope.getVar(identifier);
+        if (varDef.second.evalFinished) return varDef.second.definition->copy();
+        else return varDef.second.definition->eval(varDef.first, lazy);
+    } else return copy();
 }
 
-bool Variable::equals(const AbstractArithmetic *other) const
+bool Variable::equals(const AbstractExpression *other) const
 {
-    return other->type() == VARIABLE && static_cast<const Variable*>(other)->getIdentifier() == identifier;
+    return typeid(*other) == typeid(Variable) && static_cast<const Variable*>(other)->getIdentifier() == identifier;
 }
 
 }

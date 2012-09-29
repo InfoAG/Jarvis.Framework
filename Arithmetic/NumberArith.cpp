@@ -2,9 +2,9 @@
 
 namespace CAS {
 
-bool NumberArith::equals(const AbstractArithmetic *other) const
+bool NumberArith::equals(const AbstractExpression *other) const
 {
-    return other->type() == NUMBERARITH && static_cast<const NumberArith*>(other)->getValue() == value;
+    return typeid(*other) == typeid(NumberArith) && static_cast<const NumberArith*>(other)->getValue() == value;
 }
 
 }

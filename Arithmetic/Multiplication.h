@@ -11,19 +11,18 @@ namespace CAS {
 class Multiplication : public AbstractLevelingOperation
 {
 private:
-    typedef std::vector<std::pair<std::unique_ptr<AbstractArithmetic>, std::unique_ptr<AbstractArithmetic>>> BasisValues;
+    typedef std::vector<std::pair<std::unique_ptr<AbstractExpression>, std::unique_ptr<AbstractExpression>>> BasisValues;
 
-    void addToBasisValue(BasisValues &values, std::unique_ptr<AbstractArithmetic> basis, std::unique_ptr<AbstractArithmetic> exponent) const;
+    void addToBasisValue(BasisValues &values, std::unique_ptr<AbstractExpression> basis, std::unique_ptr<AbstractExpression> exponent) const;
 
 public:
-    Multiplication(std::unique_ptr<AbstractArithmetic> first_op, std::unique_ptr<AbstractArithmetic> second_op) : AbstractLevelingOperation(std::move(first_op), std::move(second_op)) {}
-    virtual std::unique_ptr<AbstractArithmetic> copy() const { return make_unique<Multiplication>(*this); }
+    Multiplication(std::unique_ptr<AbstractExpression> first_op, std::unique_ptr<AbstractExpression> second_op) : AbstractLevelingOperation(std::move(first_op), std::move(second_op)) {}
+    virtual std::unique_ptr<AbstractExpression> copy() const { return make_unique<Multiplication>(*this); }
     Multiplication(Operands operands) : AbstractLevelingOperation(std::move(operands)) {}
 
-    virtual std::unique_ptr<AbstractArithmetic> eval(const EvalInfo &ei) const;
-    virtual ArithmeticType type() const { return MULTIPLICATION; }
+    virtual std::unique_ptr<AbstractExpression> eval(Scope &scope, bool lazy) const;
     virtual std::string toString() const;
-    virtual bool equals(const AbstractArithmetic *other) const;
+    virtual bool equals(const AbstractExpression *other) const;
 };
 
 }

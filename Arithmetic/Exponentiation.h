@@ -4,19 +4,20 @@
 #include "AbstractBinaryOperation.h"
 #include "NumberArith.h"
 #include "Multiplication.h"
+#include "Division.h"
+#include "Subtraction.h"
 
 namespace CAS {
 
 class Exponentiation : public AbstractBinaryOperation
 {
 public:
-    Exponentiation(std::unique_ptr<AbstractArithmetic> first_op, std::unique_ptr<AbstractArithmetic> second_op) : AbstractBinaryOperation(std::move(first_op), std::move(second_op)) {}
-    virtual std::unique_ptr<AbstractArithmetic> copy() const { return make_unique<Exponentiation>(*this); }
+    Exponentiation(std::unique_ptr<AbstractExpression> first_op, std::unique_ptr<AbstractExpression> second_op) : AbstractBinaryOperation(std::move(first_op), std::move(second_op)) {}
+    virtual std::unique_ptr<AbstractExpression> copy() const { return make_unique<Exponentiation>(*this); }
 
-    virtual std::unique_ptr<AbstractArithmetic> eval(const EvalInfo &ei) const;
-    virtual ArithmeticType type() const { return EXPONENTIATION; }
+    virtual std::unique_ptr<AbstractExpression> eval(Scope &scope, bool lazy) const;
     virtual std::string toString() const;
-    virtual bool equals(const AbstractArithmetic *other) const;
+    virtual bool equals(const AbstractExpression *other) const;
 };
 
 }
