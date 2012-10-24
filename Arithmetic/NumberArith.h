@@ -14,11 +14,12 @@ private:
 
 public:
     NumberArith(const Integer &value) : value(value) {};
-    virtual std::unique_ptr<AbstractExpression> copy() const { return make_unique<NumberArith>(*this); }
+    virtual ExpressionP copy() const { return make_unique<NumberArith>(*this); }
 
-    virtual std::unique_ptr<AbstractExpression> eval(Scope &, bool) const { return copy(); }
+    virtual EvalRes eval(Scope &, bool) const { return std::make_pair(NUMBER, copy()); }
     virtual std::string toString() const { return value.toString(); }
     virtual bool equals(const AbstractExpression *other) const;
+
     const Integer &getValue() const { return value; }
     Integer &getValue() { return value; }
 

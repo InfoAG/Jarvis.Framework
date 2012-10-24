@@ -1,0 +1,31 @@
+#include "List.h"
+
+namespace CAS {
+
+AbstractExpression::EvalRes List::eval(Scope &scope, bool lazy) const
+{
+    Operands result;
+    for (const auto &operand : operands) result.emplace_back(operand->eval(scope, lazy).second);
+    //if (result.size() == 1) return std::move(result.front());
+    return std::make_pair(LIST, make_unique<List>(std::move(result)));
+}
+
+std::string List::toString() const
+{
+    std::string result = "[";
+    if (typeid(operands.front()) == typeid(List))
+        for (const auto &operand : operands) result += operand->toString();
+    else {
+        for (auto it = operands.cbegin(); it != operands.cend() - 1; ++it)
+            result += (*it)->toString() + ",";
+        result += operands.back()->toString();
+    }
+    return result + "]";
+}
+
+bool List::equals(const AbstractExpression *other) const
+{
+    return typeid(*other) == typeid(List) && equalOperands(operands, static_cast<const List*>(other)->getOperands());
+}
+
+}

@@ -8,10 +8,10 @@ namespace CAS {
 class Cosinus : public AbstractUnaryOperation
 {
 public:
-    Cosinus(std::unique_ptr<AbstractExpression> operand) : AbstractUnaryOperation(std::move(operand)) {}
-    virtual std::unique_ptr<AbstractExpression> copy() const { return make_unique<AbstractExpression>(*this); }
+    Cosinus(ExpressionP operand) : AbstractUnaryOperation(std::move(operand)) {}
+    virtual ExpressionP copy() const { return make_unique<ExpressionP>(*this); }
 
-    virtual std::unique_ptr<AbstractExpression> eval(Scope &scope, bool lazy) const { return this->copy(); }
+    virtual EvalRes eval(Scope &scope, bool lazy) const { return this->copy(); }
 };
 
 }

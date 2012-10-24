@@ -2,17 +2,19 @@
 
 namespace CAS {
 
-std::unique_ptr<AbstractExpression> Division::eval(Scope &scope, bool lazy) const
+AbstractExpression::EvalRes Division::eval(Scope &scope, bool lazy) const
 {
-    auto first_op_result = first_op->eval(scope, lazy), second_op_result = second_op->eval(scope, lazy);
-    if (first_op_result->equals(second_op_result.get()))
-        return make_unique<NumberArith>(1);
-    else if (typeid(first_op_result) == typeid(NumberArith) && typeid(second_op_result) == typeid(NumberArith))
-        return make_unique<NumberArith>(*(static_cast<NumberArith*>(first_op_result.get())) / *(static_cast<NumberArith*>(second_op_result.get())));
-    else if ((typeid(first_op_result) == typeid(NumberArith) && static_cast<NumberArith*>(first_op_result.get())->getValue() == 0)
-             || (typeid(second_op_result) == typeid(NumberArith) && static_cast<NumberArith*>(second_op_result.get())->getValue() == 1))
-        return first_op_result;
-    else return make_unique<Division>(std::move(first_op_result), std::move(second_op_result));
+    auto firstOpResult = first_op->eval(scope, lazy), secondOpResult = second_op->eval(scope, lazy);
+    if (firstOpResult.second->equals(secondOpResult.second.get()))
+        return std::make_pair(NUMBER, make_unique<NumberArith>(1));
+    else if (typeid(*(firstOpResult.second)) == typeid(NumberArith) && typeid(*(secondOpResult.second)) == typeid(NumberArith))
+        return std::make_pair(NUMBER, make_unique<NumberArith>(*(static_cast<NumberArith*>(firstOpResult.second.get())) / *(static_cast<NumberArith*>(secondOpResult.second.get()))));
+    else if ((typeid(*(firstOpResult.second)) == typeid(NumberArith) && static_cast<NumberArith*>(firstOpResult.second.get())->getValue() == 0)
+             || (typeid(*(secondOpResult.second)) == typeid(NumberArith) && static_cast<NumberArith*>(secondOpResult.second.get())->getValue() == 1))
+        return firstOpResult;
+    else {
+        return std::make_pair((firstOpResult.first == NUMBER && secondOpResult.first == NUMBER ? NUMBER : LIST), make_unique<Division>(std::move(firstOpResult.second), std::move(secondOpResult.second)));
+    }
 }
 
 std::string Division::toString() const
@@ -22,7 +24,7 @@ std::string Division::toString() const
         result = "(" + first_op->toString() + ")";
     else result = first_op->toString();
     result += "/";
-    if (typeid(*second_op) == typeid(Addition) || typeid(*second_op) == typeid(Multiplication) || typeid(*second_op) == typeid(Division) || typeid(*second_op) == typeid(Subtraction)) return result + "(" + second_op->toString() + ")";
+    if (typeid(*second_op) == typeid(Addition) || typeid(*second_op) == typeid(LevelMultiplication) || typeid(*second_op) == typeid(Division) || typeid(*second_op) == typeid(Subtraction)) return result + "(" + second_op->toString() + ")";
     else return result + second_op->toString();
 }
 

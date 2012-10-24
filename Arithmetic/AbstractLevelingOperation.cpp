@@ -2,7 +2,7 @@
 
 namespace CAS {
 
-AbstractLevelingOperation::AbstractLevelingOperation(std::unique_ptr<AbstractExpression> first_op, std::unique_ptr<AbstractExpression> second_op)
+AbstractLevelingOperation::AbstractLevelingOperation(ExpressionP first_op, ExpressionP second_op)
 {
     operands.emplace_back(std::move(first_op));
     operands.emplace_back(std::move(second_op));

@@ -3,17 +3,17 @@
 
 #include <map>
 #include <memory>
+#include "VariableDefinition.h"
 #include "FunctionDefinition.h"
+#include "FunctionSignature.h"
 
 namespace CAS {
-
-class AbstractExpression;
 
 class Scope
 {
 public:
-    typedef std::map<std::string, Definition> VarDefs;
-    typedef std::map<std::pair<std::string, unsigned int>, FunctionDefinition> FuncDefs;
+    typedef std::map<std::string, VariableDefinition> VarDefs;
+    typedef std::map<FunctionSignature, FunctionDefinition> FuncDefs;
 
 private:
     Scope * const parent;
@@ -27,13 +27,15 @@ public:
     Scope(Scope * const parent) : parent(parent) {}
     Scope(Scope * const parent, VarDefs variables) : parent(parent), variables(std::move(variables)) {}
 
-    virtual void assignVar(const std::pair<std::string, Definition> &var);
-    virtual void assignFunc(const std::pair<std::string, FunctionDefinition> &func);
+    virtual void declareVar(AbstractExpression::ReturnType type, std::string id);
+    virtual void declareFunc(FunctionSignature sig, FunctionDefinition def);
+    virtual void defineVar(const std::string &id, VariableDefinition var);
+    //virtual void assignFunc(const std::pair<std::string, FunctionDefinition> &func);
 
     bool hasVar(const std::string &identifier) const { return variables.find(identifier) != variables.end() || (parent && parent->hasVar(identifier)); }
-    std::pair<Scope &, const Definition&> getVar(const std::string &identifier);
-    bool hasFunc(const std::pair<std::string, unsigned int> &idAndArgs) const { return functions.find(idAndArgs) != functions.end() || (parent && parent->hasFunc(idAndArgs)); }
-    std::pair<Scope &, const FunctionDefinition&> getFunc(const std::pair<std::string, unsigned int> &idAndArgs);
+    std::pair<Scope &, const VariableDefinition&> getVar(const std::string &identifier);
+    bool hasFunc(const FunctionSignature &sig) const { return functions.find(sig) != functions.end() || (parent && parent->hasFunc(sig)); }
+    std::pair<Scope &, const FunctionDefinition&> getFunc(const FunctionSignature &sig);
 };
 
 }

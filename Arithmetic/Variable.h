@@ -2,6 +2,7 @@
 #define VARIABLE_H
 
 #include "AbstractExpression.h"
+#include "Scope.h"
 #include <string>
 
 namespace CAS {
@@ -13,11 +14,12 @@ private:
 
 public:
     Variable(const std::string &identifier) : identifier(identifier) {}
-    virtual std::unique_ptr<AbstractExpression> copy() const { return make_unique<Variable>(*this); }
+    virtual ExpressionP copy() const { return make_unique<Variable>(*this); }
 
-    virtual std::unique_ptr<AbstractExpression> eval(Scope &scope, bool lazy) const;
+    virtual EvalRes eval(Scope &scope, bool lazy) const;
     virtual std::string toString() const { return identifier; }
     virtual inline bool equals(const AbstractExpression *other) const;
+
     std::string getIdentifier() const { return identifier; }
 };
 

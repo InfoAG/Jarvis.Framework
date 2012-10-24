@@ -2,21 +2,30 @@
 
 namespace CAS {
 
-std::unique_ptr<AbstractExpression> Function::eval(Scope &scope, bool lazy) const
+AbstractExpression::EvalRes Function::eval(Scope &scope, bool lazy) const
 {
-    if (! lazy && scope.hasFunc(std::make_pair(identifier, operands.size()))) {
+    std::vector<ReturnType> opTypes;
+    std::vector<ExpressionP> opResults;
+    for (const auto &op : operands) {
+        auto result = op->eval(scope, lazy);
+        opTypes.emplace_back(result.first);
+        opResults.emplace_back(std::move(result.second));
+    }
+    FunctionSignature sig{identifier, std::move(opTypes)};
+    if (! lazy && scope.hasFunc(sig)) {
         Scope::VarDefs funcVars;
-        auto funcDefMatch = scope.getFunc(std::make_pair(identifier, operands.size()));
-        auto itOperands = operands.cbegin();
-        for (const auto &funcVar : funcDefMatch.second.arguments)
-            funcVars[funcVar] = Definition((*(itOperands++))->eval(scope, lazy), true);
+        auto funcDefMatch = scope.getFunc(sig);
+        auto itOpResults = opResults.begin();
+        auto itOpTypes = opTypes.cbegin();
+        for (auto &funcVar : funcDefMatch.second.arguments)
+            funcVars.insert(std::make_pair(std::move(funcVar), VariableDefinition{std::move(*(itOpResults++)), *(itOpTypes++)}));
         Scope funcScope(&funcDefMatch.first, std::move(funcVars));
         return funcDefMatch.second.definition->eval(funcScope);
     } else {
         Operands evaldOps;
         evaldOps.reserve(operands.size());
-        for (const auto &operand : operands) evaldOps.emplace_back(operand->eval(scope, lazy));
-        return make_unique<Function>(identifier, std::move(evaldOps));
+        for (const auto &operand : operands) evaldOps.emplace_back(operand->eval(scope, lazy).second);
+        return std::make_pair(NUMBER, make_unique<Function>(identifier, std::move(evaldOps)));
     }
 }
 

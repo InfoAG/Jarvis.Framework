@@ -1,27 +1,29 @@
-#include "Multiplication.h"
+#include "LevelMultiplication.h"
 
 namespace CAS {
 
-void Multiplication::addToBasisValue(BasisValues &values, std::unique_ptr<AbstractExpression> basis, std::unique_ptr<AbstractExpression> exponent) const
+void LevelMultiplication::addToBasisValue(BasisValues &values, ExpressionP basis, ExpressionP exponent) const
 {
     BasisValues::iterator it = std::find_if(begin(values), end(values),
-            [&](const std::pair<std::unique_ptr<AbstractExpression>, std::unique_ptr<AbstractExpression>> &item) {
+            [&](const std::pair<ExpressionP, ExpressionP> &item) {
                 return item.first->equals(basis.get());
         });
     if (it != values.end()) it->second = make_unique<Addition>(std::move(it->second), std::move(exponent));
     else values.emplace_back(std::move(basis), std::move(exponent));
 }
 
-std::unique_ptr<AbstractExpression> Multiplication::eval(Scope &scope, bool lazy) const
+AbstractExpression::EvalRes LevelMultiplication::eval(Scope &scope, bool lazy) const
 {
     Operands mergedOperands;
+    ReturnType returnType = NUMBER;
     for (const auto &operand : operands) {
         auto evalRes = operand->eval(scope, lazy);
-        if (typeid(evalRes) == typeid(Multiplication)) {
-            for (auto &childOp : static_cast<Multiplication*>(evalRes.get())->getOperands())
+        if (typeid(*(evalRes.second)) == typeid(LevelMultiplication)) {
+            for (auto &childOp : static_cast<LevelMultiplication*>(evalRes.second.get())->getOperands())
                 mergedOperands.emplace_back(std::move(childOp));
         }
-        else mergedOperands.emplace_back(std::move(evalRes));
+        else mergedOperands.emplace_back(std::move(evalRes.second));
+        if (evalRes.first != NUMBER) returnType = evalRes.first;
     }
     Integer numberValue = 1;
     BasisValues basisValues;
@@ -38,16 +40,16 @@ std::unique_ptr<AbstractExpression> Multiplication::eval(Scope &scope, bool lazy
     }
     mergedOperands.clear();
     for (auto &basisValue : basisValues)
-        mergedOperands.emplace_back(Exponentiation(std::move(basisValue.first), std::move(basisValue.second)).eval(scope, lazy));
-    if (numberValue == 0 || mergedOperands.empty()) return make_unique<NumberArith>(numberValue);
+        mergedOperands.emplace_back(Exponentiation(std::move(basisValue.first), std::move(basisValue.second)).eval(scope, lazy).second);
+    if (numberValue == 0 || mergedOperands.empty()) return std::make_pair(NUMBER, make_unique<NumberArith>(numberValue));
     else {
         if (! (numberValue == 1)) mergedOperands.emplace_back(make_unique<NumberArith>(numberValue));
-        else if (mergedOperands.size() == 1) return std::unique_ptr<AbstractExpression>(mergedOperands.front().release());
-        return make_unique<Multiplication>(std::move(mergedOperands));
+        else if (mergedOperands.size() == 1) return std::make_pair(returnType, std::move(mergedOperands.front()));
+        return std::make_pair(returnType, make_unique<LevelMultiplication>(std::move(mergedOperands)));
     }
 }
 
-std::string Multiplication::toString() const
+std::string LevelMultiplication::toString() const
 {
     std::string result;
     for (auto it = operands.cbegin(); it != operands.cend(); ++it) {
@@ -58,10 +60,10 @@ std::string Multiplication::toString() const
     return result;
 }
 
-bool Multiplication::equals(const AbstractExpression *other) const
+bool LevelMultiplication::equals(const AbstractExpression *other) const
 {
-    if (typeid(*other) != typeid(Multiplication)) return false;
-    return equalOperands(static_cast<const Multiplication*>(other)->getOperands(), operands);
+    if (typeid(*other) != typeid(LevelMultiplication)) return false;
+    return equalOperands(static_cast<const LevelMultiplication*>(other)->getOperands(), operands);
 }
 
 }

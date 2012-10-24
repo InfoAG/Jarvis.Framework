@@ -2,15 +2,15 @@
 
 namespace CAS {
 
-std::unique_ptr<AbstractExpression> Range::eval(Scope &scope, bool lazy) const
+AbstractExpression::EvalRes Range::eval(Scope &scope, bool lazy) const
 {
-    std::unique_ptr<AbstractExpression> startRes = start->eval(scope, lazy), endRes = end->eval(scope, lazy), stepRes = step->eval(scope, lazy);
-    if (typeid(startRes) == typeid(NumberArith) && typeid(endRes) == typeid(NumberArith) && typeid(stepRes) == typeid(NumberArith)) {
+    auto startRes = start->eval(scope, lazy), endRes = end->eval(scope, lazy), stepRes = step->eval(scope, lazy);
+    if (typeid(*(startRes.second)) == typeid(NumberArith) && typeid(*(endRes.second)) == typeid(NumberArith) && typeid(*(stepRes.second)) == typeid(NumberArith)) {
         Operands result;
-        for (Integer i = std::move(static_cast<NumberArith*>(startRes.get())->getValue()); i <= static_cast<NumberArith*>(endRes.get())->getValue(); i += static_cast<NumberArith*>(stepRes.get())->getValue())
+        for (Integer i = std::move(static_cast<NumberArith*>(startRes.second.get())->getValue()); i <= static_cast<NumberArith*>(endRes.second.get())->getValue(); i += static_cast<NumberArith*>(stepRes.second.get())->getValue())
             result.emplace_back(make_unique<NumberArith>(std::move(i)));
-        return Matrix(std::move(result)).eval(scope, lazy);
-    } else return make_unique<Range>(std::move(startRes), std::move(endRes), std::move(stepRes));
+        return List(std::move(result)).eval(scope, lazy);
+    } else return std::make_pair(LIST, make_unique<Range>(std::move(startRes.second), std::move(endRes.second), std::move(stepRes.second)));
 }
 
 std::string Range::toString() const

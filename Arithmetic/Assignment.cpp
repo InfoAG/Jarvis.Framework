@@ -2,11 +2,13 @@
 
 namespace CAS {
 
-std::unique_ptr<AbstractExpression> Assignment::eval(Scope &scope, bool lazy) const
+AbstractExpression::EvalRes Assignment::eval(Scope &scope, bool lazy) const
 {
     auto secondOpResult = second_op->eval(scope, lazy);
-    if (typeid(*first_op) == typeid(Variable)) scope.assignVar(std::make_pair(static_cast<Variable*>(first_op.get())->getIdentifier(), Definition(secondOpResult->copy(), typeid(*second_op) == typeid(LazyEval) ? false : true)));
-    else if (typeid(*first_op) == typeid(Function)) {
+    if (typeid(*first_op) == typeid(Variable)) scope.defineVar(static_cast<Variable*>(first_op.get())->getIdentifier(), VariableDefinition(secondOpResult.second->copy(), secondOpResult.first));
+    else throw "typing";
+
+        /*if (typeid(*first_op) == typeid(Function)) {
         bool assignable = true;
         std::vector<std::string> argStrings;
         for (const auto &op : static_cast<Function*>(first_op.get())->getOperands()) {
@@ -16,9 +18,9 @@ std::unique_ptr<AbstractExpression> Assignment::eval(Scope &scope, bool lazy) co
             } else argStrings.emplace_back(static_cast<Variable*>(op.get())->getIdentifier());
         }
         if (assignable) {
-            scope.assignFunc(std::make_pair(static_cast<Function*>(first_op.get())->getIdentifier(), FunctionDefinition(std::move(argStrings), secondOpResult->copy(), typeid(*second_op) == typeid(LazyEval) ? false : true)));
+            scope.assignFunc(std::make_pair(static_cast<Function*>(first_op.get())->getIdentifier(), FunctionDefinition(std::move(argStrings), secondOpResult.second->copy(), secondOpResult.first)));
         }
-    }
+    }*/
     return secondOpResult;
 }
 

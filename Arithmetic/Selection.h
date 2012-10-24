@@ -3,25 +3,25 @@
 
 #include "AbstractLevelingOperation.h"
 #include "NumberArith.h"
-#include "Matrix.h"
+#include "List.h"
 
 namespace CAS {
 
 class Selection : public AbstractLevelingOperation
 {
 private:
-    std::unique_ptr<AbstractExpression> operand;
+    ExpressionP operand;
 
 public:
-    Selection(std::unique_ptr<AbstractExpression> operand, Operands operands) : AbstractLevelingOperation(std::move(operands)), operand(std::move(operand)) {}
+    Selection(ExpressionP operand, Operands operands) : AbstractLevelingOperation(std::move(operands)), operand(std::move(operand)) {}
     Selection(const Selection &other) : AbstractLevelingOperation(other), operand(other.operand->copy()) {}
 
-    virtual std::unique_ptr<AbstractExpression> copy() const { return make_unique<Selection>(*this); }
-    virtual std::unique_ptr<AbstractExpression> eval(Scope &scope, bool lazy) const;
+    virtual ExpressionP copy() const { return make_unique<Selection>(*this); }
+    virtual EvalRes eval(Scope &scope, bool lazy) const;
     virtual std::string toString() const;
     virtual bool equals(const AbstractExpression *other) const;
 
-    const std::unique_ptr<AbstractExpression> &getOperand() const { return operand; }
+    const ExpressionP &getOperand() const { return operand; }
 };
 
 }
