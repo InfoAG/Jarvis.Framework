@@ -6,9 +6,12 @@ AbstractExpression::EvalRes Variable::eval(Scope &scope, bool lazy) const
 {
     if (! lazy && scope.hasVar(identifier)) {
         auto varDef = scope.getVar(identifier);
-        if (varDef.second.type != UNKNOWN) return std::make_pair(varDef.second.type, varDef.second.definition->copy());
-        else return varDef.second.definition->eval(varDef.first, lazy);
-    } else return std::make_pair(NUMBER, copy());
+        return std::make_pair(varDef.second.type, (varDef.second.definition == nullptr ? copy() : varDef.second.definition->copy()));
+        //else return varDef.second.definition->eval(varDef.first, lazy);
+    } else {
+        scope.declareVar(NUMBER, identifier);
+        return std::make_pair(NUMBER, copy());
+    }
 }
 
 bool Variable::equals(const AbstractExpression *other) const

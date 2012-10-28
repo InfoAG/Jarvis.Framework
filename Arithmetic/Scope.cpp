@@ -11,7 +11,8 @@ void Scope::defineVar(const std::string &id, VariableDefinition var)
         else it->second.definition = var.definition;
     } else if (parent && parent->hasVar(id)) parent->defineVar(id, var);
     else if (var.type != AbstractExpression::NUMBER) throw ":O";
-    else variables.insert(std::make_pair(id, std::move(var)));
+    else declareVar(AbstractExpression::NUMBER, id);
+    variables.find(id)->second.definition = std::move(var.definition);
 }
 
 /*
@@ -41,8 +42,8 @@ std::pair<Scope &, const FunctionDefinition&> Scope::getFunc(const FunctionSigna
 void Scope::declareVar(AbstractExpression::ReturnType type, std::string id)
 {
     auto it = variables.find(id);
-    if (it != variables.end()) it->second.type = type;
-    else if (parent && parent->hasVar(id)) parent->declareVar(type, std::move(id));
+    if (it != variables.end()) throw "already there";
+    //else if (parent && parent->hasVar(id)) parent->declareVar(type, std::move(id));
     else variables.insert(std::make_pair(std::move(id), VariableDefinition{nullptr, type}));
 }
 
