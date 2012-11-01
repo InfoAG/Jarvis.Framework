@@ -11,8 +11,9 @@ struct FunctionDefinition
 {
     std::shared_ptr<AbstractExpression> definition;
     std::vector<std::string> arguments;
+    CAS::AbstractExpression::ReturnType returnType;
 
-    FunctionDefinition(std::vector<std::string> arguments, std::shared_ptr<AbstractExpression> definition) : definition(std::move(definition)), arguments(std::move(arguments)) {}
+    FunctionDefinition(AbstractExpression::ReturnType returnType) : returnType(returnType) {}
 };
 
 }

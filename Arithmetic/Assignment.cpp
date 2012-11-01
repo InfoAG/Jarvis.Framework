@@ -6,6 +6,7 @@ AbstractExpression::EvalRes Assignment::eval(Scope &scope, bool lazy) const
 {
     auto secondOpResult = second_op->eval(scope, lazy);
     if (typeid(*first_op) == typeid(Variable)) scope.defineVar(static_cast<Variable*>(first_op.get())->getIdentifier(), VariableDefinition(secondOpResult.second->copy(), secondOpResult.first));
+    //else if (typeid(*first_op) == typeid(VariableDeclaration))
     else throw "typing";
 
         /*if (typeid(*first_op) == typeid(Function)) {

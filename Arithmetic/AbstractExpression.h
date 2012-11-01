@@ -37,6 +37,8 @@ public:
     virtual EvalRes eval(Scope &scope, bool lazy = false) const = 0;
     virtual std::string toString() const = 0; //!< @return String representation of the arithmetical tree starting at this node
     virtual bool equals(const AbstractExpression *other) const = 0;
+
+    static std::string typeToString(ReturnType type);
 };
 
 }

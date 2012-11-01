@@ -28,9 +28,9 @@ public:
     Scope(Scope * const parent, VarDefs variables) : parent(parent), variables(std::move(variables)) {}
 
     virtual void declareVar(AbstractExpression::ReturnType type, std::string id);
-    virtual void declareFunc(FunctionSignature sig, FunctionDefinition def);
+    virtual void declareFunc(FunctionSignature sig, AbstractExpression::ReturnType returnType);
     virtual void defineVar(const std::string &id, VariableDefinition var);
-    //virtual void assignFunc(const std::pair<std::string, FunctionDefinition> &func);
+    virtual void defineFunc(const FunctionSignature &sig, FunctionDefinition def);
 
     bool hasVar(const std::string &identifier) const { return variables.find(identifier) != variables.end() || (parent && parent->hasVar(identifier)); }
     std::pair<Scope &, const VariableDefinition&> getVar(const std::string &identifier);
