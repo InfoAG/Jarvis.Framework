@@ -11,7 +11,7 @@ AbstractExpression::EvalRes Function::eval(Scope &scope, bool lazy) const
         opTypes.emplace_back(result.first);
         opResults.emplace_back(std::move(result.second));
     }
-    FunctionSignature sig{identifier, std::move(opTypes)};
+    FunctionSignature sig{identifier, opTypes};
     if (! lazy && scope.hasFunc(sig)) {
         Scope::VarDefs funcVars;
         auto funcDefMatch = scope.getFunc(sig);
@@ -37,9 +37,12 @@ bool Function::equals(const AbstractExpression *other) const
 
 std::string Function::toString() const
 {
-    std::string result(identifier + "(" + operands.front()->toString());
-    for (auto it = ++(operands.cbegin()); it != operands.cend(); ++it)
-        result += "," + (*it)->toString();
+    std::string result = identifier + "(";
+    if (! operands.empty()) {
+        result += operands.front()->toString();
+        for (auto it = ++(operands.cbegin()); it != operands.cend(); ++it)
+            result += "," + (*it)->toString();
+    }
     return result + ")";
 }
 

@@ -14,6 +14,7 @@ protected:
     ExpressionP operand; //!< Pointer to root of the operand's arithmetical tree
 
 public:
+    AbstractUnaryOperation() {}
     AbstractUnaryOperation(ExpressionP operand) : operand(std::move(operand)) {}
     AbstractUnaryOperation(const AbstractUnaryOperation &other) : operand(other.operand->copy()) {}
 
