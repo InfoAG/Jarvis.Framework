@@ -6,14 +6,14 @@ AbstractExpression::EvalRes Division::eval(Scope &scope, bool lazy) const
 {
     auto firstOpResult = first_op->eval(scope, lazy), secondOpResult = second_op->eval(scope, lazy);
     if (firstOpResult.second->equals(secondOpResult.second.get()))
-        return std::make_pair(NUMBER, make_unique<NumberArith>(1));
+        return std::make_pair(TypeInfo{TypeInfo::NUMBER}, make_unique<NumberArith>(1));
     else if (typeid(*(firstOpResult.second)) == typeid(NumberArith) && typeid(*(secondOpResult.second)) == typeid(NumberArith))
-        return std::make_pair(NUMBER, make_unique<NumberArith>(*(static_cast<NumberArith*>(firstOpResult.second.get())) / *(static_cast<NumberArith*>(secondOpResult.second.get()))));
+        return std::make_pair(TypeInfo{TypeInfo::NUMBER}, make_unique<NumberArith>(*(static_cast<NumberArith*>(firstOpResult.second.get())) / *(static_cast<NumberArith*>(secondOpResult.second.get()))));
     else if ((typeid(*(firstOpResult.second)) == typeid(NumberArith) && static_cast<NumberArith*>(firstOpResult.second.get())->getValue() == 0)
              || (typeid(*(secondOpResult.second)) == typeid(NumberArith) && static_cast<NumberArith*>(secondOpResult.second.get())->getValue() == 1))
         return firstOpResult;
     else {
-        return std::make_pair((firstOpResult.first == NUMBER && secondOpResult.first == NUMBER ? NUMBER : LIST), make_unique<Division>(std::move(firstOpResult.second), std::move(secondOpResult.second)));
+        return std::make_pair((firstOpResult.first == TypeInfo::NUMBER && secondOpResult.first == TypeInfo::NUMBER ? TypeInfo::NUMBER : TypeInfo::LIST), make_unique<Division>(std::move(firstOpResult.second), std::move(secondOpResult.second)));
     }
 }
 

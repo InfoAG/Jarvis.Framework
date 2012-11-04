@@ -10,7 +10,7 @@ AbstractExpression::EvalRes Range::eval(Scope &scope, bool lazy) const
         for (Integer i = std::move(static_cast<NumberArith*>(startRes.second.get())->getValue()); i <= static_cast<NumberArith*>(endRes.second.get())->getValue(); i += static_cast<NumberArith*>(stepRes.second.get())->getValue())
             result.emplace_back(make_unique<NumberArith>(std::move(i)));
         return List(std::move(result)).eval(scope, lazy);
-    } else return std::make_pair(LIST, make_unique<Range>(std::move(startRes.second), std::move(endRes.second), std::move(stepRes.second)));
+    } else return std::make_pair(TypeInfo::LIST, make_unique<Range>(std::move(startRes.second), std::move(endRes.second), std::move(stepRes.second)));
 }
 
 std::string Range::toString() const

@@ -79,9 +79,9 @@ AbstractExpression::EvalRes Addition::eval(Scope &scope, bool lazy) const
             } else mergedOperands.emplace_back(make_unique<LevelMultiplication>(std::move(workaroundVec)));
         }
     }
-    if (mergedOperands.size() == 0) return std::make_pair(NUMBER, make_unique<NumberArith>(0));
-    else if (mergedOperands.size() == 1) return std::make_pair(NUMBER, std::move(mergedOperands.front()));
-    else return std::make_pair(NUMBER, make_unique<Addition>(std::move(mergedOperands)));
+    if (mergedOperands.size() == 0) return std::make_pair(TypeInfo{TypeInfo::NUMBER}, make_unique<NumberArith>(0));
+    else if (mergedOperands.size() == 1) return std::make_pair(TypeInfo{TypeInfo::NUMBER}, std::move(mergedOperands.front()));
+    else return std::make_pair(TypeInfo{TypeInfo::NUMBER}, make_unique<Addition>(std::move(mergedOperands)));
 }
 
 std::string Addition::toString() const

@@ -5,9 +5,15 @@ namespace CAS {
 AbstractExpression::EvalRes List::eval(Scope &scope, bool lazy) const
 {
     Operands result;
-    for (const auto &operand : operands) result.emplace_back(operand->eval(scope, lazy).second);
+    auto firstOpRes = operands.front()->eval(scope, lazy);
+    result.emplace_back(std::move(firstOpRes.second));
+    for (auto it = operands.cbegin() + 1; it != operands.cend(); ++it) {
+        auto opRes = (*it)->eval(scope, lazy);
+        if (opRes.first != firstOpRes.first) throw "list type inconsistency";
+        result.emplace_back(std::move(opRes.second));
+    }
     //if (result.size() == 1) return std::move(result.front());
-    return std::make_pair(LIST, make_unique<List>(std::move(result)));
+    return std::make_pair(TypeInfo{TypeInfo::LIST, firstOpRes.first}, make_unique<List>(std::move(result)));
 }
 
 std::string List::toString() const

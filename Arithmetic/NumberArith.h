@@ -16,7 +16,7 @@ public:
     NumberArith(const Integer &value) : value(value) {};
     virtual ExpressionP copy() const { return make_unique<NumberArith>(*this); }
 
-    virtual EvalRes eval(Scope &, bool) const { return std::make_pair(NUMBER, copy()); }
+    virtual EvalRes eval(Scope &, bool) const { return std::make_pair(TypeInfo{TypeInfo::NUMBER}, copy()); }
     virtual std::string toString() const { return value.toString(); }
     virtual bool equals(const AbstractExpression *other) const;
 

@@ -6,8 +6,8 @@ AbstractExpression::EvalRes Modulo::eval(Scope &scope, bool lazy) const
 {
     auto first_op_result = first_op->eval(scope, lazy), second_op_result = second_op->eval(scope, lazy);
     if (typeid(*(first_op_result.second)) == typeid(NumberArith) && typeid(*(second_op_result.second)) == typeid(NumberArith))
-        return std::make_pair(NUMBER, make_unique<NumberArith>(*(static_cast<NumberArith*>(first_op_result.second.get())) % *(static_cast<NumberArith*>(second_op_result.second.get()))));
-    else return std::make_pair(NUMBER, make_unique<Modulo>(std::move(first_op_result.second), std::move(second_op_result.second)));
+        return std::make_pair(TypeInfo{TypeInfo::NUMBER}, make_unique<NumberArith>(*(static_cast<NumberArith*>(first_op_result.second.get())) % *(static_cast<NumberArith*>(second_op_result.second.get()))));
+    else return std::make_pair(TypeInfo{TypeInfo::NUMBER}, make_unique<Modulo>(std::move(first_op_result.second), std::move(second_op_result.second)));
 }
 
 std::string Modulo::toString() const

@@ -15,7 +15,7 @@ void LevelMultiplication::addToBasisValue(BasisValues &values, ExpressionP basis
 AbstractExpression::EvalRes LevelMultiplication::eval(Scope &scope, bool lazy) const
 {
     Operands mergedOperands;
-    ReturnType returnType = NUMBER;
+    TypeInfo returnType = TypeInfo::NUMBER;
     for (const auto &operand : operands) {
         auto evalRes = operand->eval(scope, lazy);
         if (typeid(*(evalRes.second)) == typeid(LevelMultiplication)) {
@@ -23,7 +23,7 @@ AbstractExpression::EvalRes LevelMultiplication::eval(Scope &scope, bool lazy) c
                 mergedOperands.emplace_back(std::move(childOp));
         }
         else mergedOperands.emplace_back(std::move(evalRes.second));
-        if (evalRes.first != NUMBER) returnType = evalRes.first;
+        if (evalRes.first != TypeInfo::NUMBER) returnType = evalRes.first;
     }
     Integer numberValue = 1;
     BasisValues basisValues;
@@ -41,7 +41,7 @@ AbstractExpression::EvalRes LevelMultiplication::eval(Scope &scope, bool lazy) c
     mergedOperands.clear();
     for (auto &basisValue : basisValues)
         mergedOperands.emplace_back(Exponentiation(std::move(basisValue.first), std::move(basisValue.second)).eval(scope, lazy).second);
-    if (numberValue == 0 || mergedOperands.empty()) return std::make_pair(NUMBER, make_unique<NumberArith>(numberValue));
+    if (numberValue == 0 || mergedOperands.empty()) return std::make_pair(TypeInfo{TypeInfo::NUMBER}, make_unique<NumberArith>(numberValue));
     else {
         if (! (numberValue == 1)) mergedOperands.emplace_back(make_unique<NumberArith>(numberValue));
         else if (mergedOperands.size() == 1) return std::make_pair(returnType, std::move(mergedOperands.front()));

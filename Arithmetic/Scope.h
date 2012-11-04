@@ -27,8 +27,8 @@ public:
     Scope(Scope * const parent) : parent(parent) {}
     Scope(Scope * const parent, VarDefs variables) : parent(parent), variables(std::move(variables)) {}
 
-    virtual void declareVar(AbstractExpression::ReturnType type, std::string id);
-    virtual void declareFunc(FunctionSignature sig, AbstractExpression::ReturnType returnType);
+    virtual void declareVar(TypeInfo type, std::string id);
+    virtual void declareFunc(FunctionSignature sig, TypeInfo returnType);
     virtual void defineVar(const std::string &id, VariableDefinition var);
     virtual void defineFunc(const FunctionSignature &sig, FunctionDefinition def);
 

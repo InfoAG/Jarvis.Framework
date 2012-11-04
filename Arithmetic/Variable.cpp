@@ -9,8 +9,8 @@ AbstractExpression::EvalRes Variable::eval(Scope &scope, bool lazy) const
         return std::make_pair(varDef.second.type, (varDef.second.definition == nullptr ? copy() : varDef.second.definition->copy()));
         //else return varDef.second.definition->eval(varDef.first, lazy);
     } else {
-        scope.declareVar(NUMBER, identifier);
-        return std::make_pair(NUMBER, copy());
+        scope.declareVar({TypeInfo::NUMBER}, identifier);
+        return std::make_pair(TypeInfo{TypeInfo::NUMBER}, copy());
     }
 }
 

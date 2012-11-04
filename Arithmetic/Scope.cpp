@@ -3,7 +3,7 @@
 
 namespace CAS {
 
-void Scope::declareVar(AbstractExpression::ReturnType type, std::string id)
+void Scope::declareVar(TypeInfo type, std::string id)
 {
     if (variables.find(id) != variables.end()) throw "already there";
     //else if (parent && parent->hasVar(id)) parent->declareVar(type, std::move(id));
@@ -23,7 +23,7 @@ void Scope::defineVar(const std::string &id, VariableDefinition var)
     variables.find(id)->second.definition = std::move(var.definition);*/
 }
 
-void Scope::declareFunc(FunctionSignature sig, AbstractExpression::ReturnType returnType)
+void Scope::declareFunc(FunctionSignature sig, TypeInfo returnType)
 {
     if (functions.find(sig) != functions.end()) throw "already there";
     else functions.insert(std::make_pair(std::move(sig), FunctionDefinition{returnType}));

@@ -8,10 +8,10 @@ namespace CAS {
 struct VariableDefinition
 {
     std::shared_ptr<AbstractExpression> definition;
-    AbstractExpression::ReturnType type;
+    TypeInfo type;
 
-    VariableDefinition(std::shared_ptr<AbstractExpression> definition, AbstractExpression::ReturnType type) : definition(std::move(definition)), type(type) {}
-    VariableDefinition(AbstractExpression::EvalRes evalRes) : definition(std::move(evalRes.second)), type(evalRes.first) {}
+    VariableDefinition(std::shared_ptr<AbstractExpression> definition, TypeInfo type) : definition(std::move(definition)), type(std::move(type)) {}
+    VariableDefinition(AbstractExpression::EvalRes evalRes) : definition(std::move(evalRes.second)), type(std::move(evalRes.first)) {}
 };
 
 }

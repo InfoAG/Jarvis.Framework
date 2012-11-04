@@ -11,10 +11,10 @@ struct FunctionDefinition
 {
     std::shared_ptr<AbstractExpression> definition;
     std::vector<std::string> arguments;
-    AbstractExpression::ReturnType returnType;
+    TypeInfo returnType;
 
-    FunctionDefinition(std::shared_ptr<AbstractExpression> definition, std::vector<std::string> arguments, AbstractExpression::ReturnType returnType) : definition(std::move(definition)), arguments(std::move(arguments)), returnType(returnType) {}
-    FunctionDefinition(AbstractExpression::ReturnType returnType) : returnType(returnType) {}
+    FunctionDefinition(std::shared_ptr<AbstractExpression> definition, std::vector<std::string> arguments, TypeInfo returnType) : definition(std::move(definition)), arguments(std::move(arguments)), returnType(std::move(returnType)) {}
+    FunctionDefinition(TypeInfo returnType) : returnType(std::move(returnType)) {}
 };
 
 }

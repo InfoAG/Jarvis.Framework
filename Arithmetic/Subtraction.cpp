@@ -6,7 +6,7 @@ AbstractExpression::EvalRes Subtraction::eval(Scope &scope, bool lazy) const
 {
     auto first_op_result = first_op->eval(scope, lazy), second_op_result = second_op->eval(scope, lazy);
     if (typeid(first_op_result) == typeid(NumberArith) && typeid(second_op_result) == typeid(NumberArith))
-        return std::make_pair(NUMBER, make_unique<NumberArith>(*(static_cast<NumberArith*>(first_op_result.second.get())) - *(static_cast<NumberArith*>(second_op_result.second.get()))));
+        return std::make_pair(TypeInfo{TypeInfo::NUMBER}, make_unique<NumberArith>(*(static_cast<NumberArith*>(first_op_result.second.get())) - *(static_cast<NumberArith*>(second_op_result.second.get()))));
     else return Addition(std::move(first_op_result.second), make_unique<LevelMultiplication>(make_unique<NumberArith>(-1), std::move(second_op_result.second))).eval(scope, lazy);
 }
 

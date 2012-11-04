@@ -6,7 +6,7 @@ AbstractExpression::EvalRes Exponentiation::eval(Scope &scope, bool lazy) const
 {
     auto firstOpResult = first_op->eval(scope, lazy), secondOpResult = second_op->eval(scope, lazy);
     if (typeid(*(firstOpResult.second)) == typeid(NumberArith) && typeid(*(secondOpResult.second)) == typeid(NumberArith))
-        return std::make_pair(NUMBER, make_unique<NumberArith>(pow(*(static_cast<NumberArith*>(firstOpResult.second.get())), *(static_cast<NumberArith*>(secondOpResult.second.get())))));
+        return std::make_pair(TypeInfo{TypeInfo::NUMBER}, make_unique<NumberArith>(pow(*(static_cast<NumberArith*>(firstOpResult.second.get())), *(static_cast<NumberArith*>(secondOpResult.second.get())))));
     else if (typeid(*(firstOpResult.second)) == typeid(Exponentiation))
         return Exponentiation(std::move(static_cast<Exponentiation*>(firstOpResult.second.get())->getFirstOp()),
                               make_unique<LevelMultiplication>(std::move(static_cast<Exponentiation*>(firstOpResult.second.get())->getSecondOp()),
@@ -15,11 +15,11 @@ AbstractExpression::EvalRes Exponentiation::eval(Scope &scope, bool lazy) const
         return firstOpResult;
     else if (typeid(*(secondOpResult.second)) == typeid(NumberArith)) {
         if (static_cast<NumberArith*>(secondOpResult.second.get())->getValue() == 0)
-            return std::make_pair(NUMBER, make_unique<NumberArith>(1));
+            return std::make_pair(TypeInfo{TypeInfo::NUMBER}, make_unique<NumberArith>(1));
         else if (static_cast<NumberArith*>(secondOpResult.second.get())->getValue() == 1)
             return firstOpResult;
     }
-    return std::make_pair(NUMBER, make_unique<Exponentiation>(std::move(firstOpResult.second), std::move(secondOpResult.second)));
+    return std::make_pair(TypeInfo{TypeInfo::NUMBER}, make_unique<Exponentiation>(std::move(firstOpResult.second), std::move(secondOpResult.second)));
 }
 
 

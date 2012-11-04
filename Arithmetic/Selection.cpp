@@ -21,7 +21,7 @@ AbstractExpression::EvalRes Selection::eval(Scope &scope, bool lazy) const
         newOps.emplace_back(std::move(firstSelectRes.second));
         for (auto it = operands.cbegin() + 1; it != operands.cend(); ++it)
             newOps.emplace_back((*it)->eval(scope, lazy).second);
-        return std::make_pair(UNKNOWN, make_unique<Selection>(std::move(opResult.second), std::move(newOps))); //unless all elements in list have same type
+        return std::make_pair(TypeInfo::VOID, make_unique<Selection>(std::move(opResult.second), std::move(newOps))); //unless all elements in list have same type
     }
 }
 

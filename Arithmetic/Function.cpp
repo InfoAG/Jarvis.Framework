@@ -4,7 +4,7 @@ namespace CAS {
 
 AbstractExpression::EvalRes Function::eval(Scope &scope, bool lazy) const
 {
-    std::vector<ReturnType> opTypes;
+    std::vector<TypeInfo> opTypes;
     std::vector<ExpressionP> opResults;
     for (const auto &op : operands) {
         auto result = op->eval(scope, lazy);
@@ -25,7 +25,7 @@ AbstractExpression::EvalRes Function::eval(Scope &scope, bool lazy) const
         Operands evaldOps;
         evaldOps.reserve(operands.size());
         for (const auto &operand : operands) evaldOps.emplace_back(operand->eval(scope, lazy).second);
-        return std::make_pair(NUMBER, make_unique<Function>(identifier, std::move(evaldOps)));
+        return std::make_pair(TypeInfo{TypeInfo::NUMBER}, make_unique<Function>(identifier, std::move(evaldOps)));
     }
 }
 
