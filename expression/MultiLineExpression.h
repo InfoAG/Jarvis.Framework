@@ -1,0 +1,24 @@
+#ifndef MULTILINEEXPRESSION_H
+#define MULTILINEEXPRESSION_H
+
+#include "AbstractLevelingOperation.h"
+#include "Scope.h"
+#include "OutputExpression.h"
+#include "ReturnExpression.h"
+
+namespace CAS {
+
+class MultiLineExpression : public AbstractLevelingOperation
+{
+public:
+    MultiLineExpression(Operands operands) : AbstractLevelingOperation(std::move(operands)) {}
+    virtual std::unique_ptr<AbstractExpression> copy() const { return make_unique<MultiLineExpression>(*this); }
+
+    virtual EvalRes eval(Scope &scope, const std::function<void(const std::string &)> &load, bool lazy, bool direct) const;
+    virtual std::string toString() const;
+    virtual bool equals(const AbstractExpression *other) const;
+};
+
+}
+
+#endif // MULTILINEEXPRESSION_H
