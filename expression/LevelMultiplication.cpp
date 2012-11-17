@@ -25,7 +25,7 @@ AbstractExpression::EvalRes LevelMultiplication::eval(Scope &scope, const std::f
         else mergedOperands.emplace_back(std::move(evalRes.second));
         if (evalRes.first != TypeInfo::NUMBER) returnType = evalRes.first;
     }
-    Integer numberValue = 1;
+    double numberValue = 1;
     BasisValues basisValues;
 
     // http://www.iaeng.org/publication/WCE2010/WCE2010_pp1829-1833.pdf

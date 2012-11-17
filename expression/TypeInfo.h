@@ -11,6 +11,7 @@ struct TypeInfo
         NUMBER,
         LIST,
         BOOL,
+        VECTOR,
         VOID
     } type;
     std::unique_ptr<TypeInfo> next;
@@ -23,6 +24,7 @@ struct TypeInfo
     TypeInfo(ExpressionType type, TypeInfo next) : type(type), next(make_unique<TypeInfo>(std::move(next))) {}
 
     std::string toString() const;
+    TypeInfo getNext() const { return *next; }
 
     TypeInfo &operator=(const TypeInfo &other) { type = other.type; if (other.next == nullptr) next.reset(); else next = make_unique<TypeInfo>(*(other.next)); return *this; }
     TypeInfo &operator=(ExpressionType otherType) { type = otherType; next.reset(); return *this; }

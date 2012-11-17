@@ -13,32 +13,33 @@ AbstractExpression::EvalRes Function::eval(Scope &scope, const std::function<voi
         opResults.emplace_back(std::move(result.second));
     }
     FunctionSignature sig{identifier, opTypes};
-    if (scope.hasFunc(sig)) {
-        Scope::VarDefs funcVars;
-        auto funcDefMatch = scope.getFunc(sig);
-        if (lazy || funcDefMatch.second.definition == nullptr)
-            return std::make_pair(funcDefMatch.second.returnType, copy());
+    if (! scope.hasFunc(sig)) {
+        if (opTypes.size() == 1 && opTypes.front() == TypeInfo::LIST) {
+            sig.argumentTypes = std::vector<TypeInfo>(static_cast<List*>(operands.front().get())->getOperands().size(), opTypes.front().getNext());
+            opResults = std::move(static_cast<List*>(operands.front().get())->getOperands());
+            if (! scope.hasFunc(sig))
+                return std::make_pair(TypeInfo{TypeInfo::NUMBER}, make_unique<Function>(identifier, std::move(opResults)));
+        } else return std::make_pair(TypeInfo{TypeInfo::NUMBER}, make_unique<Function>(identifier, std::move(opResults)));
+    }
+    Scope::VarDefs funcVars;
+    auto funcDefMatch = scope.getFunc(sig);
+    if (lazy || funcDefMatch.second.definition == nullptr)
+        return std::make_pair(funcDefMatch.second.returnType, copy());
+    else {
+        EvalRes result;
+        if (typeid(*(funcDefMatch.second.definition)) == typeid(CFunctionBody))
+            result = static_cast<CFunctionBody*>(funcDefMatch.second.definition.get())->evalWithArgs(std::move(opResults), scope, load, lazy, direct);
         else {
-            EvalRes result;
-            if (typeid(*(funcDefMatch.second.definition)) == typeid(CFunctionBody))
-                result = static_cast<CFunctionBody*>(funcDefMatch.second.definition.get())->evalWithArgs(std::move(opResults), scope, load, lazy, direct);
-            else {
-                auto itOpResults = opResults.begin();
-                auto itOpTypes = opTypes.cbegin();
-                for (auto &funcVar : funcDefMatch.second.arguments)
-                    funcVars.insert(std::make_pair(std::move(funcVar), VariableDefinition{std::move(*(itOpResults++)), *(itOpTypes++)}));
-                Scope funcScope(&funcDefMatch.first, std::move(funcVars));
-                result = funcDefMatch.second.definition->eval(funcScope, load);
-            }
-            if (result.first != funcDefMatch.second.returnType) throw "return type";
-            else if (direct && ! result.second->isValue()) throw "directnonono";
-            else return result;
+            auto itOpResults = opResults.begin();
+            auto itOpTypes = opTypes.cbegin();
+            for (auto &funcVar : funcDefMatch.second.arguments)
+                funcVars.insert(std::make_pair(std::move(funcVar), VariableDefinition{std::move(*(itOpResults++)), *(itOpTypes++)}));
+            Scope funcScope(&funcDefMatch.first, std::move(funcVars));
+            result = funcDefMatch.second.definition->eval(funcScope, load);
         }
-    } else {
-        Operands evaldOps;
-        evaldOps.reserve(operands.size());
-        for (const auto &operand : operands) evaldOps.emplace_back(operand->eval(scope, load, lazy, direct).second);
-        return std::make_pair(TypeInfo{TypeInfo::NUMBER}, make_unique<Function>(identifier, std::move(evaldOps)));
+        if (result.first != funcDefMatch.second.returnType) throw "return type";
+        else if (direct && ! result.second->isValue()) throw "directnonono";
+        else return result;
     }
 }
 

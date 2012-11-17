@@ -4,18 +4,19 @@
 #include "AbstractLevelingOperation.h"
 #include "NumberArith.h"
 #include "LevelMultiplication.h"
-#include "List.h"
 #include <algorithm>
 #include <map>
 
 namespace CAS {
 
+class List;
+
 class Addition : public AbstractLevelingOperation
 {
 private:
-    typedef std::vector<std::pair<std::vector<AbstractExpression*>, Integer>> MonomValues;
+    typedef std::vector<std::pair<std::vector<AbstractExpression*>, double>> MonomValues;
 
-    Integer &accessMonomValue(MonomValues &values, Operands monom) const;
+    double &accessMonomValue(MonomValues &values, Operands monom) const;
 
 public:
     /**

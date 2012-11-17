@@ -1,11 +1,12 @@
 #include "Addition.h"
+#include "List.h"
 
 namespace CAS {
 
-Integer &Addition::accessMonomValue(MonomValues &values, Operands monom) const
+double &Addition::accessMonomValue(MonomValues &values, Operands monom) const
 {
     MonomValues::iterator it = std::find_if(begin(values), end(values),
-            [&](const std::pair<std::vector<AbstractExpression*>, Integer> &item) {
+            [&](const std::pair<std::vector<AbstractExpression*>, double> &item) {
                 return equalOperands(item.first, monom);
         });
     if (it != values.end()) return it->second;
@@ -30,7 +31,7 @@ AbstractExpression::EvalRes Addition::eval(Scope &scope, const std::function<voi
         else mergedOperands.emplace_back(std::move(evalRes));
     }
     MonomValues monomValues;
-    Integer numberValue = 0;
+    double numberValue = 0;
     std::map<unsigned int, Operands> listByDimension;
     for (auto &operand : mergedOperands) {
         if (typeid(*operand) == typeid(NumberArith))
@@ -41,7 +42,7 @@ AbstractExpression::EvalRes Addition::eval(Scope &scope, const std::function<voi
                 for (auto itChild = begin(static_cast<LevelMultiplication*>(operand.get())->getOperands());
                      itChild != end(static_cast<LevelMultiplication*>(operand.get())->getOperands()) - 1; ++itChild)
                     monom.emplace_back(std::move(*itChild));*/
-                Integer monomValue = std::move(static_cast<NumberArith*>(static_cast<LevelMultiplication*>(operand.get())->getOperands().back().get())->getValue());
+                double monomValue = std::move(static_cast<NumberArith*>(static_cast<LevelMultiplication*>(operand.get())->getOperands().back().get())->getValue());
                 static_cast<LevelMultiplication*>(operand.get())->getOperands().erase(end(static_cast<LevelMultiplication*>(operand.get())->getOperands()));
                 accessMonomValue(monomValues, std::move(static_cast<LevelMultiplication*>(operand.get())->getOperands())) += monomValue;
             } else accessMonomValue(monomValues, std::move(static_cast<LevelMultiplication*>(operand.get())->getOperands()))++;
@@ -87,7 +88,7 @@ else return std::make_pair(TypeInfo{TypeInfo::NUMBER}, make_unique<Addition>(std
 /*
 AbstractExpression::EvalRes Addition::directEval() const
 {
-    Integer result;
+    double result;
     for (const auto &op : operands) {
         auto opRes = op->directEval().second;
         if (typeid(*opRes) != typeid(NumberArith)) throw "nodirectnonono";

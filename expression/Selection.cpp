@@ -8,13 +8,13 @@ AbstractExpression::EvalRes Selection::eval(Scope &scope, const std::function<vo
 
     if (typeid(*(opResult.second)) == typeid(List) && typeid(*(firstSelectRes.second)) == typeid(NumberArith) && static_cast<const NumberArith*>(firstSelectRes.second.get())->getValue() < static_cast<const List*>(opResult.second.get())->getOperands().size()) {
         if (operands.size() == 1)
-            return static_cast<List*>(opResult.second.get())->getOperands().at(static_cast<const NumberArith*>(firstSelectRes.second.get())->getValue().getNumberAt(0))->eval(scope, load, lazy, direct);
+            return static_cast<List*>(opResult.second.get())->getOperands().at(static_cast<int>(static_cast<const NumberArith*>(firstSelectRes.second.get())->getValue()))->eval(scope, load, lazy, direct);
         else {
             Operands newOps;
             newOps.reserve(operands.size());
             for (auto it = operands.cbegin() + 1; it != operands.cend(); ++it)
                 newOps.emplace_back((*it)->copy());
-            return Selection(std::move(static_cast<List*>(opResult.second.get())->getOperands().at(static_cast<const NumberArith*>(firstSelectRes.second.get())->getValue().getNumberAt(0))), std::move(newOps)).eval(scope, load, lazy, direct);
+            return Selection(std::move(static_cast<List*>(opResult.second.get())->getOperands().at(static_cast<int>(static_cast<const NumberArith*>(firstSelectRes.second.get())->getValue()))), std::move(newOps)).eval(scope, load, lazy, direct);
         }
     } else {
         Operands newOps;

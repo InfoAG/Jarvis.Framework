@@ -4,6 +4,7 @@
 #include <vector>
 #include "global.h"
 #include "AbstractLevelingOperation.h"
+#include "Addition.h"
 
 namespace CAS {
 
@@ -18,6 +19,7 @@ public:
     virtual std::string toString() const;
     virtual bool equals(const AbstractExpression *other) const;
     virtual bool isValue() const { return true; }
+    ExpressionP sum() { return make_unique<Addition>(std::move(operands)); }
 };
 
 }
