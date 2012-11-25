@@ -1,4 +1,5 @@
 #include "LevelMultiplication.h"
+#include "List.h"
 
 namespace CAS {
 
@@ -27,25 +28,55 @@ AbstractExpression::EvalRes LevelMultiplication::eval(Scope &scope, const std::f
     }
     double numberValue = 1;
     BasisValues basisValues;
+    VectorExpression vec;
+    std::map<unsigned int, Operands> listByDimension;
 
     // http://www.iaeng.org/publication/WCE2010/WCE2010_pp1829-1833.pdf
 
-    for (auto &operand : mergedOperands) {
+
+    while (! mergedOperands.empty()) {
+        auto &operand = mergedOperands.front();
         if (typeid(*operand) == typeid(NumberArith))
             numberValue *= static_cast<NumberArith*>(operand.get())->getValue();
-        else if (typeid(*operand) == typeid(Exponentiation))
+        else if (typeid(*operand) == typeid(VectorExpression))
+            vec = std::move(*static_cast<VectorExpression*>(operand.get()));
+        else if (typeid(*operand) == typeid(List)) {
+            auto findRes = listByDimension.find(static_cast<List*>(operand.get())->getOperands().size());
+            if (findRes == listByDimension.end())
+                listByDimension[static_cast<List*>(operand.get())->getOperands().size()] = std::move(static_cast<List*>(operand.get())->getOperands());
+            else {
+                auto listIt = static_cast<List*>(operand.get())->getOperands().begin();
+                for (auto &cell : findRes->second)
+                    cell = make_unique<BinaryMultiplication>(std::move(cell), std::move(*listIt++));
+            }
+        } else if (typeid(*operand) == typeid(Exponentiation))
             addToBasisValue(basisValues, std::move(static_cast<Exponentiation*>(operand.get())->getFirstOp()), std::move(static_cast<Exponentiation*>(operand.get())->getSecondOp()));
         else
             addToBasisValue(basisValues, std::move(operand), make_unique<NumberArith>(1));
+        mergedOperands.erase(begin(mergedOperands));
     }
     mergedOperands.clear();
-    for (auto &basisValue : basisValues)
-        mergedOperands.emplace_back(Exponentiation(std::move(basisValue.first), std::move(basisValue.second)).eval(scope, load, lazy, direct).second);
-    if (numberValue == 0 || mergedOperands.empty()) return std::make_pair(TypeInfo{TypeInfo::NUMBER}, make_unique<NumberArith>(numberValue));
+    if (numberValue == 0) return std::make_pair(TypeInfo::NUMBER, make_unique<NumberArith>(0));
     else {
-        if (! (numberValue == 1)) mergedOperands.emplace_back(make_unique<NumberArith>(numberValue));
-        else if (mergedOperands.size() == 1) return std::make_pair(returnType, std::move(mergedOperands.front()));
-        return std::make_pair(returnType, make_unique<LevelMultiplication>(std::move(mergedOperands)));
+        if (numberValue == 1) {
+            if (vec.getX() != nullptr)
+                mergedOperands.emplace_back(make_unique<VectorExpression>(std::move(vec)));
+        } else {
+            if (vec.getX() != nullptr) {
+                vec = *static_cast<VectorExpression*>(VectorExpression(make_unique<LevelMultiplication>(make_unique<NumberArith>(numberValue), std::move(vec.getX())), make_unique<LevelMultiplication>(make_unique<NumberArith>(numberValue), std::move(vec.getY())), make_unique<LevelMultiplication>(make_unique<NumberArith>(numberValue), std::move(vec.getZ()))).eval(scope, load, lazy, direct).second.get());
+                mergedOperands.emplace_back(make_unique<VectorExpression>(std::move(vec)));
+            } else if (! listByDimension.empty()) {
+                for (auto &cell : listByDimension.begin()->second)
+                    cell = make_unique<BinaryMultiplication>(std::move(cell), make_unique<NumberArith>(numberValue));
+            } else mergedOperands.emplace_back(make_unique<NumberArith>(numberValue));
+        }
+        for (auto &basisValue : basisValues)
+            mergedOperands.emplace_back(Exponentiation(std::move(basisValue.first), std::move(basisValue.second)).eval(scope, load, lazy, direct).second);
+        for (auto &list : listByDimension)
+            mergedOperands.emplace_back(List(std::move(list.second)).eval(scope, load, lazy, direct).second);
+        if (mergedOperands.size() == 1) return std::make_pair(std::move(returnType), std::move(mergedOperands.front()));
+        else if (mergedOperands.empty()) return std::make_pair(TypeInfo::NUMBER, make_unique<NumberArith>(1));
+        else return std::make_pair(std::move(returnType), make_unique<LevelMultiplication>(std::move(mergedOperands)));
     }
 }
 

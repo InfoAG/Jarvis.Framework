@@ -2,9 +2,12 @@
 #define BINARYMULTIPLICATON_H
 
 #include "AbstractBinaryOperation.h"
-#include "LevelMultiplication.h"
+#include "VectorExpression.h"
+#include "Addition.h"
 
 namespace CAS {
+
+class LevelMultiplication;
 
 class BinaryMultiplication : public AbstractBinaryOperation
 {

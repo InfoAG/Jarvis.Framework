@@ -22,26 +22,29 @@ AbstractExpression::EvalRes Addition::eval(Scope &scope, const std::function<voi
 {
     Operands mergedOperands;
     mergedOperands.reserve(operands.size());
+    TypeInfo returnType = TypeInfo::NUMBER;
     for (const auto &operand : operands) {
-        auto evalRes = operand->eval(scope, load, lazy, direct).second;
-        if (typeid(*evalRes) == typeid(Addition)) {
-            for (auto &childOp : static_cast<Addition*>(evalRes.get())->getOperands())
+        auto evalRes = operand->eval(scope, load, lazy, direct);
+        if (evalRes.first != TypeInfo::NUMBER) {
+            if (returnType != TypeInfo::NUMBER && returnType != evalRes.first) throw "typing";
+            else returnType = evalRes.first;
+        }
+            returnType = std::move(evalRes.first);
+        if (typeid(*(evalRes.second)) == typeid(Addition)) {
+            for (auto &childOp : static_cast<Addition*>(evalRes.second.get())->getOperands())
                 mergedOperands.emplace_back(std::move(childOp));
         }
-        else mergedOperands.emplace_back(std::move(evalRes));
+        else mergedOperands.emplace_back(std::move(evalRes.second));
     }
     MonomValues monomValues;
     double numberValue = 0;
+    VectorExpression vec;
     std::map<unsigned int, Operands> listByDimension;
     for (auto &operand : mergedOperands) {
         if (typeid(*operand) == typeid(NumberArith))
             numberValue += static_cast<NumberArith*>(operand.get())->getValue();
         else if (typeid(*operand) == typeid(LevelMultiplication)) {
             if (typeid(static_cast<LevelMultiplication*>(operand.get())->getOperands().back()) == typeid(NumberArith)) {
-                /*Operands monom;
-                for (auto itChild = begin(static_cast<LevelMultiplication*>(operand.get())->getOperands());
-                     itChild != end(static_cast<LevelMultiplication*>(operand.get())->getOperands()) - 1; ++itChild)
-                    monom.emplace_back(std::move(*itChild));*/
                 double monomValue = std::move(static_cast<NumberArith*>(static_cast<LevelMultiplication*>(operand.get())->getOperands().back().get())->getValue());
                 static_cast<LevelMultiplication*>(operand.get())->getOperands().erase(end(static_cast<LevelMultiplication*>(operand.get())->getOperands()));
                 accessMonomValue(monomValues, std::move(static_cast<LevelMultiplication*>(operand.get())->getOperands())) += monomValue;
@@ -55,6 +58,9 @@ AbstractExpression::EvalRes Addition::eval(Scope &scope, const std::function<voi
                     for (auto &cell : findRes->second)
                         cell = make_unique<Addition>(std::move(cell), std::move(*listIt++));
                 }
+        } else if (typeid(*operand) == typeid(VectorExpression)) {
+            if (vec.getX() == nullptr) vec = std::move(*static_cast<VectorExpression*>(operand.get()));
+            else vec = VectorExpression(Addition(std::move(static_cast<VectorExpression*>(operand.get())->getX()), std::move(vec.getX())).eval(scope, load, lazy, direct).second, Addition(std::move(static_cast<VectorExpression*>(operand.get())->getY()), std::move(vec.getY())).eval(scope, load, lazy, direct).second, Addition(std::move(static_cast<VectorExpression*>(operand.get())->getZ()), std::move(vec.getZ())).eval(scope, load, lazy, direct).second);
         } else {
             Operands singleOpVec(1);
             singleOpVec.at(0) = std::move(operand);
@@ -63,12 +69,14 @@ AbstractExpression::EvalRes Addition::eval(Scope &scope, const std::function<voi
     }
     mergedOperands.clear();
     if (numberValue != 0) {
-        if (listByDimension.empty()) mergedOperands.emplace_back(make_unique<NumberArith>(numberValue));
-        else {
+        if (vec.getX() != nullptr) {
+            vec = VectorExpression(Addition(make_unique<NumberArith>(numberValue), std::move(vec.getX())).eval(scope, load, lazy, direct).second, Addition(make_unique<NumberArith>(numberValue), std::move(vec.getY())).eval(scope, load, lazy, direct).second, Addition(make_unique<NumberArith>(numberValue), std::move(vec.getZ())).eval(scope, load, lazy, direct).second);
+        } else if (! listByDimension.empty()) {
             for (auto &cell : listByDimension.begin()->second)
                 cell = make_unique<Addition>(std::move(cell), make_unique<NumberArith>(numberValue));
-        }
+        } else mergedOperands.emplace_back(make_unique<NumberArith>(numberValue));
     }
+    if (vec.getX() != nullptr) mergedOperands.emplace_back(make_unique<VectorExpression>(std::move(vec)));
     for (auto &list : listByDimension) mergedOperands.emplace_back(List(std::move(list.second)).eval(scope, load, lazy, direct).second);
     for (auto &item : monomValues) {
         Operands workaroundVec;
@@ -81,8 +89,8 @@ AbstractExpression::EvalRes Addition::eval(Scope &scope, const std::function<voi
         }
     }
     if (mergedOperands.size() == 0) return std::make_pair(TypeInfo{TypeInfo::NUMBER}, make_unique<NumberArith>(0));
-    else if (mergedOperands.size() == 1) return std::make_pair(TypeInfo{TypeInfo::NUMBER}, std::move(mergedOperands.front()));
-else return std::make_pair(TypeInfo{TypeInfo::NUMBER}, make_unique<Addition>(std::move(mergedOperands)));
+    else if (mergedOperands.size() == 1) return std::make_pair(std::move(returnType), std::move(mergedOperands.front()));
+else return std::make_pair(std::move(returnType), make_unique<Addition>(std::move(mergedOperands)));
 }
 
 /*

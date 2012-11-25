@@ -4,6 +4,7 @@
 #include "AbstractLevelingOperation.h"
 #include "NumberArith.h"
 #include "LevelMultiplication.h"
+#include "VectorExpression.h"
 #include <algorithm>
 #include <map>
 

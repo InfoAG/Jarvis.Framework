@@ -4,9 +4,12 @@
 #include "AbstractLevelingOperation.h"
 #include "NumberArith.h"
 #include "Exponentiation.h"
-#include "Addition.h"
+#include "BinaryMultiplication.h"
 
 namespace CAS {
+
+class Addition;
+class List;
 
 class LevelMultiplication : public AbstractLevelingOperation
 {

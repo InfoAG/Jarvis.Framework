@@ -5,7 +5,8 @@ namespace CAS {
 AbstractExpression::EvalRes Division::eval(Scope &scope, const std::function<void(const std::string &)> &load, bool lazy, bool direct) const
 {
     auto firstOpResult = first_op->eval(scope, load, lazy, direct), secondOpResult = second_op->eval(scope, load, lazy, direct);
-    if (firstOpResult.second->equals(secondOpResult.second.get()))
+    if (firstOpResult.first != TypeInfo::NUMBER || secondOpResult.first != TypeInfo::NUMBER) throw "typing";
+    else if (firstOpResult.second->equals(secondOpResult.second.get()))
         return std::make_pair(TypeInfo{TypeInfo::NUMBER}, make_unique<NumberArith>(1));
     else if (typeid(*(firstOpResult.second)) == typeid(NumberArith) && typeid(*(secondOpResult.second)) == typeid(NumberArith))
         return std::make_pair(TypeInfo{TypeInfo::NUMBER}, make_unique<NumberArith>(*(static_cast<NumberArith*>(firstOpResult.second.get())) / *(static_cast<NumberArith*>(secondOpResult.second.get()))));
