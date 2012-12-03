@@ -2,11 +2,16 @@
 
 namespace CAS {
 
-AbstractExpression::EvalRes ReturnExpression::eval(Scope &scope, const std::function<void(const std::string &)> &load, bool lazy, bool direct) const
+AbstractExpression::ExpressionP ReturnExpression::eval(Scope &scope, const std::function<void(const std::string &)> &load, bool lazy, bool direct) const
 {
-    auto opRes = operand->eval(scope, load, lazy, direct);
-    if (opRes.first == TypeInfo::VOID) throw "return type";
-    return std::make_pair(opRes.first, make_unique<ReturnExpression>(std::move(opRes.second)));
+    return make_unique<ReturnExpression>(operand->eval(scope, load, lazy, direct));
+}
+
+TypeInfo ReturnExpression::typeCheck(const TypeCollection &candidates, Scope &scope)
+{
+    TypeCollection tc(candidates);
+    tc.types.erase(TypeInfo::VOID);
+    return operand->typeCheck(tc, scope);
 }
 
 bool ReturnExpression::equals(const AbstractExpression *other) const

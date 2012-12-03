@@ -5,26 +5,32 @@
 
 namespace CAS {
 
-struct TypeInfo
+class TypeInfo
 {
+public:
     enum ExpressionType {
-        NUMBER,
-        LIST,
-        BOOL,
-        VECTOR,
-        VOID
-    } type;
+        NUMBER = 1,
+        BOOL = 2,
+        VECTOR = 4,
+        MATRIX = 8,
+        VOID = 16,
+        LIST
+    };
+
+private:
+    ExpressionType type;
     std::unique_ptr<TypeInfo> next;
 
+public:
     static TypeInfo fromString(const std::string &str);
 
-    TypeInfo() {}
+    TypeInfo() : type(VOID) {}
     TypeInfo(const TypeInfo &other) : type(other.type) { if (other.next != nullptr) next = make_unique<TypeInfo>(*(other.next)); }
     TypeInfo(ExpressionType type) : type(type) {}
     TypeInfo(ExpressionType type, TypeInfo next) : type(type), next(make_unique<TypeInfo>(std::move(next))) {}
 
     std::string toString() const;
-    TypeInfo getNext() const { return *next; }
+    TypeInfo *getNext() const { return next.get(); }
 
     TypeInfo &operator=(const TypeInfo &other) { type = other.type; if (other.next == nullptr) next.reset(); else next = make_unique<TypeInfo>(*(other.next)); return *this; }
     TypeInfo &operator=(ExpressionType otherType) { type = otherType; next.reset(); return *this; }

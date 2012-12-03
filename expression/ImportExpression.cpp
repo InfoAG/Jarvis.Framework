@@ -2,10 +2,10 @@
 
 namespace CAS {
 
-AbstractExpression::EvalRes ImportExpression::eval(Scope &, const std::function<void(const std::string &)> &load, bool, bool) const
+AbstractExpression::ExpressionP ImportExpression::eval(Scope &, const std::function<void(const std::string &)> &load, bool, bool) const
 {
     load(fileName);
-    return std::make_pair(TypeInfo::VOID, make_unique<OutputExpression>());
+    return make_unique<OutputExpression>();
 }
 
 bool ImportExpression::equals(const AbstractExpression *other) const

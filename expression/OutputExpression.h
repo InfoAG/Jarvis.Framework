@@ -12,7 +12,8 @@ public:
     OutputExpression(ExpressionP operand) : AbstractUnaryOperation(std::move(operand)) {}
     virtual ExpressionP copy() const { return make_unique<OutputExpression>(*this); }
 
-    virtual EvalRes eval(Scope &scope, const std::function<void(const std::string &)> &load, bool lazy, bool direct) const { return std::make_pair(TypeInfo::VOID, make_unique<OutputExpression>(operand->eval(scope, load, lazy, direct).second)); }
+    virtual ExpressionP eval(Scope &scope, const std::function<void(const std::string &)> &load, bool lazy, bool direct) const { return make_unique<OutputExpression>(operand->eval(scope, load, lazy, direct)); }
+    virtual TypeInfo typeCheck(const TypeCollection &candidates, Scope &scope);
     virtual std::string toString() const { if (operand == nullptr) return std::string(); else return operand->toString(); }
     virtual bool equals(const AbstractExpression *other) const;
 };

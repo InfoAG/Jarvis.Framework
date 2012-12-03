@@ -7,13 +7,13 @@ namespace CAS {
 
 struct VariableDefinition
 {
-    std::shared_ptr<AbstractExpression> definition;
+    std::unique_ptr<AbstractExpression> definition;
     TypeInfo type;
-    bool recursion{false};
+    bool recursion;
 
-    VariableDefinition(std::shared_ptr<AbstractExpression> definition, TypeInfo type) : definition(std::move(definition)), type(std::move(type)), recursion(false) {}
-    VariableDefinition(AbstractExpression::EvalRes evalRes) : definition(std::move(evalRes.second)), type(std::move(evalRes.first)), recursion(false) {}
-    VariableDefinition(const VariableDefinition &other, bool recursion) : definition(other.definition), type(other.type), recursion(recursion) {}
+    VariableDefinition(AbstractExpression::ExpressionP definition, TypeInfo type, bool recursion = false) : definition(std::move(definition)), type(std::move(type)), recursion(recursion) {}
+    VariableDefinition(TypeInfo type) : type(std::move(type)), recursion(false) {}
+    VariableDefinition(const VariableDefinition &other) : definition(other.definition ? other.definition->copy() : nullptr), type(other.type), recursion(other.recursion) {}
 };
 
 }

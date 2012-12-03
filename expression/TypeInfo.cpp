@@ -8,6 +8,7 @@ TypeInfo TypeInfo::fromString(const std::string &str)
     else if (str == "bool") return BOOL;
     else if (str.substr(0, 5) == "list<" && str.back() == '>') return {LIST, fromString(str.substr(5, str.length() - 6))};
     else if (str == "vector") return VECTOR;
+    else if (str == "matrix") return MATRIX;
     else throw "not a type";
 }
 
@@ -19,6 +20,7 @@ std::string TypeInfo::toString() const
     case VOID: return "void";
     case LIST: return "list<" + next->toString() + ">";
     case VECTOR: return "vector";
+    case MATRIX: return "matrix";
     }
 }
 

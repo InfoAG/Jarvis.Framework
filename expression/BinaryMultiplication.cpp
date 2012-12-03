@@ -2,20 +2,72 @@
 
 namespace CAS {
 
-AbstractExpression::EvalRes BinaryMultiplication::eval(Scope &scope, const std::function<void(const std::string &)> &load, bool lazy, bool direct) const
+AbstractExpression::ExpressionP BinaryMultiplication::eval(Scope &scope, const std::function<void(const std::string &)> &load, bool lazy, bool direct) const
 {
     auto firstOpResult = first_op->eval(scope, load, lazy, direct), secondOpResult = second_op->eval(scope, load, lazy, direct);
-    if (firstOpResult.first == TypeInfo::VECTOR && secondOpResult.first == TypeInfo::VECTOR) {
-        if (typeid(*(firstOpResult.second)) == typeid(VectorExpression) && typeid(*(secondOpResult.second)) == typeid(VectorExpression)) {
+    if (type == SCALARVECTOR) {
+        if (typeid(*(firstOpResult)) == typeid(VectorExpression) && typeid(*(secondOpResult)) == typeid(VectorExpression)) {
             Operands addOps;
-            addOps.emplace_back(make_unique<LevelMultiplication>(std::move(static_cast<VectorExpression*>(firstOpResult.second.get())->getX()), std::move(static_cast<VectorExpression*>(secondOpResult.second.get())->getX())));
-            addOps.emplace_back(make_unique<LevelMultiplication>(std::move(static_cast<VectorExpression*>(firstOpResult.second.get())->getY()), std::move(static_cast<VectorExpression*>(secondOpResult.second.get())->getY())));
-            addOps.emplace_back(make_unique<LevelMultiplication>(std::move(static_cast<VectorExpression*>(firstOpResult.second.get())->getZ()), std::move(static_cast<VectorExpression*>(secondOpResult.second.get())->getZ())));
+            addOps.emplace_back(make_unique<LevelMultiplication>(std::move(static_cast<VectorExpression*>(firstOpResult.get())->getX()), std::move(static_cast<VectorExpression*>(secondOpResult.get())->getX())));
+            addOps.emplace_back(make_unique<LevelMultiplication>(std::move(static_cast<VectorExpression*>(firstOpResult.get())->getY()), std::move(static_cast<VectorExpression*>(secondOpResult.get())->getY())));
+            addOps.emplace_back(make_unique<LevelMultiplication>(std::move(static_cast<VectorExpression*>(firstOpResult.get())->getZ()), std::move(static_cast<VectorExpression*>(secondOpResult.get())->getZ())));
             return Addition(std::move(addOps)).eval(scope, load, lazy, direct);
-        } else return std::make_pair(TypeInfo::NUMBER, make_unique<BinaryMultiplication>(std::move(firstOpResult.second), std::move(secondOpResult.second)));
-    } if ((firstOpResult.first == TypeInfo::VECTOR && secondOpResult.first == TypeInfo::LIST) || (firstOpResult.first == TypeInfo::LIST && secondOpResult.first == TypeInfo::VECTOR))
-        throw "typing";
-    else return LevelMultiplication(std::move(firstOpResult.second), std::move(secondOpResult.second)).eval(scope, load, lazy, direct);
+        } else return make_unique<BinaryMultiplication>(std::move(firstOpResult), std::move(secondOpResult));
+    } else return LevelMultiplication(std::move(firstOpResult), std::move(secondOpResult), (type == LEVELNUM)).eval(scope, load, lazy, direct);
+}
+
+TypeInfo BinaryMultiplication::typeCheck(const TypeCollection &candidates, Scope &scope)
+{
+    TypeCollection cp(candidates);
+    cp.types.erase(TypeInfo::VOID);
+    cp.types.erase(TypeInfo::BOOL);
+    cp.listElementTypes.erase(TypeInfo::BOOL);
+    cp.listElementTypes.erase(TypeInfo::VOID);
+    auto num = cp.contains(TypeInfo::NUMBER);
+    if (! num) cp.types.insert(TypeInfo::NUMBER);
+    try {
+        auto firstOpT = first_op->typeCheck(cp, scope);
+        if (firstOpT == TypeInfo::NUMBER) {
+            if (! num) cp.types.erase(TypeInfo::NUMBER);
+            auto secondOpT = second_op->typeCheck(cp, scope);
+            if (secondOpT == TypeInfo::NUMBER) type = LEVELNUM;
+            else type = LEVEL;
+            return secondOpT;
+        } else if (firstOpT == TypeInfo::VECTOR) {
+            auto secondOpT = second_op->typeCheck({{TypeInfo::NUMBER, firstOpT}}, scope);
+            if (secondOpT == TypeInfo::VECTOR) {
+                type = SCALARVECTOR;
+                return TypeInfo::NUMBER;
+            } else {
+                type = LEVEL;
+                return TypeInfo::VECTOR;
+            }
+        } else {
+            second_op->typeCheck({{TypeInfo::NUMBER, firstOpT}}, scope);
+            return firstOpT;
+        }
+    } catch (const char *) {
+        auto secondOpT = second_op->typeCheck(cp, scope);
+        if (secondOpT == TypeInfo::NUMBER) {
+            if (! num) cp.types.erase(TypeInfo::NUMBER);
+            auto firstOpT = first_op->typeCheck(cp, scope);
+            if (firstOpT == TypeInfo::NUMBER) type = LEVELNUM;
+            else type = LEVEL;
+            return firstOpT;
+        } else if (secondOpT == TypeInfo::VECTOR) {
+            auto firstOpT = second_op->typeCheck({{TypeInfo::NUMBER, secondOpT}}, scope);
+            if (firstOpT == TypeInfo::VECTOR) {
+                type = SCALARVECTOR;
+                return TypeInfo::NUMBER;
+            } else {
+                type = LEVEL;
+                return TypeInfo::VECTOR;
+            }
+        } else {
+            first_op->typeCheck({{TypeInfo::NUMBER, secondOpT}}, scope);
+            return secondOpT;
+        }
+    }
 }
 
 bool BinaryMultiplication::equals(const AbstractExpression *other) const

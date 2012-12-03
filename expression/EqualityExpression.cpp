@@ -2,17 +2,36 @@
 
 namespace CAS {
 
-AbstractExpression::EvalRes EqualityExpression::eval(Scope &scope, const std::function<void(const std::string &)> &load, bool lazy, bool direct) const
+AbstractExpression::ExpressionP EqualityExpression::eval(Scope &scope, const std::function<void(const std::string &)> &load, bool lazy, bool direct) const
 {
-    auto firstOpResult = first_op->eval(scope, load, lazy, direct), secondOpResult = second_op->eval(scope, load, lazy, direct);
-    if (firstOpResult.first != secondOpResult.first) return std::make_pair(TypeInfo::BOOL, make_unique<BoolValue>(false));
-    else if (typeid(*(firstOpResult.second)) == typeid(BoolValue) && typeid(*(secondOpResult.second)) == typeid(BoolValue))
-        return std::make_pair(TypeInfo::BOOL, make_unique<BoolValue>(static_cast<BoolValue*>(firstOpResult.second.get())->value() == static_cast<BoolValue*>(secondOpResult.second.get())->value()));
-    else if (typeid(*(firstOpResult.second)) == typeid(NumberArith) && typeid(*(secondOpResult.second)) == typeid(NumberArith))
-        return std::make_pair(TypeInfo::BOOL, make_unique<BoolValue>(static_cast<NumberArith*>(firstOpResult.second.get())->getValue() == static_cast<NumberArith*>(secondOpResult.second.get())->getValue()));
-    else if (firstOpResult.second->equals(secondOpResult.second.get()))
-        return std::make_pair(TypeInfo::BOOL, make_unique<BoolValue>(true));
-    else return std::make_pair(TypeInfo::BOOL, make_unique<EqualityExpression>(std::move(firstOpResult.second), std::move(secondOpResult.second)));
+    try {
+        auto firstOpResult = first_op->eval(scope, load, lazy, true), secondOpResult = second_op->eval(scope, load, lazy, true);
+        return make_unique<BoolValue>(firstOpResult->equals(secondOpResult.get()));
+    } catch (const char *s) {
+        if (direct) throw s;
+        else {
+            auto firstOpResult = first_op->eval(scope, load, lazy, false), secondOpResult = second_op->eval(scope, load, lazy, false);
+            if (firstOpResult->equals(secondOpResult.get()))
+                return make_unique<BoolValue>(true);
+            else return make_unique<EqualityExpression>(std::move(firstOpResult), std::move(secondOpResult));
+        }
+    }
+}
+
+TypeInfo EqualityExpression::typeCheck(const TypeCollection &candidates, Scope &scope)
+{
+    if (! candidates.contains(TypeInfo::BOOL)) throw "typing";
+    TypeCollection opCol{TypeCollection::all()};
+    opCol.erase(TypeInfo::VOID);
+    try {
+        auto firstOpT = first_op->typeCheck(opCol, scope);
+        second_op->typeCheck({{firstOpT}}, scope);
+        return TypeInfo::BOOL;
+    } catch(const char *) {
+        auto secondOpT = second_op->typeCheck(opCol, scope);
+        first_op->typeCheck({{secondOpT}}, scope);
+        return TypeInfo::BOOL;
+    }
 }
 
 bool EqualityExpression::equals(const AbstractExpression *other) const

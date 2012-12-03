@@ -14,7 +14,8 @@ public:
     BoolValue(bool value) : value_(value) {}
 
     virtual ExpressionP copy() const { return make_unique<BoolValue>(*this); }
-    virtual EvalRes eval(Scope &, const std::function<void(const std::string &)> &, bool, bool) const { return std::make_pair(TypeInfo::BOOL, copy()); }
+    virtual ExpressionP eval(Scope &, const std::function<void(const std::string &)> &, bool, bool) const { return copy(); }
+    virtual TypeInfo typeCheck(const TypeCollection &candidates, Scope &) { if (candidates.contains(TypeInfo::BOOL)) return TypeInfo::BOOL; else throw "typing"; }
     virtual std::string toString() const { return value_ ? "true" : "false"; }
     virtual bool equals(const AbstractExpression *other) const;
     virtual bool isValue() const { return true; }

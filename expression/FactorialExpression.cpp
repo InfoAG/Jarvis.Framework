@@ -2,18 +2,26 @@
 
 namespace CAS {
 
-AbstractExpression::EvalRes FactorialExpression::eval(Scope &scope, const std::function<void (const std::string &)> &load, bool lazy, bool direct) const
+AbstractExpression::ExpressionP FactorialExpression::eval(Scope &scope, const std::function<void (const std::string &)> &load, bool lazy, bool direct) const
 {
     auto opRes = operand->eval(scope, load, lazy, direct);
-    if (opRes.first != TypeInfo::NUMBER) throw "type";
+    if (typeid(*opRes) == typeid(NumberValue)) {
+        double result = 1.0;
+        int start = static_cast<NumberValue*>(opRes.get())->getValue();
+        if (start < 0)
+            while (start) result *= start++;
+        else
+            while (start) result *= start--;
+        return make_unique<NumberValue>(result);
+    } else return make_unique<FactorialExpression>(std::move(opRes));
+}
 
-    double result = 1.0;
-    int start = static_cast<NumberArith*>(opRes.second.get())->getValue();
-    if (start < 0)
-        while (start) result *= start++;
-    else
-        while (start) result *= start--;
-    return std::make_pair(TypeInfo::NUMBER, make_unique<NumberArith>(result));
+TypeInfo FactorialExpression::typeCheck(const TypeCollection &candidates, Scope &scope)
+{
+    if (candidates.contains(TypeInfo::NUMBER)) {
+        operand->typeCheck({{TypeInfo::NUMBER}}, scope);
+        return TypeInfo::NUMBER;
+    } else throw "typing";
 }
 
 bool FactorialExpression::equals(const AbstractExpression *other) const

@@ -2,6 +2,7 @@
 #define CFUNCTIONBODY_H
 
 #include "AbstractExpression.h"
+#include "Function.h"
 
 namespace CAS {
 
@@ -18,16 +19,12 @@ public:
     CFunctionBody(TypeInfo returnType, std::string identifier, std::function<ExpressionP(const Operands &, Scope &, const std::function<void(const std::string &)> &, bool, bool)> evalFunc) : returnType(std::move(returnType)), identifier(std::move(identifier)), evalFunc(std::move(evalFunc)) {}
     virtual ExpressionP copy() const { return make_unique<CFunctionBody>(*this); }
 
-    virtual EvalRes eval(Scope &, const std::function<void(const std::string &)> &, bool , bool ) const { throw "need args"; }
+    virtual TypeInfo typeCheck(const TypeCollection &candidates, Scope &) { if (candidates.contains(returnType)) return returnType;  else throw "typing"; }
+    virtual ExpressionP eval(Scope &, const std::function<void(const std::string &)> &, bool , bool ) const { throw "need args"; }
     virtual bool equals(const AbstractExpression *) const { return false; }
     virtual std::string toString() const { return "<loaded from lib>"; }
 
-    virtual EvalRes evalWithArgs(Operands args, Scope &scope, const std::function<void(const std::string &)> &load, bool lazy, bool direct) const {
-        auto result = evalFunc(args, scope, load, lazy, direct);
-        //Operands a = std::move(args);
-        if (result == nullptr)
-            return std::make_pair(returnType, make_unique<Function>(identifier, std::move(args)));
-        else return std::make_pair(returnType, std::move(result)); }
+    virtual ExpressionP evalWithArgs(Operands args, Scope &scope, const std::function<void(const std::string &)> &load, bool lazy, bool direct) const;
 };
 
 }

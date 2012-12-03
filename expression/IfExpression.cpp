@@ -8,32 +8,38 @@ IfExpression::IfExpression(const IfExpression &other)
         conditionals.emplace_back(conditional.first->copy(), conditional.second->copy());
 }
 
-AbstractExpression::EvalRes IfExpression::eval(Scope &scope, const std::function<void(const std::string &)> &load, bool lazy, bool direct) const
+AbstractExpression::ExpressionP IfExpression::eval(Scope &scope, const std::function<void(const std::string &)> &load, bool lazy, bool direct) const
 {
     std::vector<std::pair<ExpressionP, ExpressionP>> evalRes;
     auto it = conditionals.cbegin();
     for (; it != conditionals.cend(); ++it) {
         auto conditionResult = it->first->eval(scope, load, lazy, true);
-        if (conditionResult.first != TypeInfo::BOOL) throw "wrong argument";
-        else if (typeid(*(conditionResult.second)) == typeid(BoolValue)) {
-            if (static_cast<BoolValue*>(conditionResult.second.get())->value())
+        if (typeid(*(conditionResult)) == typeid(BoolValue)) {
+            if (static_cast<BoolValue*>(conditionResult.get())->value())
                 return it->second->eval(scope, load, lazy, direct);
         } else {
-            evalRes.emplace_back(std::move(conditionResult.second), it->second->copy());
+            evalRes.emplace_back(std::move(conditionResult), it->second->copy());
             ++it;
             break;
         }
     }
 
     if (it != conditionals.cend()) {
-        for (; it != conditionals.cend(); ++it) {
-            auto conditionResult = it->first->eval(scope, load, lazy, direct);
-            if (conditionResult.first != TypeInfo::BOOL) throw "wrong argument";
-            evalRes.emplace_back(std::move(conditionResult.second), it->second->copy());
-        }
+        for (; it != conditionals.cend(); ++it)
+            evalRes.emplace_back(it->first->eval(scope, load, lazy, direct), it->second->copy());
     }
-    if (evalRes.empty()) return std::make_pair(TypeInfo::VOID, make_unique<OutputExpression>());
-    else return std::make_pair(TypeInfo::VOID, make_unique<IfExpression>(std::move(evalRes)));
+    if (evalRes.empty()) return make_unique<OutputExpression>();
+    else return make_unique<IfExpression>(std::move(evalRes));
+}
+
+TypeInfo IfExpression::typeCheck(const TypeCollection &candidates, Scope &scope)
+{
+    if (! candidates.contains(TypeInfo::VOID)) throw "typing";
+    for (const auto &cond : conditionals) {
+        cond.first->typeCheck({{TypeInfo::BOOL}}, scope);
+        cond.second->typeCheck(TypeCollection::all(), scope);
+    }
+    return TypeInfo::VOID;
 }
 
 std::string IfExpression::toString() const

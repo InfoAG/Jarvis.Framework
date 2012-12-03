@@ -3,43 +3,83 @@
 
 namespace CAS {
 
-AbstractExpression::EvalRes Function::eval(Scope &scope, const std::function<void(const std::string &)> &load, bool lazy, bool direct) const
+AbstractExpression::ExpressionP Function::eval(Scope &scope, const std::function<void(const std::string &)> &load, bool lazy, bool direct) const
 {
-    std::vector<TypeInfo> opTypes;
     std::vector<ExpressionP> opResults;
-    for (const auto &op : operands) {
-        auto result = op->eval(scope, load, lazy, direct);
-        opTypes.emplace_back(result.first);
-        opResults.emplace_back(std::move(result.second));
-    }
-    FunctionSignature sig{identifier, opTypes};
-    if (! scope.hasFunc(sig)) {
-        if (opTypes.size() == 1 && opTypes.front() == TypeInfo::LIST) {
-            sig.argumentTypes = std::vector<TypeInfo>(static_cast<List*>(operands.front().get())->getOperands().size(), opTypes.front().getNext());
-            opResults = std::move(static_cast<List*>(operands.front().get())->getOperands());
-            if (! scope.hasFunc(sig))
-                return std::make_pair(TypeInfo{TypeInfo::NUMBER}, make_unique<Function>(identifier, std::move(opResults)));
-        } else return std::make_pair(TypeInfo{TypeInfo::NUMBER}, make_unique<Function>(identifier, std::move(opResults)));
-    }
+    for (const auto &op : operands)
+        opResults.emplace_back(op->eval(scope, load, lazy, direct));
+
     Scope::VarDefs funcVars;
-    auto funcDefMatch = scope.getFunc(sig);
+    auto funcDefMatch = scope.getFunc({identifier, std::move(argTypes)});
     if (lazy || funcDefMatch.second.definition == nullptr)
-        return std::make_pair(funcDefMatch.second.returnType, copy());
+        return copy();
     else {
-        EvalRes result;
+        ExpressionP result;
         if (typeid(*(funcDefMatch.second.definition)) == typeid(CFunctionBody))
             result = static_cast<CFunctionBody*>(funcDefMatch.second.definition.get())->evalWithArgs(std::move(opResults), scope, load, lazy, direct);
         else {
             auto itOpResults = opResults.begin();
-            auto itOpTypes = opTypes.cbegin();
+            auto itOpTypes = argTypes.cbegin();
             for (auto &funcVar : funcDefMatch.second.arguments)
                 funcVars.insert(std::make_pair(std::move(funcVar), VariableDefinition{std::move(*(itOpResults++)), *(itOpTypes++)}));
             Scope funcScope(&funcDefMatch.first, std::move(funcVars));
             result = funcDefMatch.second.definition->eval(funcScope, load);
         }
-        if (result.first != funcDefMatch.second.returnType) throw "return type";
-        else if (direct && ! result.second->isValue()) throw "directnonono";
+
+        if (direct && ! result->isValue()) throw "directnonono";
         else return result;
+    }
+}
+
+TypeInfo Function::typeCheck(const TypeCollection &candidates, Scope &scope)
+{
+    auto opsAreDeterminant = true;
+    for (const auto &op : operands) {
+        try {
+            argTypes.emplace_back(op->typeCheck(TypeCollection::all(), scope));
+        } catch (const char *) {
+            opsAreDeterminant = false;
+            break;
+        }
+    }
+    if (opsAreDeterminant) {
+        FunctionSignature sig{identifier, argTypes};
+        if (scope.hasFunc(sig)) {
+            auto defMatch = scope.getFunc(sig).second.returnType;
+            if (candidates.contains(defMatch)) return defMatch;
+            else throw "typing";
+        } else if (candidates.determinant()) {
+            scope.declareFunc(sig, *(candidates.types.begin()));
+            return *(candidates.types.begin());
+        } else throw "typing";
+    } else {
+        bool foundOne = false;
+        Scope matchScope;
+        TypeInfo matchReturnT;
+        for (const auto &func : scope.getFunctions()) {
+            if (func.first.id == identifier && func.first.argumentTypes.size() == operands.size() && candidates.contains(func.second.returnType)) {
+                auto sigTypesIt = func.first.argumentTypes.cbegin();
+                Scope tryScope(&scope);
+                for (const auto &op : operands) {
+                    try {
+                        auto opT = op->typeCheck({{*(sigTypesIt++)}}, tryScope);
+                    } catch (const char *) { break; }
+                }
+                if (sigTypesIt == func.first.argumentTypes.cend()) {
+                    if (foundOne) throw "typing";
+                    else {
+                        foundOne = true;
+                        matchScope = std::move(tryScope);
+                        matchReturnT = func.second.returnType;
+                        argTypes = func.first.argumentTypes;
+                    }
+                }
+            }
+        }
+        if (foundOne) {
+            scope.consume(std::move(matchScope));
+            return matchReturnT;
+        } else throw "typing";
     }
 }
 

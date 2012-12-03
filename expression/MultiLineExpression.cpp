@@ -2,15 +2,23 @@
 
 namespace CAS {
 
-AbstractExpression::EvalRes MultiLineExpression::eval(Scope &scope, const std::function<void(const std::string &)> &load, bool lazy, bool direct) const
+AbstractExpression::ExpressionP MultiLineExpression::eval(Scope &scope, const std::function<void(const std::string &)> &load, bool lazy, bool direct) const
 {
     Operands result;
     for (const auto &op : operands) {
         auto evalRes = op->eval(scope, load, lazy, direct);
-        if (typeid(*(evalRes.second)) == typeid(OutputExpression)) result.emplace_back(std::move(evalRes.second));
-        else if (typeid(*(evalRes.second)) == typeid(ReturnExpression)) return std::make_pair(evalRes.first, std::move(static_cast<ReturnExpression*>(evalRes.second.get())->getOperand()));
+        if (typeid(*(evalRes)) == typeid(OutputExpression)) result.emplace_back(std::move(evalRes));
+        else if (typeid(*(evalRes)) == typeid(ReturnExpression)) return std::move(static_cast<ReturnExpression*>(evalRes.get())->getOperand());
     }
-    return std::make_pair(TypeInfo::VOID, make_unique<MultiLineExpression>(std::move(result)));
+    return make_unique<MultiLineExpression>(std::move(result));
+}
+
+TypeInfo MultiLineExpression::typeCheck(const TypeCollection &candidates, Scope &scope)
+{
+    if (! candidates.contains(TypeInfo::VOID)) throw "typing";
+    for (const auto &op : operands)
+        op->typeCheck(TypeCollection::all(), scope);
+    return TypeInfo::VOID;
 }
 
 std::string MultiLineExpression::toString() const

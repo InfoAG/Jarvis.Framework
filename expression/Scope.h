@@ -15,27 +15,31 @@ public:
     typedef std::map<std::string, VariableDefinition> VarDefs;
     typedef std::map<FunctionSignature, FunctionDefinition> FuncDefs;
 
-private:
-    Scope * const parent;
-
 protected:
+    Scope *parent;
     VarDefs variables;
     FuncDefs functions;
 
 public:
     Scope() : parent(nullptr) {}
-    Scope(Scope * const parent) : parent(parent) {}
-    Scope(Scope * const parent, VarDefs variables) : parent(parent), variables(std::move(variables)) {}
+    Scope(Scope *parent) : parent(parent) {}
+    Scope(Scope *parent, VarDefs variables) : parent(parent), variables(std::move(variables)) {}
 
     virtual void declareVar(TypeInfo type, std::string id);
     virtual void declareFunc(FunctionSignature sig, TypeInfo returnType);
-    virtual void defineVar(const std::string &id, VariableDefinition var);
+    virtual void defineVar(const std::string &id, AbstractExpression::ExpressionP definition, bool recursion = false);
     virtual void defineFunc(const FunctionSignature &sig, FunctionDefinition def);
 
+    void consume(Scope other);
+
     bool hasVar(const std::string &identifier) const { return variables.find(identifier) != variables.end() || (parent && parent->hasVar(identifier)); }
-    std::pair<Scope &, const VariableDefinition&> getVar(const std::string &identifier);
+    std::pair<Scope &, VariableDefinition &> getVar(const std::string &identifier);
     bool hasFunc(const FunctionSignature &sig) const { return functions.find(sig) != functions.end() || (parent && parent->hasFunc(sig)); }
-    std::pair<Scope &, const FunctionDefinition&> getFunc(const FunctionSignature &sig);
+    std::pair<Scope &, FunctionDefinition &> getFunc(const FunctionSignature &sig);
+
+    void setParent(Scope *newParent) { parent = newParent; }
+    const VarDefs &getVariables() const { return variables; }
+    const FuncDefs &getFunctions() const { return functions; }
 };
 
 }

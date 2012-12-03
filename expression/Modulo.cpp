@@ -2,12 +2,21 @@
 
 namespace CAS {
 
-AbstractExpression::EvalRes Modulo::eval(Scope &scope, const std::function<void(const std::string &)> &load, bool lazy, bool direct) const
+AbstractExpression::ExpressionP Modulo::eval(Scope &scope, const std::function<void(const std::string &)> &load, bool lazy, bool direct) const
 {
     auto first_op_result = first_op->eval(scope, load, lazy, direct), second_op_result = second_op->eval(scope, load, lazy, direct);
-    if (typeid(*(first_op_result.second)) == typeid(NumberArith) && typeid(*(second_op_result.second)) == typeid(NumberArith))
-        return std::make_pair(TypeInfo{TypeInfo::NUMBER}, make_unique<NumberArith>(*(static_cast<NumberArith*>(first_op_result.second.get())) % *(static_cast<NumberArith*>(second_op_result.second.get()))));
-    else return std::make_pair(TypeInfo{TypeInfo::NUMBER}, make_unique<Modulo>(std::move(first_op_result.second), std::move(second_op_result.second)));
+    if (typeid(*(first_op_result)) == typeid(NumberValue) && typeid(*(second_op_result)) == typeid(NumberValue))
+        return make_unique<NumberValue>(*(static_cast<NumberValue*>(first_op_result.get())) % *(static_cast<NumberValue*>(second_op_result.get())));
+    else return make_unique<Modulo>(std::move(first_op_result), std::move(second_op_result));
+}
+
+TypeInfo Modulo::typeCheck(const TypeCollection &candidates, Scope &scope)
+{
+    if (candidates.contains(TypeInfo::NUMBER)) {
+        first_op->typeCheck({{TypeInfo::NUMBER}}, scope);
+        second_op->typeCheck({{TypeInfo::NUMBER}}, scope);
+        return TypeInfo::NUMBER;
+    } else throw "typing";
 }
 
 std::string Modulo::toString() const

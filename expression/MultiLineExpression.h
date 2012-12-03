@@ -14,7 +14,8 @@ public:
     MultiLineExpression(Operands operands) : AbstractLevelingOperation(std::move(operands)) {}
     virtual std::unique_ptr<AbstractExpression> copy() const { return make_unique<MultiLineExpression>(*this); }
 
-    virtual EvalRes eval(Scope &scope, const std::function<void(const std::string &)> &load, bool lazy, bool direct) const;
+    virtual ExpressionP eval(Scope &scope, const std::function<void(const std::string &)> &load, bool lazy, bool direct) const;
+    virtual TypeInfo typeCheck(const TypeCollection &candidates, Scope &scope);
     virtual std::string toString() const;
     virtual bool equals(const AbstractExpression *other) const;
 };

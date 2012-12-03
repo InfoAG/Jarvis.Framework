@@ -2,13 +2,26 @@
 
 namespace CAS {
 
-AbstractExpression::EvalRes LessExpression::eval(Scope &scope, const std::function<void(const std::string &)> &load, bool lazy, bool direct) const
+AbstractExpression::ExpressionP LessExpression::eval(Scope &scope, const std::function<void(const std::string &)> &load, bool lazy, bool direct) const
 {
     auto firstOpResult = first_op->eval(scope, load, lazy, direct), secondOpResult = second_op->eval(scope, load, lazy, direct);
-    if (firstOpResult.first != TypeInfo::NUMBER || secondOpResult.first != TypeInfo::NUMBER) throw "(:";
-    else if (typeid(*(firstOpResult.second)) == typeid(NumberArith) && typeid(*(secondOpResult.second)) == typeid(NumberArith))
-        return std::make_pair(TypeInfo::BOOL, make_unique<BoolValue>(static_cast<NumberArith*>(firstOpResult.second.get())->getValue() < static_cast<NumberArith*>(secondOpResult.second.get())->getValue()));
-    else return std::make_pair(TypeInfo::BOOL, make_unique<LessExpression>(std::move(firstOpResult.second), std::move(secondOpResult.second)));
+    if (typeid(*(firstOpResult)) == typeid(NumberValue) && typeid(*(secondOpResult)) == typeid(NumberValue))
+        return make_unique<BoolValue>(static_cast<NumberValue*>(firstOpResult.get())->getValue() < static_cast<NumberValue*>(secondOpResult.get())->getValue());
+    else return make_unique<LessExpression>(std::move(firstOpResult), std::move(secondOpResult));
+}
+
+TypeInfo LessExpression::typeCheck(const TypeCollection &candidates, Scope &scope)
+{
+    if (! candidates.contains(TypeInfo::BOOL)) throw "typing";
+    TypeCollection opCol{TypeCollection::all()};
+    opCol.erase(TypeInfo::VOID);
+    try {
+        second_op->typeCheck({{first_op->typeCheck(opCol, scope)}}, scope);
+        return TypeInfo::BOOL;
+    } catch (const char *) {
+        first_op->typeCheck({{second_op->typeCheck(opCol, scope)}}, scope);
+        return TypeInfo::BOOL;
+    }
 }
 
 bool LessExpression::equals(const AbstractExpression *other) const

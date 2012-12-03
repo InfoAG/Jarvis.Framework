@@ -23,7 +23,8 @@ public:
     RangedForExpression(const RangedForExpression &other) : declaration(other.declaration->copy()), list(other.list->copy()), instruction(other.instruction->copy()) {}
 
     virtual ExpressionP copy() const { return make_unique<RangedForExpression>(*this); }
-    virtual EvalRes eval(Scope &scope, const std::function<void(const std::string &)> &load, bool lazy, bool direct) const;
+    virtual ExpressionP eval(Scope &scope, const std::function<void(const std::string &)> &load, bool lazy, bool direct) const;
+    virtual TypeInfo typeCheck(const TypeCollection &candidates, Scope &scope);
     virtual std::string toString() const { return "for (" + declaration->toString() + " : " + list->toString() + ")\n" + instruction->toString(); }
     virtual bool equals(const AbstractExpression *other) const { return typeid(*other) == typeid(RangedForExpression) && *this == *static_cast<const RangedForExpression*>(other); }
 
