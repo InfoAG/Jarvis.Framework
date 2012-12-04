@@ -2,7 +2,7 @@
 
 namespace CAS {
 
-AbstractExpression::ExpressionP ImportExpression::eval(Scope &, const std::function<void(const std::string &)> &load, bool, bool) const
+AbstractExpression::ExpressionP ImportExpression::execute(Scope &, const std::function<void(const std::string &)> &load, ExecOption) const
 {
     load(fileName);
     return make_unique<OutputExpression>();

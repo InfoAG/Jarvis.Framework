@@ -4,10 +4,9 @@ namespace CAS {
 
 TypeInfo VariableDeclarationExpression::typeCheck(const TypeCollection &candidates, Scope &scope)
 {
-    if (candidates.contains(TypeInfo::VOID)) {
-        for (const auto &id : ids) scope.declareVar(type, id);
-        return TypeInfo::VOID;
-    } else throw "typing";
+    candidates.assertContains(*this, TypeInfo::VOID);
+    for (const auto &id : ids) scope.declareVar(type, id);
+    return TypeInfo::VOID;
 }
 
 std::string VariableDeclarationExpression::toString() const

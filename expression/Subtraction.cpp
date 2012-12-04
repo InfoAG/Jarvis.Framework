@@ -2,12 +2,12 @@
 
 namespace CAS {
 
-AbstractExpression::ExpressionP Subtraction::eval(Scope &scope, const std::function<void(const std::string &)> &load, bool lazy, bool direct) const
+AbstractExpression::ExpressionP Subtraction::execute(Scope &scope, const std::function<void(const std::string &)> &load, ExecOption execOption) const
 {
-    auto first_op_result = first_op->eval(scope, load, lazy, direct), second_op_result = second_op->eval(scope, load, lazy, direct);
+    auto first_op_result = first_op->execute(scope, load, execOption), second_op_result = second_op->execute(scope, load, execOption);
     if (typeid(first_op_result) == typeid(NumberValue) && typeid(second_op_result) == typeid(NumberValue))
         return make_unique<NumberValue>(*(static_cast<NumberValue*>(first_op_result.get())) - *(static_cast<NumberValue*>(second_op_result.get())));
-    else return Addition(std::move(first_op_result), make_unique<LevelMultiplication>(make_unique<NumberValue>(-1), std::move(second_op_result))).eval(scope, load, lazy, direct);
+    else return Addition(std::move(first_op_result), make_unique<LevelMultiplication>(make_unique<NumberValue>(-1), std::move(second_op_result))).execute(scope, load, execOption);
 }
 
 TypeInfo Subtraction::typeCheck(const TypeCollection &candidates, Scope &scope)
@@ -28,7 +28,7 @@ TypeInfo Subtraction::typeCheck(const TypeCollection &candidates, Scope &scope)
             second_op->typeCheck({{TypeInfo::NUMBER, firstOpT}}, scope);
             return firstOpT;
         }
-    } catch (const char *) {
+    } catch (UndecidableTypeException &) {
         auto secondOpT = second_op->typeCheck(cp, scope);
         if (secondOpT == TypeInfo::NUMBER) {
             if (! num) cp.types.erase(TypeInfo::NUMBER);

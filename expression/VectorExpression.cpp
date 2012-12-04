@@ -3,19 +3,18 @@
 
 namespace CAS {
 
-inline AbstractExpression::ExpressionP VectorExpression::eval(Scope &scope, const std::function<void (const std::string &)> &load, bool lazy, bool direct) const
+inline AbstractExpression::ExpressionP VectorExpression::execute(Scope &scope, const std::function<void (const std::string &)> &load, ExecOption execOption) const
 {
-    return make_unique<VectorExpression>(x->eval(scope, load, lazy, direct), y->eval(scope, load, lazy, direct), z->eval(scope, load, lazy, direct));
+    return make_unique<VectorExpression>(x->execute(scope, load, execOption), y->execute(scope, load, execOption), z->execute(scope, load, execOption));
 }
 
 TypeInfo VectorExpression::typeCheck(const TypeCollection &candidates, Scope &scope)
 {
-    if (candidates.contains(TypeInfo::VECTOR)) {
-        x->typeCheck({{TypeInfo::NUMBER}}, scope);
-        y->typeCheck({{TypeInfo::NUMBER}}, scope);
-        z->typeCheck({{TypeInfo::NUMBER}}, scope);
-        return TypeInfo::VECTOR;
-    } else throw "typing";
+    candidates.assertContains(*this, TypeInfo::VECTOR);
+    x->typeCheck({{TypeInfo::NUMBER}}, scope);
+    y->typeCheck({{TypeInfo::NUMBER}}, scope);
+    z->typeCheck({{TypeInfo::NUMBER}}, scope);
+    return TypeInfo::VECTOR;
 }
 
 bool VectorExpression::isNull() const

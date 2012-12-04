@@ -3,30 +3,30 @@
 
 namespace CAS {
 
-AbstractExpression::ExpressionP Function::eval(Scope &scope, const std::function<void(const std::string &)> &load, bool lazy, bool direct) const
+AbstractExpression::ExpressionP Function::execute(Scope &scope, const std::function<void(const std::string &)> &load, ExecOption execOption) const
 {
     std::vector<ExpressionP> opResults;
     for (const auto &op : operands)
-        opResults.emplace_back(op->eval(scope, load, lazy, direct));
+        opResults.emplace_back(op->execute(scope, load, execOption));
 
     Scope::VarDefs funcVars;
     auto funcDefMatch = scope.getFunc({identifier, std::move(argTypes)});
-    if (lazy || funcDefMatch.second.definition == nullptr)
+    if (execOption == LAZY || funcDefMatch.second.definition == nullptr)
         return copy();
     else {
         ExpressionP result;
         if (typeid(*(funcDefMatch.second.definition)) == typeid(CFunctionBody))
-            result = static_cast<CFunctionBody*>(funcDefMatch.second.definition.get())->evalWithArgs(std::move(opResults), scope, load, lazy, direct);
+            result = static_cast<CFunctionBody*>(funcDefMatch.second.definition.get())->executeWithArgs(std::move(opResults), scope, load, execOption);
         else {
             auto itOpResults = opResults.begin();
             auto itOpTypes = argTypes.cbegin();
             for (auto &funcVar : funcDefMatch.second.arguments)
                 funcVars.insert(std::make_pair(std::move(funcVar), VariableDefinition{std::move(*(itOpResults++)), *(itOpTypes++)}));
             Scope funcScope(&funcDefMatch.first, std::move(funcVars));
-            result = funcDefMatch.second.definition->eval(funcScope, load);
+            result = funcDefMatch.second.definition->execute(funcScope, load);
         }
 
-        if (direct && ! result->isValue()) throw "directnonono";
+    if (execOption == EAGER && ! result->isValue()) throw ExecutionException::failedEager(toString());
         else return result;
     }
 }
@@ -37,7 +37,7 @@ TypeInfo Function::typeCheck(const TypeCollection &candidates, Scope &scope)
     for (const auto &op : operands) {
         try {
             argTypes.emplace_back(op->typeCheck(TypeCollection::all(), scope));
-        } catch (const char *) {
+        } catch (UndecidableTypeException &) {
             opsAreDeterminant = false;
             break;
         }
@@ -46,12 +46,13 @@ TypeInfo Function::typeCheck(const TypeCollection &candidates, Scope &scope)
         FunctionSignature sig{identifier, argTypes};
         if (scope.hasFunc(sig)) {
             auto defMatch = scope.getFunc(sig).second.returnType;
-            if (candidates.contains(defMatch)) return defMatch;
-            else throw "typing";
-        } else if (candidates.determinant()) {
+            candidates.assertContains(*this, defMatch);
+            return defMatch;
+        } else {
+            candidates.assertDeterminant(*this);
             scope.declareFunc(sig, *(candidates.types.begin()));
             return *(candidates.types.begin());
-        } else throw "typing";
+        }
     } else {
         bool foundOne = false;
         Scope matchScope;
@@ -63,10 +64,10 @@ TypeInfo Function::typeCheck(const TypeCollection &candidates, Scope &scope)
                 for (const auto &op : operands) {
                     try {
                         auto opT = op->typeCheck({{*(sigTypesIt++)}}, tryScope);
-                    } catch (const char *) { break; }
+                    } catch (const UndecidableTypeException &) { break; }
                 }
                 if (sigTypesIt == func.first.argumentTypes.cend()) {
-                    if (foundOne) throw "typing";
+                    if (foundOne) throw UndecidableTypeException(toString());
                     else {
                         foundOne = true;
                         matchScope = std::move(tryScope);
@@ -79,7 +80,7 @@ TypeInfo Function::typeCheck(const TypeCollection &candidates, Scope &scope)
         if (foundOne) {
             scope.consume(std::move(matchScope));
             return matchReturnT;
-        } else throw "typing";
+        } else throw UndecidableTypeException(toString());
     }
 }
 

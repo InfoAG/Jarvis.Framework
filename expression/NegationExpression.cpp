@@ -2,9 +2,9 @@
 
 namespace CAS {
 
-AbstractExpression::ExpressionP NegationExpression::eval(Scope &scope, const std::function<void(const std::string &)> &load, bool lazy, bool direct) const
+AbstractExpression::ExpressionP NegationExpression::execute(Scope &scope, const std::function<void(const std::string &)> &load, ExecOption execOption) const
 {
-    auto operandRes = operand->eval(scope, load, lazy, direct);
+    auto operandRes = operand->execute(scope, load, execOption);
     if (typeid(*(operandRes)) == typeid(BoolValue))
         return make_unique<BoolValue>(! static_cast<BoolValue*>(operandRes.get())->value());
     else return make_unique<NegationExpression>(std::move(operandRes));
@@ -12,10 +12,9 @@ AbstractExpression::ExpressionP NegationExpression::eval(Scope &scope, const std
 
 TypeInfo NegationExpression::typeCheck(const TypeCollection &candidates, Scope &scope)
 {
-    if (candidates.contains(TypeInfo::BOOL)) {
-        operand->typeCheck({{TypeInfo::BOOL}}, scope);
-        return TypeInfo::BOOL;
-    } else throw "typing";
+    candidates.assertContains(*this, TypeInfo::BOOL);
+    operand->typeCheck({{TypeInfo::BOOL}}, scope);
+    return TypeInfo::BOOL;
 }
 
 bool NegationExpression::equals(const AbstractExpression *other) const

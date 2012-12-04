@@ -8,15 +8,15 @@ IfExpression::IfExpression(const IfExpression &other)
         conditionals.emplace_back(conditional.first->copy(), conditional.second->copy());
 }
 
-AbstractExpression::ExpressionP IfExpression::eval(Scope &scope, const std::function<void(const std::string &)> &load, bool lazy, bool direct) const
+AbstractExpression::ExpressionP IfExpression::execute(Scope &scope, const std::function<void(const std::string &)> &load, ExecOption execOption) const
 {
     std::vector<std::pair<ExpressionP, ExpressionP>> evalRes;
     auto it = conditionals.cbegin();
     for (; it != conditionals.cend(); ++it) {
-        auto conditionResult = it->first->eval(scope, load, lazy, true);
+        auto conditionResult = it->first->execute(scope, load, EAGER);
         if (typeid(*(conditionResult)) == typeid(BoolValue)) {
             if (static_cast<BoolValue*>(conditionResult.get())->value())
-                return it->second->eval(scope, load, lazy, direct);
+                return it->second->execute(scope, load, execOption);
         } else {
             evalRes.emplace_back(std::move(conditionResult), it->second->copy());
             ++it;
@@ -26,7 +26,7 @@ AbstractExpression::ExpressionP IfExpression::eval(Scope &scope, const std::func
 
     if (it != conditionals.cend()) {
         for (; it != conditionals.cend(); ++it)
-            evalRes.emplace_back(it->first->eval(scope, load, lazy, direct), it->second->copy());
+            evalRes.emplace_back(it->first->execute(scope, load, execOption), it->second->copy());
     }
     if (evalRes.empty()) return make_unique<OutputExpression>();
     else return make_unique<IfExpression>(std::move(evalRes));
@@ -34,7 +34,7 @@ AbstractExpression::ExpressionP IfExpression::eval(Scope &scope, const std::func
 
 TypeInfo IfExpression::typeCheck(const TypeCollection &candidates, Scope &scope)
 {
-    if (! candidates.contains(TypeInfo::VOID)) throw "typing";
+    candidates.assertContains(*this, TypeInfo::VOID);
     for (const auto &cond : conditionals) {
         cond.first->typeCheck({{TypeInfo::BOOL}}, scope);
         cond.second->typeCheck(TypeCollection::all(), scope);

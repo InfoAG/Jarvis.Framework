@@ -2,15 +2,14 @@
 
 namespace CAS {
 
-AbstractExpression::ExpressionP Assignment::eval(Scope &scope, const std::function<void(const std::string &)> &load, bool lazy, bool direct) const
+AbstractExpression::ExpressionP Assignment::execute(Scope &scope, const std::function<void(const std::string &)> &load, ExecOption execOption) const
 {
-    auto secondOpResult = second_op->eval(scope, load, lazy, direct);
-    if (typeid(*first_op) == typeid(Variable)) {
-        if (typeid(*second_op) == typeid(LazyEval))
-            scope.defineVar(static_cast<Variable*>(first_op.get())->getIdentifier(), secondOpResult->copy());
-        else scope.defineVar(static_cast<Variable*>(first_op.get())->getIdentifier(), secondOpResult->copy());
+    auto secondOpResult = second_op->execute(scope, load, execOption);
+
+    if (typeid(*second_op) == typeid(LazyEval))
+        scope.defineVar(static_cast<Variable*>(first_op.get())->getIdentifier(), secondOpResult->copy());
+    else scope.defineVar(static_cast<Variable*>(first_op.get())->getIdentifier(), secondOpResult->copy());
     //else if (typeid(*first_op) == typeid(VariableDeclaration))
-    } else throw "typing";
 
         /*if (typeid(*first_op) == typeid(Function)) {
         bool assignable = true;
@@ -30,13 +29,12 @@ AbstractExpression::ExpressionP Assignment::eval(Scope &scope, const std::functi
 
 TypeInfo Assignment::typeCheck(const TypeCollection &candidates, Scope &scope)
 {
-    if (typeid(*first_op) != typeid(Variable)) throw "typing";
+    if (typeid(*first_op) != typeid(Variable)) throw InvalidTreeException(toString(), "expected variable to assign to");
     if (scope.hasVar(static_cast<const Variable*>(first_op.get())->getIdentifier())) {
         auto varT = scope.getVar(static_cast<const Variable*>(first_op.get())->getIdentifier()).second.type;
-        if (candidates.contains(varT)) {
-            second_op->typeCheck({{varT}}, scope);
-            return varT;
-        } else throw "typing";
+        candidates.assertContains(*this, varT);
+        second_op->typeCheck({{varT}}, scope);
+        return varT;
     } else {
         TypeCollection tc(TypeCollection::all());
         tc.types.erase(TypeInfo::VOID);

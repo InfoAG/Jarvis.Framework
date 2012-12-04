@@ -15,7 +15,7 @@ private:
 public:
     VariableDeclarationExpression(TypeInfo type, std::vector<std::string> ids) : type(std::move(type)), ids(std::move(ids)) {}
     virtual ExpressionP copy() const { return make_unique<VariableDeclarationExpression>(*this); }
-    virtual ExpressionP eval(Scope &, const std::function<void(const std::string &)> &, bool, bool) const { return copy(); }
+    virtual ExpressionP execute(Scope &, const std::function<void(const std::string &)> &, ExecOption) const { return copy(); }
     virtual TypeInfo typeCheck(const TypeCollection &candidates, Scope &scope);
     virtual std::string toString() const;
     virtual bool equals(const AbstractExpression *other) const { return typeid(*other) == typeid(VariableDeclarationExpression) && *this == *static_cast<const VariableDeclarationExpression*>(other); }

@@ -2,11 +2,11 @@
 
 namespace CAS {
 
-AbstractExpression::ExpressionP MultiLineExpression::eval(Scope &scope, const std::function<void(const std::string &)> &load, bool lazy, bool direct) const
+AbstractExpression::ExpressionP MultiLineExpression::execute(Scope &scope, const std::function<void(const std::string &)> &load, ExecOption execOption) const
 {
     Operands result;
     for (const auto &op : operands) {
-        auto evalRes = op->eval(scope, load, lazy, direct);
+        auto evalRes = op->execute(scope, load, execOption);
         if (typeid(*(evalRes)) == typeid(OutputExpression)) result.emplace_back(std::move(evalRes));
         else if (typeid(*(evalRes)) == typeid(ReturnExpression)) return std::move(static_cast<ReturnExpression*>(evalRes.get())->getOperand());
     }
@@ -15,7 +15,7 @@ AbstractExpression::ExpressionP MultiLineExpression::eval(Scope &scope, const st
 
 TypeInfo MultiLineExpression::typeCheck(const TypeCollection &candidates, Scope &scope)
 {
-    if (! candidates.contains(TypeInfo::VOID)) throw "typing";
+    candidates.assertContains(*this, TypeInfo::VOID);
     for (const auto &op : operands)
         op->typeCheck(TypeCollection::all(), scope);
     return TypeInfo::VOID;

@@ -9,14 +9,15 @@ namespace CAS {
 
 struct FunctionDefinition
 {
-    std::shared_ptr<AbstractExpression> definition;
+    AbstractExpression::ExpressionP definition;
     std::vector<std::string> arguments;
     TypeInfo returnType;
     bool defNeedsEval;
 
-    FunctionDefinition(std::shared_ptr<AbstractExpression> definition, std::vector<std::string> arguments, TypeInfo returnType, bool defNeedsEval = false) : definition(std::move(definition)), arguments(std::move(arguments)), returnType(std::move(returnType)), defNeedsEval(defNeedsEval) {}
-    FunctionDefinition(std::shared_ptr<AbstractExpression> definition, TypeInfo returnType, bool defNeedsEval = false) : definition(std::move(definition)), returnType(returnType), defNeedsEval(defNeedsEval) {}
+    FunctionDefinition(AbstractExpression::ExpressionP definition, std::vector<std::string> arguments, TypeInfo returnType, bool defNeedsEval = false) : definition(std::move(definition)), arguments(std::move(arguments)), returnType(std::move(returnType)), defNeedsEval(defNeedsEval) {}
+    FunctionDefinition(std::unique_ptr<AbstractExpression> definition, TypeInfo returnType, bool defNeedsEval = false) : definition(std::move(definition)), returnType(returnType), defNeedsEval(defNeedsEval) {}
     FunctionDefinition(TypeInfo returnType) : returnType(std::move(returnType)) {}
+    FunctionDefinition(const FunctionDefinition &other) : definition(other.definition ? other.definition->copy() : nullptr), arguments(other.arguments), returnType(other.returnType), defNeedsEval(other.defNeedsEval) {}
 };
 
 }

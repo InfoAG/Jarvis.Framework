@@ -2,10 +2,10 @@
 
 namespace CAS {
 
-AbstractExpression::ExpressionP List::eval(Scope &scope, const std::function<void(const std::string &)> &load, bool lazy, bool direct) const
+AbstractExpression::ExpressionP List::execute(Scope &scope, const std::function<void(const std::string &)> &load, ExecOption execOption) const
 {
     Operands result;
-    for (const auto &op : operands) result.emplace_back(op->eval(scope, load, lazy, direct));
+    for (const auto &op : operands) result.emplace_back(op->execute(scope, load, execOption));
     //if (result.size() == 1) return std::move(result.front());
     return make_unique<List>(std::move(result));
 }
@@ -19,9 +19,14 @@ TypeInfo List::typeCheck(const TypeCollection &candidates, Scope &scope)
         try {
             elT = (*it)->typeCheck(elementTs, scope);
             break;
-        } catch (const char *) {}
+        } catch (UndecidableTypeException &) {}
+        catch (FatalTypeException &e) {
+            if (e.reason() == FatalTypeException::MISMATCH)
+                throw e.inList();
+            else throw e;
+        }
     }
-    if (it == operands.cend()) throw "typing";
+    if (it == operands.cend()) throw UndecidableTypeException(toString());
     for (auto oIt = operands.cbegin(); oIt != operands.cend(); ++oIt)
         if (it != oIt) (*oIt)->typeCheck({{elT}}, scope);
     return TypeInfo(TypeInfo::LIST, {elT});
@@ -48,7 +53,7 @@ bool List::equals(const AbstractExpression *other) const
 List List::operator/(const List &other) const
 {
     if (operands.size() != other.operands.size())
-        throw "List/List dim mismatch";
+        throw ExecutionException::dimMismatch("List/List dim mismatch");
     Operands result;
     auto itOther = other.operands.cbegin();
     for (const auto &op : operands) {

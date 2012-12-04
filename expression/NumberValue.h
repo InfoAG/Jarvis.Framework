@@ -19,8 +19,8 @@ public:
     NumberValue(double value) : value(std::move(value)) {};
     virtual ExpressionP copy() const { return make_unique<NumberValue>(*this); }
 
-    virtual ExpressionP eval(Scope &, const std::function<void(const std::string &)> &, bool, bool) const { return copy(); }
-    virtual TypeInfo typeCheck(const TypeCollection &candidates, Scope &) { if (candidates.contains(TypeInfo::NUMBER)) return TypeInfo::NUMBER;  else throw "typing"; }
+    virtual ExpressionP execute(Scope &, const std::function<void(const std::string &)> &, ExecOption) const { return copy(); }
+    virtual TypeInfo typeCheck(const TypeCollection &candidates, Scope &) { candidates.assertContains(*this, TypeInfo::NUMBER); return TypeInfo::NUMBER; }
     virtual std::string toString() const { std::ostringstream ss; ss << value; return ss.str(); }
     virtual bool equals(const AbstractExpression *other) const;
     virtual bool isValue() const { return true; }

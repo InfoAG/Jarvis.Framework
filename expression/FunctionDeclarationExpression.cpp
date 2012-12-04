@@ -4,10 +4,9 @@ namespace CAS {
 
 TypeInfo FunctionDeclarationExpression::typeCheck(const TypeCollection &candidates, Scope &scope)
 {
-    if (candidates.contains(TypeInfo::VOID)) {
-        if (! scope.hasFunc(sig)) scope.declareFunc(sig, returnType);
-        return TypeInfo::VOID;
-    } else throw "typing";
+    candidates.assertContains(*this, TypeInfo::VOID);
+    if (! scope.hasFunc(sig)) scope.declareFunc(sig, returnType);
+    return TypeInfo::VOID;
 }
 
 std::string FunctionDeclarationExpression::toString() const

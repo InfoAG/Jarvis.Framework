@@ -20,7 +20,7 @@ public:
     VectorExpression(const VectorExpression &other) : x(other.x->copy()), y(other.y->copy()), z(other.z->copy()) {}
     virtual ExpressionP copy() const { return make_unique<VectorExpression>(*this); }
 
-    virtual ExpressionP eval(Scope &scope, const std::function<void(const std::string &)> &load, bool lazy, bool direct) const;
+    virtual ExpressionP execute(Scope &scope, const std::function<void(const std::string &)> &load, ExecOption) const;
     virtual TypeInfo typeCheck(const TypeCollection &candidates, Scope &scope);
     virtual bool equals(const AbstractExpression *other) const { return typeid(*other) == typeid(VectorExpression) && *this == *static_cast<const VectorExpression*>(other); }
     virtual std::string toString() const { return "(" + x->toString() + "," + y->toString() + "," + z->toString() + ")"; }

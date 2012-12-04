@@ -16,8 +16,8 @@ public:
     ImportExpression(const ImportExpression &other) : fileName(other.fileName) {}
     virtual ExpressionP copy() const { return make_unique<ImportExpression>(*this); }
 
-    virtual ExpressionP eval(Scope &scope, const std::function<void(const std::string &)> &load, bool, bool) const;
-    virtual TypeInfo typeCheck(const TypeCollection &candidates, Scope &) { if (candidates.contains(TypeInfo::VOID)) return TypeInfo::VOID; else throw "typing"; }
+    virtual ExpressionP execute(Scope &scope, const std::function<void(const std::string &)> &load, ExecOption) const;
+    virtual TypeInfo typeCheck(const TypeCollection &candidates, Scope &) { candidates.assertContains(*this, TypeInfo::VOID); return TypeInfo::VOID; }
     virtual bool equals(const AbstractExpression *other) const;
     virtual std::string toString() const { return "import " + fileName; }
 

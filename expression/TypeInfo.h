@@ -2,6 +2,7 @@
 #define TYPEINFO_H
 
 #include "global.h"
+#include "exception/FatalTypeException.h"
 
 namespace CAS {
 

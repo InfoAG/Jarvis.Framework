@@ -2,9 +2,9 @@
 
 namespace CAS {
 
-AbstractExpression::ExpressionP ReturnExpression::eval(Scope &scope, const std::function<void(const std::string &)> &load, bool lazy, bool direct) const
+AbstractExpression::ExpressionP ReturnExpression::execute(Scope &scope, const std::function<void(const std::string &)> &load, ExecOption execOption) const
 {
-    return make_unique<ReturnExpression>(operand->eval(scope, load, lazy, direct));
+    return make_unique<ReturnExpression>(operand->execute(scope, load, execOption));
 }
 
 TypeInfo ReturnExpression::typeCheck(const TypeCollection &candidates, Scope &scope)

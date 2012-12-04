@@ -2,9 +2,9 @@
 
 namespace CAS {
 
-AbstractExpression::ExpressionP Modulo::eval(Scope &scope, const std::function<void(const std::string &)> &load, bool lazy, bool direct) const
+AbstractExpression::ExpressionP Modulo::execute(Scope &scope, const std::function<void(const std::string &)> &load, ExecOption execOption) const
 {
-    auto first_op_result = first_op->eval(scope, load, lazy, direct), second_op_result = second_op->eval(scope, load, lazy, direct);
+    auto first_op_result = first_op->execute(scope, load, execOption), second_op_result = second_op->execute(scope, load, execOption);
     if (typeid(*(first_op_result)) == typeid(NumberValue) && typeid(*(second_op_result)) == typeid(NumberValue))
         return make_unique<NumberValue>(*(static_cast<NumberValue*>(first_op_result.get())) % *(static_cast<NumberValue*>(second_op_result.get())));
     else return make_unique<Modulo>(std::move(first_op_result), std::move(second_op_result));
@@ -12,11 +12,10 @@ AbstractExpression::ExpressionP Modulo::eval(Scope &scope, const std::function<v
 
 TypeInfo Modulo::typeCheck(const TypeCollection &candidates, Scope &scope)
 {
-    if (candidates.contains(TypeInfo::NUMBER)) {
-        first_op->typeCheck({{TypeInfo::NUMBER}}, scope);
-        second_op->typeCheck({{TypeInfo::NUMBER}}, scope);
-        return TypeInfo::NUMBER;
-    } else throw "typing";
+    candidates.assertContains(*this, TypeInfo::NUMBER);
+    first_op->typeCheck({{TypeInfo::NUMBER}}, scope);
+    second_op->typeCheck({{TypeInfo::NUMBER}}, scope);
+    return TypeInfo::NUMBER;
 }
 
 std::string Modulo::toString() const

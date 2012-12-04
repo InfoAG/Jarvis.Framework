@@ -2,11 +2,11 @@
 
 namespace CAS {
 
-AbstractExpression::ExpressionP ScopeExpression::eval(Scope &scope, const std::function<void(const std::string &)> &load, bool lazy, bool direct) const
+AbstractExpression::ExpressionP ScopeExpression::execute(Scope &scope, const std::function<void(const std::string &)> &load, ExecOption execOption) const
 {
     Scope evalScope(myScope);
     evalScope.setParent(&scope);
-    return operand->eval(evalScope, load, lazy, direct);
+    return operand->execute(evalScope, load, execOption);
 }
 
 bool ScopeExpression::equals(const AbstractExpression *other) const

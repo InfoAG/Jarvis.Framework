@@ -13,18 +13,18 @@ class CFunctionBody : public AbstractExpression
 private:
     TypeInfo returnType;
     std::string identifier;
-    std::function<ExpressionP(const Operands &, Scope &, const std::function<void(const std::string &)> &, bool, bool)> evalFunc;
+    std::function<ExpressionP(const Operands &, Scope &, const std::function<void(const std::string &)> &, ExecOption)> evalFunc;
 
 public:
-    CFunctionBody(TypeInfo returnType, std::string identifier, std::function<ExpressionP(const Operands &, Scope &, const std::function<void(const std::string &)> &, bool, bool)> evalFunc) : returnType(std::move(returnType)), identifier(std::move(identifier)), evalFunc(std::move(evalFunc)) {}
+    CFunctionBody(TypeInfo returnType, std::string identifier, std::function<ExpressionP(const Operands &, Scope &, const std::function<void(const std::string &)> &, ExecOption)> evalFunc) : returnType(std::move(returnType)), identifier(std::move(identifier)), evalFunc(std::move(evalFunc)) {}
     virtual ExpressionP copy() const { return make_unique<CFunctionBody>(*this); }
 
-    virtual TypeInfo typeCheck(const TypeCollection &candidates, Scope &) { if (candidates.contains(returnType)) return returnType;  else throw "typing"; }
-    virtual ExpressionP eval(Scope &, const std::function<void(const std::string &)> &, bool , bool ) const { throw "need args"; }
+    virtual TypeInfo typeCheck(const TypeCollection &candidates, Scope &) { candidates.assertContains(*this, returnType); return returnType; }
+    virtual ExpressionP execute(Scope &, const std::function<void(const std::string &)> &, ExecOption) const { throw ExecutionException::noCFuncArgs(toString()); }
     virtual bool equals(const AbstractExpression *) const { return false; }
     virtual std::string toString() const { return "<loaded from lib>"; }
 
-    virtual ExpressionP evalWithArgs(Operands args, Scope &scope, const std::function<void(const std::string &)> &load, bool lazy, bool direct) const;
+    virtual ExpressionP executeWithArgs(Operands args, Scope &scope, const std::function<void(const std::string &)> &load, ExecOption execOption) const;
 };
 
 }

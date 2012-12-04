@@ -6,6 +6,7 @@
 #include "VariableDefinition.h"
 #include "FunctionDefinition.h"
 #include "FunctionSignature.h"
+#include "exception/ScopeException.h"
 
 namespace CAS {
 
@@ -28,7 +29,7 @@ public:
     virtual void declareVar(TypeInfo type, std::string id);
     virtual void declareFunc(FunctionSignature sig, TypeInfo returnType);
     virtual void defineVar(const std::string &id, AbstractExpression::ExpressionP definition, bool recursion = false);
-    virtual void defineFunc(const FunctionSignature &sig, FunctionDefinition def);
+    virtual void defineFunc(const FunctionSignature &sig, std::vector<std::string> args, AbstractExpression::ExpressionP def);
 
     void consume(Scope other);
 

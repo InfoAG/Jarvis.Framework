@@ -21,7 +21,7 @@ private:
 public:
     FunctionDeclarationExpression(FunctionSignature sig, TypeInfo returnType, std::vector<std::string> argumentNames) : sig(std::move(sig)), returnType(std::move(returnType)), argumentNames(std::move(argumentNames)) {}
     virtual ExpressionP copy() const { return make_unique<FunctionDeclarationExpression>(*this); }
-    virtual ExpressionP eval(Scope &, const std::function<void(const std::string &)> &, bool, bool) const { return copy(); }
+    virtual ExpressionP execute(Scope &, const std::function<void(const std::string &)> &, ExecOption) const { return copy(); }
     virtual TypeInfo typeCheck(const TypeCollection &candidates, Scope &scope);
     virtual std::string toString() const;
     virtual bool equals(const AbstractExpression *other) const { return typeid(*other) == typeid(FunctionDeclarationExpression) && *this == *static_cast<const FunctionDeclarationExpression*>(other); }

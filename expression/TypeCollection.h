@@ -2,9 +2,13 @@
 #define TYPECOLLECTION_H
 
 #include "TypeInfo.h"
+#include "exception/FatalTypeException.h"
+#include "exception/UndecidableTypeException.h"
 #include <set>
 
 namespace CAS {
+
+class AbstractExpression;
 
 struct TypeCollection
 {
@@ -15,7 +19,9 @@ struct TypeCollection
     TypeCollection(std::set<TypeInfo> types, std::set<TypeInfo> listElementTypes) : types(std::move(types)), listElementTypes(std::move(listElementTypes)) {}
 
     bool contains(const TypeInfo &ti) const;
+    void assertContains(const AbstractExpression &expr, const TypeInfo &ti) const;
     bool determinant() const { return types.size() == 1 && listElementTypes.empty(); }
+    void assertDeterminant(const AbstractExpression &expr) const;
     void erase(const TypeInfo &ti) { types.erase(std::find(begin(types), end(types), ti)); }
     TypeCollection flattenToElements() const;
 

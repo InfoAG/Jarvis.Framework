@@ -4,26 +4,26 @@
 
 namespace CAS {
 
-AbstractExpression::ExpressionP Division::eval(Scope &scope, const std::function<void(const std::string &)> &load, bool lazy, bool direct) const
+AbstractExpression::ExpressionP Division::execute(Scope &scope, const std::function<void(const std::string &)> &load, ExecOption execOption) const
 {
-    auto firstOpResult = first_op->eval(scope, load, lazy, direct), secondOpResult = second_op->eval(scope, load, lazy, direct);
+    auto firstOpResult = first_op->execute(scope, load, execOption), secondOpResult = second_op->execute(scope, load, execOption);
     if (typeid(*(firstOpResult)) == typeid(NumberValue)) {
         if (typeid(*(secondOpResult)) == typeid(NumberValue))
             return make_unique<NumberValue>(*static_cast<NumberValue*>(firstOpResult.get()) / *static_cast<NumberValue*>(secondOpResult.get()));
         else if (typeid(*(firstOpResult)) == typeid(NumberValue) && typeid(*(secondOpResult)) == typeid(List))
-            return List(*static_cast<NumberValue*>(firstOpResult.get()) / *static_cast<List*>(secondOpResult.get())).eval(scope, load, lazy, direct);
+            return List(*static_cast<NumberValue*>(firstOpResult.get()) / *static_cast<List*>(secondOpResult.get())).execute(scope, load, execOption);
         else if (typeid(*(firstOpResult)) == typeid(NumberValue) && typeid(*(secondOpResult)) == typeid(VectorExpression))
-            return VectorExpression(*static_cast<NumberValue*>(firstOpResult.get()) / *static_cast<VectorExpression*>(secondOpResult.get())).eval(scope, load, lazy, direct);
+            return VectorExpression(*static_cast<NumberValue*>(firstOpResult.get()) / *static_cast<VectorExpression*>(secondOpResult.get())).execute(scope, load, execOption);
     } else if (typeid(*(firstOpResult)) == typeid(List)) {
         if (typeid(*(secondOpResult)) == typeid(NumberValue))
-            return List(*static_cast<List*>(firstOpResult.get()) / *static_cast<NumberValue*>(secondOpResult.get())).eval(scope, load, lazy, direct);
+            return List(*static_cast<List*>(firstOpResult.get()) / *static_cast<NumberValue*>(secondOpResult.get())).execute(scope, load, execOption);
         else if (typeid(*(secondOpResult)) == typeid(List))
-            return List(*static_cast<List*>(firstOpResult.get()) / *static_cast<List*>(secondOpResult.get())).eval(scope, load, lazy, direct);
+            return List(*static_cast<List*>(firstOpResult.get()) / *static_cast<List*>(secondOpResult.get())).execute(scope, load, execOption);
     } else if (typeid(*(firstOpResult)) == typeid(VectorExpression)) {
         if (typeid(*(secondOpResult)) == typeid(NumberValue))
-            return VectorExpression(*static_cast<VectorExpression*>(firstOpResult.get()) / *static_cast<NumberValue*>(secondOpResult.get())).eval(scope, load, lazy, direct);
+            return VectorExpression(*static_cast<VectorExpression*>(firstOpResult.get()) / *static_cast<NumberValue*>(secondOpResult.get())).execute(scope, load, execOption);
         else if (typeid(*(secondOpResult)) == typeid(VectorExpression))
-            return VectorExpression(*static_cast<VectorExpression*>(firstOpResult.get()) / *static_cast<VectorExpression*>(secondOpResult.get())).eval(scope, load, lazy, direct);
+            return VectorExpression(*static_cast<VectorExpression*>(firstOpResult.get()) / *static_cast<VectorExpression*>(secondOpResult.get())).execute(scope, load, execOption);
     }
     if (typeid(*(secondOpResult)) == typeid(NumberValue) && static_cast<NumberValue*>(secondOpResult.get())->getValue() == 1)
         return firstOpResult;
@@ -48,7 +48,7 @@ TypeInfo Division::typeCheck(const TypeCollection &candidates, Scope &scope)
             second_op->typeCheck({{TypeInfo::NUMBER, firstOpT}}, scope);
             return firstOpT;
         }
-    } catch (const char *) {
+    } catch (UndecidableTypeException &) {
         auto secondOpT = second_op->typeCheck(cp, scope);
         if (secondOpT == TypeInfo::NUMBER) {
             if (! num) cp.types.erase(TypeInfo::NUMBER);

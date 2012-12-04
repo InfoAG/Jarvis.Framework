@@ -1,4 +1,5 @@
 #include "TypeCollection.h"
+#include "AbstractExpression.h"
 
 namespace CAS {
 
@@ -14,6 +15,16 @@ bool TypeCollection::contains(const TypeInfo &ti) const
             }
         } else return true;
     } else return std::find(types.cbegin(), types.cend(), ti) != types.cend();
+}
+
+void TypeCollection::assertContains(const AbstractExpression &expr, const TypeInfo &ti) const
+{
+    if (! contains(ti)) throw FatalTypeException::mismatch(expr.toString(), ti.toString());
+}
+
+void TypeCollection::assertDeterminant(const AbstractExpression &expr) const
+{
+    if (! determinant()) throw UndecidableTypeException(expr.toString());
 }
 
 TypeCollection TypeCollection::flattenToElements() const

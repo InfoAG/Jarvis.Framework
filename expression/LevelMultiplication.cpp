@@ -13,11 +13,11 @@ void LevelMultiplication::addToBasisValue(BasisValues &values, ExpressionP basis
     else values.emplace_back(std::move(basis), std::move(exponent));
 }
 
-AbstractExpression::ExpressionP LevelMultiplication::eval(Scope &scope, const std::function<void(const std::string &)> &load, bool lazy, bool direct) const
+AbstractExpression::ExpressionP LevelMultiplication::execute(Scope &scope, const std::function<void(const std::string &)> &load, ExecOption execOption) const
 {
     Operands mergedOperands;
     for (const auto &operand : operands) {
-        auto evalRes = operand->eval(scope, load, lazy, direct);
+        auto evalRes = operand->execute(scope, load, execOption);
         if (typeid(*(evalRes)) == typeid(LevelMultiplication)) {
             for (auto &childOp : static_cast<LevelMultiplication*>(evalRes.get())->getOperands())
                 mergedOperands.emplace_back(std::move(childOp));
@@ -61,7 +61,7 @@ AbstractExpression::ExpressionP LevelMultiplication::eval(Scope &scope, const st
                 mergedOperands.emplace_back(make_unique<VectorExpression>(std::move(vec)));
         } else {
             if (vec.getX() != nullptr) {
-                vec = *static_cast<VectorExpression*>(VectorExpression(make_unique<LevelMultiplication>(make_unique<NumberValue>(numberValue), std::move(vec.getX())), make_unique<LevelMultiplication>(make_unique<NumberValue>(numberValue), std::move(vec.getY())), make_unique<LevelMultiplication>(make_unique<NumberValue>(numberValue), std::move(vec.getZ()))).eval(scope, load, lazy, direct).get());
+                vec = *static_cast<VectorExpression*>(VectorExpression(make_unique<LevelMultiplication>(make_unique<NumberValue>(numberValue), std::move(vec.getX())), make_unique<LevelMultiplication>(make_unique<NumberValue>(numberValue), std::move(vec.getY())), make_unique<LevelMultiplication>(make_unique<NumberValue>(numberValue), std::move(vec.getZ()))).execute(scope, load, execOption).get());
                 mergedOperands.emplace_back(make_unique<VectorExpression>(std::move(vec)));
             } else if (! listByDimension.empty()) {
                 for (auto &cell : listByDimension.begin()->second)
@@ -69,9 +69,9 @@ AbstractExpression::ExpressionP LevelMultiplication::eval(Scope &scope, const st
             } else mergedOperands.emplace_back(make_unique<NumberValue>(numberValue));
         }
         for (auto &basisValue : basisValues)
-            mergedOperands.emplace_back(Exponentiation(std::move(basisValue.first), std::move(basisValue.second)).eval(scope, load, lazy, direct));
+            mergedOperands.emplace_back(Exponentiation(std::move(basisValue.first), std::move(basisValue.second)).execute(scope, load, execOption));
         for (auto &list : listByDimension)
-            mergedOperands.emplace_back(List(std::move(list.second)).eval(scope, load, lazy, direct));
+            mergedOperands.emplace_back(List(std::move(list.second)).execute(scope, load, execOption));
         if (mergedOperands.size() == 1) return std::move(mergedOperands.front());
         else if (mergedOperands.empty()) return make_unique<NumberValue>(1);
         else return make_unique<LevelMultiplication>(std::move(mergedOperands));
@@ -103,8 +103,8 @@ TypeInfo LevelMultiplication::typeCheck(const TypeCollection &candidates, Scope 
                 returnT = std::move(opT);
             }
             it = opRefs.erase(it);
-        } catch (const char *) {
-            if (opRefs.size() == 1 || lastFail == it) throw "typing";
+        } catch (UndecidableTypeException &e) {
+            if (opRefs.size() == 1 || lastFail == it) throw e;
             else {
                 ++it;
                 lastFail = it;

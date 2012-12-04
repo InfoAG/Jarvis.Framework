@@ -2,18 +2,18 @@
 
 namespace CAS {
 
-AbstractExpression::ExpressionP BinaryMultiplication::eval(Scope &scope, const std::function<void(const std::string &)> &load, bool lazy, bool direct) const
+AbstractExpression::ExpressionP BinaryMultiplication::execute(Scope &scope, const std::function<void(const std::string &)> &load, ExecOption execOption) const
 {
-    auto firstOpResult = first_op->eval(scope, load, lazy, direct), secondOpResult = second_op->eval(scope, load, lazy, direct);
+    auto firstOpResult = first_op->execute(scope, load, execOption), secondOpResult = second_op->execute(scope, load, execOption);
     if (type == SCALARVECTOR) {
         if (typeid(*(firstOpResult)) == typeid(VectorExpression) && typeid(*(secondOpResult)) == typeid(VectorExpression)) {
             Operands addOps;
             addOps.emplace_back(make_unique<LevelMultiplication>(std::move(static_cast<VectorExpression*>(firstOpResult.get())->getX()), std::move(static_cast<VectorExpression*>(secondOpResult.get())->getX())));
             addOps.emplace_back(make_unique<LevelMultiplication>(std::move(static_cast<VectorExpression*>(firstOpResult.get())->getY()), std::move(static_cast<VectorExpression*>(secondOpResult.get())->getY())));
             addOps.emplace_back(make_unique<LevelMultiplication>(std::move(static_cast<VectorExpression*>(firstOpResult.get())->getZ()), std::move(static_cast<VectorExpression*>(secondOpResult.get())->getZ())));
-            return Addition(std::move(addOps)).eval(scope, load, lazy, direct);
+            return Addition(std::move(addOps)).execute(scope, load, execOption);
         } else return make_unique<BinaryMultiplication>(std::move(firstOpResult), std::move(secondOpResult));
-    } else return LevelMultiplication(std::move(firstOpResult), std::move(secondOpResult), (type == LEVELNUM)).eval(scope, load, lazy, direct);
+    } else return LevelMultiplication(std::move(firstOpResult), std::move(secondOpResult), (type == LEVELNUM)).execute(scope, load, execOption);
 }
 
 TypeInfo BinaryMultiplication::typeCheck(const TypeCollection &candidates, Scope &scope)
@@ -46,7 +46,7 @@ TypeInfo BinaryMultiplication::typeCheck(const TypeCollection &candidates, Scope
             second_op->typeCheck({{TypeInfo::NUMBER, firstOpT}}, scope);
             return firstOpT;
         }
-    } catch (const char *) {
+    } catch (UndecidableTypeException &) {
         auto secondOpT = second_op->typeCheck(cp, scope);
         if (secondOpT == TypeInfo::NUMBER) {
             if (! num) cp.types.erase(TypeInfo::NUMBER);

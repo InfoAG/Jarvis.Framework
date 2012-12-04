@@ -11,7 +11,7 @@ public:
     ReturnExpression(ExpressionP operand) : AbstractUnaryOperation(std::move(operand)) {}
     virtual std::unique_ptr<AbstractExpression> copy() const { return make_unique<ReturnExpression>(*this); }
 
-    virtual ExpressionP eval(Scope &scope, const std::function<void(const std::string &)> &load, bool lazy, bool direct) const;
+    virtual ExpressionP execute(Scope &scope, const std::function<void(const std::string &)> &load, ExecOption execOption) const;
     virtual TypeInfo typeCheck(const TypeCollection &candidates, Scope &scope);
     virtual std::string toString() const { return "return " + operand->toString(); }
     virtual bool equals(const AbstractExpression *other) const;

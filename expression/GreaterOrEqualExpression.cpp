@@ -2,9 +2,9 @@
 
 namespace CAS {
 
-AbstractExpression::ExpressionP GreaterOrEqualExpression::eval(Scope &scope, const std::function<void(const std::string &)> &load, bool lazy, bool direct) const
+AbstractExpression::ExpressionP GreaterOrEqualExpression::execute(Scope &scope, const std::function<void(const std::string &)> &load, ExecOption execOption) const
 {
-    auto firstOpResult = first_op->eval(scope, load, lazy, direct), secondOpResult = second_op->eval(scope, load, lazy, direct);
+    auto firstOpResult = first_op->execute(scope, load, execOption), secondOpResult = second_op->execute(scope, load, execOption);
     if (typeid(*(firstOpResult)) == typeid(NumberValue) && typeid(*(secondOpResult)) == typeid(NumberValue))
         return make_unique<BoolValue>(static_cast<NumberValue*>(firstOpResult.get())->getValue() < static_cast<NumberValue*>(secondOpResult.get())->getValue());
     else return make_unique<GreaterOrEqualExpression>(std::move(firstOpResult), std::move(secondOpResult));
@@ -12,13 +12,13 @@ AbstractExpression::ExpressionP GreaterOrEqualExpression::eval(Scope &scope, con
 
 TypeInfo GreaterOrEqualExpression::typeCheck(const TypeCollection &candidates, Scope &scope)
 {
-    if (! candidates.contains(TypeInfo::BOOL)) throw "typing";
+    candidates.assertContains(*this, TypeInfo::BOOL);
     TypeCollection opCol{TypeCollection::all()};
     opCol.erase(TypeInfo::VOID);
     try {
         second_op->typeCheck({{first_op->typeCheck(opCol, scope)}}, scope);
         return TypeInfo::BOOL;
-    } catch (const char *) {
+    } catch (UndecidableTypeException &) {
         first_op->typeCheck({{second_op->typeCheck(opCol, scope)}}, scope);
         return TypeInfo::BOOL;
     }

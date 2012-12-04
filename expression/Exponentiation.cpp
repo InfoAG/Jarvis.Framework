@@ -2,15 +2,15 @@
 
 namespace CAS {
 
-AbstractExpression::ExpressionP Exponentiation::eval(Scope &scope, const std::function<void(const std::string &)> &load, bool lazy, bool direct) const
+AbstractExpression::ExpressionP Exponentiation::execute(Scope &scope, const std::function<void(const std::string &)> &load, ExecOption execOption) const
 {
-    auto firstOpResult = first_op->eval(scope, load, lazy, direct), secondOpResult = second_op->eval(scope, load, lazy, direct);
+    auto firstOpResult = first_op->execute(scope, load, execOption), secondOpResult = second_op->execute(scope, load, execOption);
     if (typeid(*(firstOpResult)) == typeid(NumberValue) && typeid(*(secondOpResult)) == typeid(NumberValue))
         return make_unique<NumberValue>(pow(*(static_cast<NumberValue*>(firstOpResult.get())), *(static_cast<NumberValue*>(secondOpResult.get()))));
     else if (typeid(*(firstOpResult)) == typeid(Exponentiation))
         return Exponentiation(std::move(static_cast<Exponentiation*>(firstOpResult.get())->getFirstOp()),
                               make_unique<LevelMultiplication>(std::move(static_cast<Exponentiation*>(firstOpResult.get())->getSecondOp()),
-                                                          std::move(secondOpResult))).eval(scope, load, lazy, direct);
+                                                          std::move(secondOpResult))).execute(scope, load, execOption);
     else if (typeid(*(firstOpResult)) == typeid(NumberValue) && static_cast<NumberValue*>(firstOpResult.get())->getValue() == 1)
         return firstOpResult;
     else if (typeid(*(secondOpResult)) == typeid(NumberValue)) {

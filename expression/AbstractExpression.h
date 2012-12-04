@@ -18,6 +18,12 @@ public:
     typedef std::unique_ptr<AbstractExpression> ExpressionP;
     typedef std::vector<ExpressionP> Operands;
 
+    enum ExecOption {
+        STD,
+        LAZY,
+        EAGER
+    };
+
     virtual ~AbstractExpression() {} //!< Virtual destructor to prevent slicing
 
     virtual ExpressionP copy() const = 0;
@@ -27,7 +33,8 @@ public:
      * @param ei EvalInfo object containing definitions
      * @return AbstractExpression* pointing to the root of an arithmetical tree representing the result
      */
-    virtual ExpressionP eval(Scope &scope, const std::function<void(const std::string &)> &load, bool lazy = false, bool direct = false) const = 0;
+    virtual ExpressionP execute(Scope &scope, const std::function<void(const std::string &)> &load, ExecOption execOption = STD) const = 0;
+    ExpressionP eval(Scope &scope, const std::function<void(const std::string &)> &load, ExecOption execOption = STD) { typeCheck(TypeCollection::all(), scope); return execute(scope, load, execOption); }
     virtual TypeInfo typeCheck(const TypeCollection &candidates, Scope &scope) = 0;
     virtual std::string toString() const = 0; //!< @return String representation of the arithmetical tree starting at this node
     virtual bool equals(const AbstractExpression *other) const = 0;

@@ -17,7 +17,7 @@ public:
     IfExpression(const IfExpression &other);
 
     virtual ExpressionP copy() const { return make_unique<IfExpression>(*this); }
-    virtual ExpressionP eval(Scope &scope, const std::function<void(const std::string &)> &load, bool lazy, bool direct) const;
+    virtual ExpressionP execute(Scope &scope, const std::function<void(const std::string &)> &load, ExecOption execOption) const;
     virtual TypeInfo typeCheck(const TypeCollection &candidates, Scope &scope);
     virtual std::string toString() const;
     virtual bool equals(const AbstractExpression *other) const;

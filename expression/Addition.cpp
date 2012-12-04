@@ -18,12 +18,12 @@ double &Addition::accessMonomValue(MonomValues &values, Operands monom) const
     }
 }
 
-AbstractExpression::ExpressionP Addition::eval(Scope &scope, const std::function<void(const std::string &)> &load, bool lazy, bool direct) const
+AbstractExpression::ExpressionP Addition::execute(Scope &scope, const std::function<void(const std::string &)> &load, ExecOption execOption) const
 {
     Operands mergedOperands;
     mergedOperands.reserve(operands.size());
     for (const auto &operand : operands) {
-        auto evalRes = operand->eval(scope, load, lazy, direct);
+        auto evalRes = operand->execute(scope, load, execOption);
         if (typeid(*(evalRes)) == typeid(Addition)) {
             for (auto &childOp : static_cast<Addition*>(evalRes.get())->getOperands())
                 mergedOperands.emplace_back(std::move(childOp));
@@ -55,7 +55,7 @@ AbstractExpression::ExpressionP Addition::eval(Scope &scope, const std::function
                 }
         } else if (typeid(*operand) == typeid(VectorExpression)) {
             if (vec.getX() == nullptr) vec = std::move(*static_cast<VectorExpression*>(operand.get()));
-            else vec = VectorExpression(Addition(std::move(static_cast<VectorExpression*>(operand.get())->getX()), std::move(vec.getX())).eval(scope, load, lazy, direct), Addition(std::move(static_cast<VectorExpression*>(operand.get())->getY()), std::move(vec.getY())).eval(scope, load, lazy, direct), Addition(std::move(static_cast<VectorExpression*>(operand.get())->getZ()), std::move(vec.getZ())).eval(scope, load, lazy, direct));
+            else vec = VectorExpression(Addition(std::move(static_cast<VectorExpression*>(operand.get())->getX()), std::move(vec.getX())).execute(scope, load, execOption), Addition(std::move(static_cast<VectorExpression*>(operand.get())->getY()), std::move(vec.getY())).execute(scope, load, execOption), Addition(std::move(static_cast<VectorExpression*>(operand.get())->getZ()), std::move(vec.getZ())).execute(scope, load, execOption));
         /*} else if (typeid(*operand) == typeid(Matrix)) {
             auto findRes = matrixByDimensions.find(static_cast<Matrix*>(operand.get())->getOperands().size());
             if (findRes == matrixByDimensions.end())
@@ -74,14 +74,14 @@ AbstractExpression::ExpressionP Addition::eval(Scope &scope, const std::function
     mergedOperands.clear();
     if (numberValue != 0) {
         if (vec.getX() != nullptr) {
-            vec = VectorExpression(Addition(make_unique<NumberValue>(numberValue), std::move(vec.getX())).eval(scope, load, lazy, direct), Addition(make_unique<NumberValue>(numberValue), std::move(vec.getY())).eval(scope, load, lazy, direct), Addition(make_unique<NumberValue>(numberValue), std::move(vec.getZ())).eval(scope, load, lazy, direct));
+            vec = VectorExpression(Addition(make_unique<NumberValue>(numberValue), std::move(vec.getX())).execute(scope, load, execOption), Addition(make_unique<NumberValue>(numberValue), std::move(vec.getY())).execute(scope, load, execOption), Addition(make_unique<NumberValue>(numberValue), std::move(vec.getZ())).execute(scope, load, execOption));
         } else if (! listByDimension.empty()) {
             for (auto &cell : listByDimension.begin()->second)
                 cell = make_unique<Addition>(std::move(cell), make_unique<NumberValue>(numberValue));
         } else mergedOperands.emplace_back(make_unique<NumberValue>(numberValue));
     }
     if (vec.getX() != nullptr) mergedOperands.emplace_back(make_unique<VectorExpression>(std::move(vec)));
-    for (auto &list : listByDimension) mergedOperands.emplace_back(List(std::move(list.second)).eval(scope, load, lazy, direct));
+    for (auto &list : listByDimension) mergedOperands.emplace_back(List(std::move(list.second)).execute(scope, load, execOption));
     for (auto &item : monomValues) {
         Operands workaroundVec;
         for (const auto &monomItem : item.first) workaroundVec.emplace_back(monomItem);
@@ -131,8 +131,8 @@ TypeInfo Addition::typeCheck(const TypeCollection &candidates, Scope &scope)
                 returnT = std::move(opT);
             }
             it = opRefs.erase(it);
-        } catch (const char *) {
-            if (opRefs.size() == 1 || lastFail == it) throw "typing";
+        } catch (UndecidableTypeException &e) {
+            if (opRefs.size() == 1 || lastFail == it) throw e;
             else {
                 ++it;
                 lastFail = it;
@@ -142,18 +142,6 @@ TypeInfo Addition::typeCheck(const TypeCollection &candidates, Scope &scope)
     }
     return returnT;
 }
-
-/*
-AbstractExpression::ExpressionP Addition::directEval() const
-{
-    double result;
-    for (const auto &op : operands) {
-        auto opRes = op->directEval().second;
-        if (typeid(*opRes) != typeid(NumberValue)) throw "nodirectnonono";
-        else result += static_cast<NumberValue*>(opRes)->getValue();
-    }
-    return make_unique<
-}*/
 
 std::string Addition::toString() const
 {

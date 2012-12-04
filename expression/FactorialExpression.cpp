@@ -2,9 +2,9 @@
 
 namespace CAS {
 
-AbstractExpression::ExpressionP FactorialExpression::eval(Scope &scope, const std::function<void (const std::string &)> &load, bool lazy, bool direct) const
+AbstractExpression::ExpressionP FactorialExpression::execute(Scope &scope, const std::function<void (const std::string &)> &load, ExecOption execOption) const
 {
-    auto opRes = operand->eval(scope, load, lazy, direct);
+    auto opRes = operand->execute(scope, load, execOption);
     if (typeid(*opRes) == typeid(NumberValue)) {
         double result = 1.0;
         int start = static_cast<NumberValue*>(opRes.get())->getValue();
@@ -18,10 +18,9 @@ AbstractExpression::ExpressionP FactorialExpression::eval(Scope &scope, const st
 
 TypeInfo FactorialExpression::typeCheck(const TypeCollection &candidates, Scope &scope)
 {
-    if (candidates.contains(TypeInfo::NUMBER)) {
-        operand->typeCheck({{TypeInfo::NUMBER}}, scope);
-        return TypeInfo::NUMBER;
-    } else throw "typing";
+    candidates.assertContains(*this, TypeInfo::NUMBER);
+    operand->typeCheck({{TypeInfo::NUMBER}}, scope);
+    return TypeInfo::NUMBER;
 }
 
 bool FactorialExpression::equals(const AbstractExpression *other) const
