@@ -23,18 +23,22 @@ TypeInfo BinaryMultiplication::typeCheck(const TypeCollection &candidates, Scope
     cp.types.erase(TypeInfo::BOOL);
     cp.listElementTypes.erase(TypeInfo::BOOL);
     cp.listElementTypes.erase(TypeInfo::VOID);
-    auto num = cp.contains(TypeInfo::NUMBER);
-    if (! num) cp.types.insert(TypeInfo::NUMBER);
+    auto num = cp.contains(TypeInfo::NUMBER), vec = cp.contains(TypeInfo::VECTOR);
+    cp.types.insert(TypeInfo::NUMBER);
+    if (num) cp.types.insert(TypeInfo::VECTOR);
     try {
         auto firstOpT = first_op->typeCheck(cp, scope);
         if (firstOpT == TypeInfo::NUMBER) {
             if (! num) cp.types.erase(TypeInfo::NUMBER);
+            if (! vec) cp.types.erase(TypeInfo::VECTOR);
             auto secondOpT = second_op->typeCheck(cp, scope);
             if (secondOpT == TypeInfo::NUMBER) type = LEVELNUM;
             else type = LEVEL;
             return secondOpT;
         } else if (firstOpT == TypeInfo::VECTOR) {
-            auto secondOpT = second_op->typeCheck({{TypeInfo::NUMBER, firstOpT}}, scope);
+            if (! num) cp.types.erase(TypeInfo::VECTOR);
+            else if (! vec) cp.types.erase(TypeInfo::NUMBER);
+            auto secondOpT = second_op->typeCheck(cp, scope);
             if (secondOpT == TypeInfo::VECTOR) {
                 type = SCALARVECTOR;
                 return TypeInfo::NUMBER;
@@ -50,12 +54,15 @@ TypeInfo BinaryMultiplication::typeCheck(const TypeCollection &candidates, Scope
         auto secondOpT = second_op->typeCheck(cp, scope);
         if (secondOpT == TypeInfo::NUMBER) {
             if (! num) cp.types.erase(TypeInfo::NUMBER);
+            if (! vec) cp.types.erase(TypeInfo::VECTOR);
             auto firstOpT = first_op->typeCheck(cp, scope);
             if (firstOpT == TypeInfo::NUMBER) type = LEVELNUM;
             else type = LEVEL;
             return firstOpT;
         } else if (secondOpT == TypeInfo::VECTOR) {
-            auto firstOpT = second_op->typeCheck({{TypeInfo::NUMBER, secondOpT}}, scope);
+            if (! num) cp.types.erase(TypeInfo::VECTOR);
+            else if (! vec) cp.types.erase(TypeInfo::NUMBER);
+            auto firstOpT = first_op->typeCheck(cp, scope);
             if (firstOpT == TypeInfo::VECTOR) {
                 type = SCALARVECTOR;
                 return TypeInfo::NUMBER;
