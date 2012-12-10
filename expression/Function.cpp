@@ -1,5 +1,6 @@
 #include "Function.h"
 #include "CFunctionBody.h"
+#include <iostream>
 
 namespace CAS {
 
@@ -9,24 +10,25 @@ AbstractExpression::ExpressionP Function::execute(Scope &scope, const std::funct
     for (const auto &op : operands)
         opResults.emplace_back(op->execute(scope, load, execOption));
 
-    Scope::VarDefs funcVars;
-    auto funcDefMatch = scope.getFunc({identifier, std::move(argTypes)});
+    auto funcDefMatch = scope.getFunc({identifier, argTypes});
     if (execOption == LAZY || funcDefMatch.second.definition == nullptr)
         return copy();
     else {
         ExpressionP result;
-        if (typeid(*(funcDefMatch.second.definition)) == typeid(CFunctionBody))
-            result = static_cast<CFunctionBody*>(funcDefMatch.second.definition.get())->executeWithArgs(std::move(opResults), scope, load, execOption);
-        else {
+        if (typeid(*(funcDefMatch.second.definition)) == typeid(CFunctionBody)) {
+            result = static_cast<CFunctionBody*>(funcDefMatch.second.definition.get())->executeWithArgs(std::move(opResults), funcDefMatch.first, load, execOption);
+            if (result == nullptr) result = make_unique<Function>(identifier, std::move(opResults), argTypes);
+        } else {
+            Scope::VarDefs funcVars;
             auto itOpResults = opResults.begin();
             auto itOpTypes = argTypes.cbegin();
-            for (auto &funcVar : funcDefMatch.second.arguments)
-                funcVars.insert(std::make_pair(std::move(funcVar), VariableDefinition{std::move(*(itOpResults++)), *(itOpTypes++)}));
+            for (const auto &funcVar : funcDefMatch.second.arguments)
+                funcVars.insert(std::make_pair(funcVar, VariableDefinition{std::move(*(itOpResults++)), *(itOpTypes++)}));
             Scope funcScope(&funcDefMatch.first, std::move(funcVars));
             result = funcDefMatch.second.definition->execute(funcScope, load);
         }
 
-    if (execOption == EAGER && ! result->isValue()) throw ExecutionException::failedEager(toString());
+        if (execOption == EAGER && ! result->isValue()) throw ExecutionException::failedEager(toString());
         else return result;
     }
 }
