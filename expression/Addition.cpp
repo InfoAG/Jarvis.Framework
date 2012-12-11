@@ -82,11 +82,14 @@ AbstractExpression::ExpressionP Addition::execute(Scope &scope, const std::funct
     }
     if (vec.getX() != nullptr) mergedOperands.emplace_back(make_unique<VectorExpression>(std::move(vec)));
     for (auto &list : listByDimension) mergedOperands.emplace_back(List(std::move(list.second)).execute(scope, load, execOption));
-    for (auto &item : monomValues) {
-        Operands workaroundVec;
-        for (const auto &monomItem : item.first) workaroundVec.emplace_back(monomItem);
+    for (auto &item : monomValues) { 
         if (item.second != 0) {
-            if (item.second != 1) {
+            Operands workaroundVec;
+            for (const auto &monomItem : item.first) workaroundVec.emplace_back(monomItem);
+            if (item.second == 1) {
+                if (workaroundVec.size() == 1) mergedOperands.emplace_back(std::move(workaroundVec.front()));
+                else mergedOperands.emplace_back(make_unique<LevelMultiplication>(std::move(workaroundVec)));
+            } else {
                 if (item.second < 0 && ! mergedOperands.empty()) {
                     ExpressionP subtr;
                     if (item.second != -1)
@@ -98,7 +101,7 @@ AbstractExpression::ExpressionP Addition::execute(Scope &scope, const std::funct
                     workaroundVec.emplace(begin(workaroundVec), make_unique<NumberValue>(item.second));
                     mergedOperands.emplace_back(make_unique<LevelMultiplication>(std::move(workaroundVec)));
                 }
-            } else mergedOperands.emplace_back(make_unique<LevelMultiplication>(std::move(workaroundVec)));
+            }
         }
     }
     if (mergedOperands.size() == 0) return make_unique<NumberValue>(0);
@@ -143,11 +146,18 @@ TypeInfo Addition::typeCheck(const TypeCollection &candidates, Scope &scope)
     return returnT;
 }
 
+AbstractExpression::ExpressionP Addition::differentiate(const std::string &var) const
+{
+    Operands result;
+    for (const auto &op : operands) result.emplace_back(op->differentiate(var));
+    return make_unique<Addition>(std::move(result));
+}
+
 std::string Addition::toString() const
 {
     std::string result;
     for (auto it = operands.cbegin(); it != operands.cend(); ++it) {
-        if (typeid(*it) == typeid(Subtraction)) result += "(" + (*it)->toString() + ")";
+        if (typeid(**it) == typeid(Subtraction)) result += "(" + (*it)->toString() + ")";
         else result += (*it)->toString();
         if (it != operands.cend() - 1) result += "+";
     }

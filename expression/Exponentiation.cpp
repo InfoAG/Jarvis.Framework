@@ -6,7 +6,7 @@ AbstractExpression::ExpressionP Exponentiation::execute(Scope &scope, const std:
 {
     auto firstOpResult = first_op->execute(scope, load, execOption), secondOpResult = second_op->execute(scope, load, execOption);
     if (typeid(*(firstOpResult)) == typeid(NumberValue) && typeid(*(secondOpResult)) == typeid(NumberValue))
-        return make_unique<NumberValue>(pow(*(static_cast<NumberValue*>(firstOpResult.get())), *(static_cast<NumberValue*>(secondOpResult.get()))));
+        return make_unique<NumberValue>(pow(static_cast<NumberValue*>(firstOpResult.get())->getValue(), static_cast<NumberValue*>(secondOpResult.get())->getValue()));
     else if (typeid(*(firstOpResult)) == typeid(Exponentiation))
         return Exponentiation(std::move(static_cast<Exponentiation*>(firstOpResult.get())->getFirstOp()),
                               make_unique<LevelMultiplication>(std::move(static_cast<Exponentiation*>(firstOpResult.get())->getSecondOp()),
@@ -31,6 +31,17 @@ TypeInfo Exponentiation::typeCheck(const TypeCollection &candidates, Scope &scop
     cp.listElementTypes.erase(TypeInfo::VOID);
     second_op->typeCheck({{TypeInfo::NUMBER}}, scope);
     return first_op->typeCheck(cp, scope);
+}
+
+AbstractExpression::ExpressionP Exponentiation::differentiate(const std::string &var) const
+{
+    if (typeid(*first_op) == typeid(Constant) && static_cast<Constant*>(first_op.get())->type() == Constant::EULER)
+        return make_unique<LevelMultiplication>(second_op->differentiate(var), copy());
+    else if (second_op->hasVar(var))
+        return make_unique<LevelMultiplication>(LevelMultiplication(second_op->copy(), make_unique<NaturalLogarithm>(first_op->copy())).differentiate(var), copy());
+    else if (first_op->hasVar(var))
+        return make_unique<LevelMultiplication>(second_op->copy(), make_unique<Exponentiation>(first_op->copy(), make_unique<Subtraction>(second_op->copy(), make_unique<NumberValue>(1))));
+    else return make_unique<NumberValue>(0);
 }
 
 

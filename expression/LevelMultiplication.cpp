@@ -116,11 +116,19 @@ TypeInfo LevelMultiplication::typeCheck(const TypeCollection &candidates, Scope 
     return returnT;
 }
 
+AbstractExpression::ExpressionP LevelMultiplication::differentiate(const std::string &var) const
+{
+    ExpressionP result = operands.front()->copy();
+    for (auto it = operands.cbegin() + 1; it != operands.cend(); ++it)
+        result = make_unique<Addition>(make_unique<LevelMultiplication>(result->differentiate(var), (*it)->copy()), make_unique<LevelMultiplication>(result->copy(), (*it)->differentiate(var)));
+    return result;
+}
+
 std::string LevelMultiplication::toString() const
 {
     std::string result;
     for (auto it = operands.cbegin(); it != operands.cend(); ++it) {
-        if (typeid(*it) == typeid(Subtraction) || typeid(*it) == typeid(Addition)) result += "(" + (*it)->toString() + ")";
+        if (typeid(**it) == typeid(Subtraction) || typeid(**it) == typeid(Addition)) result += "(" + (*it)->toString() + ")";
         else result += (*it)->toString();
         if (it != operands.cend() - 1) result += "*";
     }

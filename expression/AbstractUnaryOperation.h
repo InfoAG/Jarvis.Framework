@@ -18,8 +18,12 @@ public:
     AbstractUnaryOperation(ExpressionP operand) : operand(std::move(operand)) {}
     AbstractUnaryOperation(const AbstractUnaryOperation &other) : operand(other.operand->copy()) {}
 
+    virtual bool hasVar(const std::string &id) const { return operand->hasVar(id); }
+
     const ExpressionP &getOperand() const { return operand; }
     ExpressionP &getOperand() { return operand; }
+
+    bool operator==(const AbstractUnaryOperation &other) const { return operand->equals(other.operand.get()); }
 };
 
 }

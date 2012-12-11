@@ -6,6 +6,7 @@
 #include <vector>
 #include "TypeInfo.h"
 #include "TypeCollection.h"
+#include "exception/InvalidTreeException.h"
 
 namespace CAS {
 
@@ -36,9 +37,11 @@ public:
     virtual ExpressionP execute(Scope &scope, const std::function<void(const std::string &)> &load, ExecOption execOption = STD) const = 0;
     ExpressionP eval(Scope &scope, const std::function<void(const std::string &)> &load, ExecOption execOption = STD) { typeCheck(TypeCollection::all(), scope); return execute(scope, load, execOption); }
     virtual TypeInfo typeCheck(const TypeCollection &candidates, Scope &scope) = 0;
+    virtual ExpressionP differentiate(const std::string &) const { throw InvalidTreeException(toString(), "cannot differentiate \"" + toString() + "\""); }
     virtual std::string toString() const = 0; //!< @return String representation of the arithmetical tree starting at this node
     virtual bool equals(const AbstractExpression *other) const = 0;
     virtual bool isValue() const { return false; }
+    virtual bool hasVar(const std::string &) const { throw InvalidTreeException(toString(), "cannot call hasVar() on \"" + toString() + "\""); }
 };
 
 }

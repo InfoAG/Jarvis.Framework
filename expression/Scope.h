@@ -34,7 +34,7 @@ public:
     void consume(Scope other);
 
     bool hasVar(const std::string &identifier) const { return variables.find(identifier) != variables.end() || (parent && parent->hasVar(identifier)); }
-    std::pair<Scope &, VariableDefinition &> getVar(const std::string &identifier);
+    virtual std::pair<Scope &, VariableDefinition &> getVar(const std::string &identifier);
     bool hasFunc(const FunctionSignature &sig) const { return functions.find(sig) != functions.end() || (parent && parent->hasFunc(sig)); }
     std::pair<Scope &, FunctionDefinition &> getFunc(const FunctionSignature &sig);
 

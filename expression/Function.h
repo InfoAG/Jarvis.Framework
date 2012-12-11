@@ -2,7 +2,7 @@
 #define FUNCTION_H
 
 #include "AbstractLevelingOperation.h"
-#include "Scope.h"
+#include "FunctionScope.h"
 #include "List.h"
 #include "exception/ExecutionException.h"
 

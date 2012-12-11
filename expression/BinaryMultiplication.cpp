@@ -74,7 +74,12 @@ TypeInfo BinaryMultiplication::typeCheck(const TypeCollection &candidates, Scope
             first_op->typeCheck({{TypeInfo::NUMBER, secondOpT}}, scope);
             return secondOpT;
         }
-    }
+}
+}
+
+AbstractExpression::ExpressionP BinaryMultiplication::differentiate(const std::string &var) const
+{
+    return make_unique<Addition>(make_unique<LevelMultiplication>(first_op->differentiate(var), second_op->copy()), make_unique<LevelMultiplication>(first_op->copy(), second_op->differentiate(var)));
 }
 
 bool BinaryMultiplication::equals(const AbstractExpression *other) const

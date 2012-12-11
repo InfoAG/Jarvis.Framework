@@ -22,6 +22,8 @@ public:
     //! Copy constructor
     AbstractBinaryOperation(const AbstractBinaryOperation &other) : first_op(other.first_op->copy()), second_op(other.second_op->copy()) {}
 
+    virtual bool hasVar(const std::string &id) const { return first_op->hasVar(id) || second_op->hasVar(id); }
+
     ExpressionP &getFirstOp() { return first_op; }
     const ExpressionP &getFirstOp() const { return first_op; }
     ExpressionP &getSecondOp() { return second_op; }

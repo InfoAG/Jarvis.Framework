@@ -1,6 +1,5 @@
 #include "Function.h"
 #include "CFunctionBody.h"
-#include <iostream>
 
 namespace CAS {
 
@@ -16,7 +15,7 @@ AbstractExpression::ExpressionP Function::execute(Scope &scope, const std::funct
     else {
         ExpressionP result;
         if (typeid(*(funcDefMatch.second.definition)) == typeid(CFunctionBody)) {
-            result = static_cast<CFunctionBody*>(funcDefMatch.second.definition.get())->executeWithArgs(std::move(opResults), funcDefMatch.first, load, execOption);
+            result = static_cast<CFunctionBody*>(funcDefMatch.second.definition.get())->executeWithArgs(std::move(opResults), scope, load, execOption);
             if (result == nullptr) result = make_unique<Function>(identifier, std::move(opResults), argTypes);
         } else {
             Scope::VarDefs funcVars;
@@ -24,7 +23,7 @@ AbstractExpression::ExpressionP Function::execute(Scope &scope, const std::funct
             auto itOpTypes = argTypes.cbegin();
             for (const auto &funcVar : funcDefMatch.second.arguments)
                 funcVars.insert(std::make_pair(funcVar, VariableDefinition{std::move(*(itOpResults++)), *(itOpTypes++)}));
-            Scope funcScope(&funcDefMatch.first, std::move(funcVars));
+            FunctionScope funcScope(&funcDefMatch.first, scope, std::move(funcVars));
             result = funcDefMatch.second.definition->execute(funcScope, load);
         }
 

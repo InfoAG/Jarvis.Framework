@@ -6,7 +6,7 @@ namespace CAS {
 
 AbstractExpression::ExpressionP Division::execute(Scope &scope, const std::function<void(const std::string &)> &load, ExecOption execOption) const
 {
-    auto firstOpResult = first_op->execute(scope, load, execOption), secondOpResult = second_op->execute(scope, load, execOption);
+    /*auto firstOpResult = first_op->execute(scope, load, execOption), secondOpResult = second_op->execute(scope, load, execOption);
     if (typeid(*(firstOpResult)) == typeid(NumberValue)) {
         if (typeid(*(secondOpResult)) == typeid(NumberValue))
             return make_unique<NumberValue>(*static_cast<NumberValue*>(firstOpResult.get()) / *static_cast<NumberValue*>(secondOpResult.get()));
@@ -27,7 +27,8 @@ AbstractExpression::ExpressionP Division::execute(Scope &scope, const std::funct
     }
     if (typeid(*(secondOpResult)) == typeid(NumberValue) && static_cast<NumberValue*>(secondOpResult.get())->getValue() == 1)
         return firstOpResult;
-    else return make_unique<Division>(std::move(firstOpResult), std::move(secondOpResult));
+    else return make_unique<Division>(std::move(firstOpResult), std::move(secondOpResult));*/
+    return BinaryMultiplication(first_op->copy(), make_unique<Exponentiation>(second_op->copy(), make_unique<NumberValue>(-1))).execute(scope, load, execOption);
 }
 
 TypeInfo Division::typeCheck(const TypeCollection &candidates, Scope &scope)
@@ -57,7 +58,12 @@ TypeInfo Division::typeCheck(const TypeCollection &candidates, Scope &scope)
             first_op->typeCheck({{TypeInfo::NUMBER, secondOpT}}, scope);
             return secondOpT;
         }
-    }
+}
+}
+
+AbstractExpression::ExpressionP Division::differentiate(const std::string &var) const
+{
+    return make_unique<Division>(make_unique<Subtraction>(make_unique<LevelMultiplication>(first_op->differentiate(var), second_op->copy()), make_unique<LevelMultiplication>(first_op->copy(), second_op->differentiate(var))), make_unique<Exponentiation>(second_op->copy(), make_unique<NumberValue>(2)));
 }
 
 
