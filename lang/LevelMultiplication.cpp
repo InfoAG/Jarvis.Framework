@@ -15,14 +15,14 @@ void LevelMultiplication::addToBasisValue(BasisValues &values, ExpressionP basis
 
 AbstractExpression::ExpressionP LevelMultiplication::executeExpression(Scope &scope, const LoadFunc &load, const PrintFunc &print, ExecOption execOption) const
 {
-    Expressions mergedExpressions;
+    Expressions mergedOperands;
     for (const auto &operand : operands) {
         auto evalRes = operand->executeExpression(scope, load, print, execOption);
         if (typeid(*(evalRes)) == typeid(LevelMultiplication)) {
             for (auto &childOp : static_cast<LevelMultiplication*>(evalRes.get())->getOperands())
-                mergedExpressions.emplace_back(std::move(childOp));
+                mergedOperands.emplace_back(std::move(childOp));
         }
-        else mergedExpressions.emplace_back(std::move(evalRes));
+        else mergedOperands.emplace_back(std::move(evalRes));
     }
     double numberValue = 1;
     BasisValues basisValues;
@@ -32,8 +32,8 @@ AbstractExpression::ExpressionP LevelMultiplication::executeExpression(Scope &sc
     // http://www.iaeng.org/publication/WCE2010/WCE2010_pp1829-1833.pdf
 
 
-    while (! mergedExpressions.empty()) {
-        auto &operand = mergedExpressions.front();
+    while (! mergedOperands.empty()) {
+        auto &operand = mergedOperands.front();
         if (typeid(*operand) == typeid(NumberValue))
             numberValue *= static_cast<NumberValue*>(operand.get())->getValue();
         else if (typeid(*operand) == typeid(Vector))
@@ -47,34 +47,38 @@ AbstractExpression::ExpressionP LevelMultiplication::executeExpression(Scope &sc
                 for (auto &cell : findRes->second)
                     cell = make_unique<BinaryMultiplication>(std::move(cell), std::move(*listIt++));
             }
-        } else if (typeid(*operand) == typeid(Exponentiation))
-            addToBasisValue(basisValues, std::move(static_cast<Exponentiation*>(operand.get())->getFirstOp()), std::move(static_cast<Exponentiation*>(operand.get())->getSecondOp()));
-        else
+        } else if (typeid(*operand) == typeid(Exponentiation)) {
+            if (typeid(*(static_cast<Exponentiation*>(operand.get())->getFirstOp())) == typeid(LevelMultiplication)) {
+                for (auto &basisOp : static_cast<LevelMultiplication*>(static_cast<Exponentiation*>(operand.get())->getFirstOp().get())->getOperands())
+                    addToBasisValue(basisValues, std::move(basisOp), static_cast<Exponentiation*>(operand.get())->getSecondOp()->copyEx());
+            } else
+                addToBasisValue(basisValues, std::move(static_cast<Exponentiation*>(operand.get())->getFirstOp()), std::move(static_cast<Exponentiation*>(operand.get())->getSecondOp()));
+        } else
             addToBasisValue(basisValues, std::move(operand), make_unique<NumberValue>(1));
-        mergedExpressions.erase(begin(mergedExpressions));
+        mergedOperands.erase(begin(mergedOperands));
     }
-    mergedExpressions.clear();
+    mergedOperands.clear();
     if (returnsNumber && numberValue == 0) return make_unique<NumberValue>(0);
     else {
         if (numberValue == 1) {
             if (vec.getX() != nullptr)
-                mergedExpressions.emplace_back(make_unique<Vector>(std::move(vec)));
+                mergedOperands.emplace_back(make_unique<Vector>(std::move(vec)));
         } else {
             if (vec.getX() != nullptr) {
                 vec = *static_cast<Vector*>(Vector(make_unique<LevelMultiplication>(make_unique<NumberValue>(numberValue), std::move(vec.getX())), make_unique<LevelMultiplication>(make_unique<NumberValue>(numberValue), std::move(vec.getY())), make_unique<LevelMultiplication>(make_unique<NumberValue>(numberValue), std::move(vec.getZ()))).executeExpression(scope, load, print, execOption).get());
-                mergedExpressions.emplace_back(make_unique<Vector>(std::move(vec)));
+                mergedOperands.emplace_back(make_unique<Vector>(std::move(vec)));
             } else if (! listByDimension.empty()) {
                 for (auto &cell : listByDimension.begin()->second)
                     cell = make_unique<BinaryMultiplication>(std::move(cell), make_unique<NumberValue>(numberValue));
-            } else mergedExpressions.emplace_back(make_unique<NumberValue>(numberValue));
+            } else mergedOperands.emplace_back(make_unique<NumberValue>(numberValue));
         }
         for (auto &basisValue : basisValues)
-            mergedExpressions.emplace_back(Exponentiation(std::move(basisValue.first), std::move(basisValue.second)).executeExpression(scope, load, print, execOption));
+            mergedOperands.emplace_back(Exponentiation(std::move(basisValue.first), std::move(basisValue.second)).executeExpression(scope, load, print, execOption));
         for (auto &list : listByDimension)
-            mergedExpressions.emplace_back(List(std::move(list.second)).executeExpression(scope, load, print, execOption));
-        if (mergedExpressions.size() == 1) return std::move(mergedExpressions.front());
-        else if (mergedExpressions.empty()) return make_unique<NumberValue>(1);
-        else return make_unique<LevelMultiplication>(std::move(mergedExpressions));
+            mergedOperands.emplace_back(List(std::move(list.second)).executeExpression(scope, load, print, execOption));
+        if (mergedOperands.size() == 1) return std::move(mergedOperands.front());
+        else if (mergedOperands.empty()) return make_unique<NumberValue>(1);
+        else return make_unique<LevelMultiplication>(std::move(mergedOperands));
     }
 }
 

@@ -10,8 +10,8 @@ MultiLine::MultiLine(const MultiLine &other)
 AbstractExpression::ExpressionP MultiLine::execute(Scope &scope, const LoadFunc &load, const PrintFunc &print, ExecOption execOption) const
 {
     for (const auto &op : operands) {
-        op->execute(scope, load, print, execOption);
-        //if (typeid(*(evalRes)) == typeid(Return)) return std::move(static_cast<Return*>(evalRes.get())->getOperand());
+        auto evalRes = op->execute(scope, load, print, execOption);
+        if (typeid(*(evalRes)) != typeid(Void)) return evalRes;
     }
     return make_unique<Void>();
 }

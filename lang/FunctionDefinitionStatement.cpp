@@ -19,7 +19,7 @@ TypeInfo FunctionDefinitionStatement::typeCheck(const TypeCollection &candidates
     for (const auto &type : head.getSignature().argumentTypes)
         args.insert(std::make_pair(*(itNames++), VariableDefinition{type}));
 
-    Scope bodyScope(&scope, std::move(args));
+    Scope bodyScope(&(scope.getFunc(head.getSignature()).first), std::move(args));
     body->typeCheck(TypeCollection::all(), bodyScope);
     return TypeInfo::VOID;
 }

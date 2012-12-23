@@ -10,11 +10,11 @@ class TypeInfo
 {
 public:
     enum StatementType {
-        NUMBER = 1,
-        BOOL = 2,
-        VECTOR = 4,
-        MATRIX = 8,
-        VOID = 16,
+        NUMBER,
+        BOOL,
+        VECTOR,
+        MATRIX,
+        VOID,
         LIST
     };
 

@@ -4,7 +4,7 @@ namespace CAS {
 
 AbstractExpression::ExpressionP Assignment::executeExpression(Scope &scope, const LoadFunc &load, const PrintFunc &print, ExecOption execOption) const
 {
-    auto secondOpResult = second_op->executeExpression(scope, load, print, execOption);
+    auto secondOpResult = second_op->executeExpression(scope.getVar(static_cast<Variable*>(first_op.get())->getIdentifier()).first, load, print, execOption);
 
     scope.defineVar(static_cast<Variable*>(first_op.get())->getIdentifier(), secondOpResult->copyEx());
     //else if (typeid(*first_op) == typeid(VariableDeclaration))
@@ -29,10 +29,10 @@ TypeInfo Assignment::typeCheck(const TypeCollection &candidates, Scope &scope)
 {
     if (typeid(*first_op) != typeid(Variable)) throw InvalidTreeException(toString(), "expected variable to assign to");
     if (scope.hasVar(static_cast<const Variable*>(first_op.get())->getIdentifier())) {
-        auto varT = scope.getVar(static_cast<const Variable*>(first_op.get())->getIdentifier()).second.type;
-        candidates.assertContains(*this, varT);
-        second_op->typeCheck({{varT}}, scope);
-        return varT;
+        auto varInfo = scope.getVar(static_cast<const Variable*>(first_op.get())->getIdentifier());
+        candidates.assertContains(*this, varInfo.second.type);
+        second_op->typeCheck({{varInfo.second.type}}, varInfo.first);
+        return varInfo.second.type;
     } else {
         TypeCollection tc(TypeCollection::all());
         tc.types.erase(TypeInfo::VOID);

@@ -5,7 +5,7 @@ namespace CAS {
 
 AbstractExpression::ExpressionP Function::executeExpression(Scope &scope, const LoadFunc &load, const PrintFunc &print, ExecOption execOption) const
 {
-    std::vector<ExpressionP> opResults;
+    Expressions opResults;
     for (const auto &op : operands)
         opResults.emplace_back(op->executeExpression(scope, load, print, execOption));
 
@@ -25,7 +25,7 @@ AbstractExpression::ExpressionP Function::executeExpression(Scope &scope, const 
                 funcVars.insert(std::make_pair(funcVar, VariableDefinition{std::move(*(itOpResults++)), *(itOpTypes++)}));
             FunctionScope funcArgScope(&funcDefMatch.first, scope, std::move(funcVars));
             Scope funcBodyScope(&funcArgScope);
-            result = funcDefMatch.second.definition->execute(funcBodyScope, load, print);
+            result = funcDefMatch.second.definition->eval(funcBodyScope, load, print);
         }
 
         if (execOption == EAGER && ! result->isValue()) throw ExecutionException::failedEager(toString());
