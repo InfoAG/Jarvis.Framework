@@ -12,7 +12,7 @@ class LevelMultiplication;
 class BinaryMultiplication : public AbstractBinaryExpression
 {
 private:
-    enum {
+    enum MultiplicationType {
         UNCHECKED,
         SCALARVECTOR,
         LEVEL,
@@ -20,10 +20,11 @@ private:
     } type = UNCHECKED;
 
 public:
-    BinaryMultiplication(ExpressionP first_op, ExpressionP second_op) : AbstractBinaryExpression(std::move(first_op), std::move(second_op)) {}
+    BinaryMultiplication(ExpressionP first_op, ExpressionP second_op, MultiplicationType type = UNCHECKED) : AbstractBinaryExpression(std::move(first_op), std::move(second_op)), type(type) {}
     virtual StatementP copy() const { return make_unique<BinaryMultiplication>(*this); }
     virtual ExpressionP constructWithArgs(ExpressionP first, ExpressionP second) const { return make_unique<BinaryMultiplication>(std::move(first), std::move(second)); }
 
+    virtual ExpressionP substituteConstants() const { return make_unique<BinaryMultiplication>(first_op->substituteConstants(), second_op->substituteConstants(), type); }
     virtual ExpressionP executeExpression(Scope &scope, const LoadFunc &load, const PrintFunc &print, ExecOption execOption) const;
     virtual TypeInfo typeCheck(const TypeCollection &candidates, Scope &scope);
     virtual ExpressionP differentiate(const std::string &var) const;
