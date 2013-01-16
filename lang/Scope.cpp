@@ -61,17 +61,11 @@ bool Scope::varIsSymbolic(const std::string &identifier)
 {
     auto it = variables.find(identifier);
     if (it != variables.end()) {
-        if (it->second.definition == nullptr) return true;
-        if (it->second.recursion) throw ExecutionException::recursion(identifier);
+        if (it->second.definition == nullptr || it->second.recursion) return true;
         it->second.recursion = true;
-        try {
-            auto res = it->second.definition->isSymbolic(*this);
-            it->second.recursion = false;
-            return res;
-        } catch (ExecutionException &e) {
-            it->second.recursion = false;
-            throw e;
-        }
+        auto res = it->second.definition->isSymbolic(*this);
+        it->second.recursion = false;
+        return res;
     } else return parent->varIsSymbolic(identifier);
 }
 

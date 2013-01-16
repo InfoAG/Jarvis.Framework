@@ -14,6 +14,7 @@ public:
     virtual ExpressionP constructWithArgs(ExpressionP op) const { return make_unique<LazyEval>(std::move(op)); }
 
     virtual ExpressionP executeExpression(Scope &scope, const LoadFunc &load, const PrintFunc &print, ExecOption execOption) const { if (execOption == EAGER) throw ExecutionException::failedEager(toString()); else return operand->executeExpression(scope, load, print, LAZY); }
+    virtual ExpressionP substituteConstants() const { return copyEx(); }
     virtual TypeInfo typeCheck(const TypeCollection &candidates, Scope &scope);
     virtual bool equals(const AbstractStatement *other) const;
     virtual std::string toString() const { return "lazy(" + operand->toString() + ")"; }
