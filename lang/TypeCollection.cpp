@@ -38,8 +38,7 @@ TypeCollection TypeCollection::flattenToElements() const
 
 TypeCollection TypeCollection::all()
 {
-    TypeCollection result{{TypeInfo::NUMBER, TypeInfo::BOOL, TypeInfo::VECTOR, TypeInfo::MATRIX, TypeInfo::VOID}, {TypeInfo::NUMBER, TypeInfo::BOOL, TypeInfo::VECTOR, TypeInfo::MATRIX, TypeInfo::VOID}};
-    return result;
+    return TypeCollection{{TypeInfo::NUMBER, TypeInfo::BOOL, TypeInfo::VECTOR, TypeInfo::MATRIX, TypeInfo::VOID}, {TypeInfo::NUMBER, TypeInfo::BOOL, TypeInfo::VECTOR, TypeInfo::MATRIX, TypeInfo::VOID}};
 }
 
 }

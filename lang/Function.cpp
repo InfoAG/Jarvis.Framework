@@ -59,23 +59,21 @@ TypeInfo Function::typeCheck(const TypeCollection &candidates, Scope &scope)
         bool foundOne = false;
         Scope matchScope;
         TypeInfo matchReturnT;
-        for (const auto &func : scope.getFunctions()) {
-            if (func.first.id == identifier && func.first.argumentTypes.size() == operands.size() && candidates.contains(func.second.returnType)) {
-                auto sigTypesIt = func.first.argumentTypes.cbegin();
-                Scope tryScope(&scope);
-                for (const auto &op : operands) {
-                    try {
-                        auto opT = op->typeCheck({{*(sigTypesIt++)}}, tryScope);
-                    } catch (const UndecidableTypeException &) { break; }
-                }
-                if (sigTypesIt == func.first.argumentTypes.cend()) {
-                    if (foundOne) throw UndecidableTypeException(toString());
-                    else {
-                        foundOne = true;
-                        matchScope = std::move(tryScope);
-                        matchReturnT = func.second.returnType;
-                        argTypes = func.first.argumentTypes;
-                    }
+        for (const auto &func : scope.matchFunctions(identifier, operands.size(), candidates)) {
+            auto sigTypesIt = func.first.argumentTypes.cbegin();
+            Scope tryScope(&scope);
+            for (const auto &op : operands) {
+                try {
+                    auto opT = op->typeCheck({{*(sigTypesIt++)}}, tryScope);
+                } catch (const UndecidableTypeException &) { break; }
+            }
+            if (sigTypesIt == func.first.argumentTypes.cend()) {
+                if (foundOne) throw UndecidableTypeException(toString());
+                else {
+                    foundOne = true;
+                    matchScope = std::move(tryScope);
+                    matchReturnT = func.second.returnType;
+                    argTypes = func.first.argumentTypes;
                 }
             }
         }

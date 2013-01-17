@@ -90,4 +90,16 @@ std::pair<Scope &, FunctionDefinition &> Scope::getFunc(const FunctionSignature 
     else return parent->getFunc(sig);
 }
 
+Scope::FuncDefs Scope::matchFunctions(const std::string &id, std::size_t argCount, const TypeCollection &returnTypes)
+{
+    FuncDefs result;
+    if (parent != nullptr)
+        result = parent->matchFunctions(id, argCount, returnTypes);
+    for (const auto &func : functions) {
+        if (func.first.id == id && func.first.argumentTypes.size() == argCount && returnTypes.contains(func.second.returnType))
+            result.insert(func);
+    }
+    return result;
+}
+
 }

@@ -40,6 +40,7 @@ public:
     bool hasFunc(const FunctionSignature &sig) const { return functions.find(sig) != functions.end() || (parent && parent->hasFunc(sig)); }
     bool funcIsSymbolic(const FunctionSignature &sig) const;
     std::pair<Scope &, FunctionDefinition &> getFunc(const FunctionSignature &sig);
+    FuncDefs matchFunctions(const std::string &id, std::size_t argCount, const TypeCollection &returnTypes);
 
     void setParent(Scope *newParent) { parent = newParent; }
     const VarDefs &getVariables() const { return variables; }
