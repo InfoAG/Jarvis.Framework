@@ -1,5 +1,5 @@
-#ifndef NUMBERARITH_H
-#define NUMBERARITH_H
+#ifndef NUMBERVALUE_H
+#define NUMBERVALUE_H
 
 #include "AbstractExpression.h"
 #include <sstream>
@@ -44,4 +44,4 @@ public:
 
 }
 
-#endif //NUMBERARITH_H
+#endif //NUMBERVALUE_H

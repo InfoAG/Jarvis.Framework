@@ -4,8 +4,7 @@ namespace CAS {
 
 AbstractExpression::ExpressionP Return::execute(Scope &scope, const LoadFunc &load, const PrintFunc &print, ExecOption execOption) const
 {
-    expression->execute(scope, load, print, execOption);
-    return make_unique<Void>();
+    return make_unique<ReturnExpression>(expression->execute(scope, load, print, execOption));
 }
 
 TypeInfo Return::typeCheck(const TypeCollection &candidates, Scope &scope)

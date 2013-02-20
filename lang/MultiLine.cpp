@@ -11,7 +11,7 @@ AbstractExpression::ExpressionP MultiLine::execute(Scope &scope, const LoadFunc 
 {
     for (const auto &op : operands) {
         auto evalRes = op->execute(scope, load, print, execOption);
-        if (typeid(*(evalRes)) != typeid(Void)) return evalRes;
+        if (typeid(*(evalRes)) == typeid(ReturnExpression)) return std::move(static_cast<ReturnExpression*>(evalRes.get())->getExpression());
     }
     return make_unique<Void>();
 }

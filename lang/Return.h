@@ -4,6 +4,7 @@
 #include "AbstractStatement.h"
 #include "AbstractExpression.h"
 #include "Void.h"
+#include "ReturnExpression.h"
 
 namespace CAS {
 
