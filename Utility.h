@@ -9,6 +9,12 @@ typedef unsigned int fbyte;
 typedef unsigned long long ebyte;
 
 
+enum numType
+{
+	NumNat,NumInt,NumRat
+};
+
+
 
 const int MAX_INT = 9;
 

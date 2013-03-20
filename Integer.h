@@ -38,6 +38,7 @@ namespace CAS{
 		fbyte getNumberAt(unsigned int) const;
 		fbyte getSize() const;
 		bool getSign() const;
+		numType getType() const;
         std::string toString()const;
 
 		//Properties
@@ -89,7 +90,7 @@ namespace CAS{
         bool operator<(const Integer&) const;
         bool operator<=(const Integer&) const;
         bool operator==(const Integer&) const;
-        bool operator!=(const Integer &other) const { return ! (*this == other); }
+        bool operator!=(const Integer &)const;
         bool operator>=(const Integer&) const;
         bool operator>(const Integer&) const;
 	};

@@ -23,17 +23,21 @@ Natural::Natural(unsigned short us){
 }
 
 Natural::Natural(int i){
-	if(i<0)
-		i *= -1;
-	if(i < intmod[MAX_INT]){
+	unsigned int ui;
+	if(i < 0){
+		ui = i*-1;
+	}else{
+		ui = i;
+	}
+	if(ui < intmod[MAX_INT]){
 		size = 1;
 		digits.resize(1);
-		digits.at(0) = i;
+		digits.at(0) = ui;
 	}else{
 		size = 2;
 		digits.resize(size);
-		digits.at(0) = i % intmod[MAX_INT];
-		digits.at(1) = i / intmod[MAX_INT];
+		digits.at(0) = ui % intmod[MAX_INT];
+		digits.at(1) = ui / intmod[MAX_INT];
 	}
 }
 
@@ -174,6 +178,9 @@ fbyte Natural::getDigitsAt(unsigned int ui)const{
 fbyte Natural::getSize()const{
 	return size;
 }
+numType Natural::getType()const{
+	return NumNat;
+}
 
 std::string Natural::toString()const{
     std::string str;
@@ -200,15 +207,15 @@ PROPERTIES
 bool Natural::isInteger(){
 	return true;
 }
-bool Natural::isEven(){
+bool Natural::isEven()const{
 	return !this->isOdd();
 }
-bool Natural::isOdd(){
+bool Natural::isOdd()const{
 	if(digits.at(0) % 2 == 0)
 		return false;
 	return true;
 }
-bool Natural::isPrime(){
+bool Natural::isPrime()const{
 	return true;
 }
 
@@ -281,29 +288,29 @@ Natural Natural::Addition(const Natural& rhs)const{
 	fbyte min    = (size < rhs.getSize())? size : rhs.getSize();
 	fbyte max    = (size > rhs.getSize())? size : rhs.getSize();
 	fbyte tmp    = 0;
-	fbyte buffer = 0;
+	fbyte carry = 0;
     std::vector<fbyte> c(max);
 	for(fbyte i = 0 ; i < min ; i++){
-		tmp	    = buffer + digits.at(i) + rhs.getDigitsAt(i);
-		buffer  = tmp / intmod[MAX_INT];
+		tmp	    = carry + digits.at(i) + rhs.getDigitsAt(i);
+		carry  = tmp / intmod[MAX_INT];
 		c.at(i) = tmp % intmod[MAX_INT];
 	}
 	if(size >= max){
 		for(fbyte i = min ; i < max ; i++){
-			tmp     = buffer + digits.at(i);
-			buffer  = tmp / intmod[MAX_INT];
+			tmp     = carry + digits.at(i);
+			carry  = tmp / intmod[MAX_INT];
 			c.at(i) = tmp % intmod[MAX_INT];
 		}	
 	}
 	if(rhs.getSize() >= max){
 		for(fbyte i = min ; i < max ; i++){
-			tmp		= buffer + rhs.getDigitsAt(i);
-			buffer  = tmp / intmod[MAX_INT];
+			tmp		= carry + rhs.getDigitsAt(i);
+			carry  = tmp / intmod[MAX_INT];
 			c.at(i) = tmp % intmod[MAX_INT];
 		}
 	}
 	Natural result;
-	if(buffer == 0){
+	if(carry == 0){
 		result.digits = c;
 		result.size   = max;
 	}else{
@@ -312,7 +319,7 @@ Natural Natural::Addition(const Natural& rhs)const{
 		for(fbyte i = 0 ; i < max ; i++){
 			result.digits.at(i) = c.at(i);
 		}
-		result.digits.at(max) = buffer;
+		result.digits.at(max) = carry;
 	}
 	return result;
 }
@@ -440,7 +447,7 @@ Natural Natural::shortDivision(const Natural& rhs)const{
 		r       = tmp % rhs.getDigitsAt(0);
 	}
 	tmp     = r * emod + (ebyte)digits.at(0);
-	c.at(0) = tmp / rhs.getDigitsAt(0);
+	c.at(0) = (fbyte)(tmp / rhs.getDigitsAt(0));
 	if(c.at(s-1)==0){
 		c.pop_back();
 		s--;
@@ -828,6 +835,56 @@ Natural Natural::longDivisionDaC3by2(const Natural& rhs)const{
 }
 
 /****
+
+****/
+
+Natural Natural::LCM(const Natural& lhs, const Natural& rhs){
+	return (rhs*lhs) / GCD(rhs,lhs);
+}
+
+Natural Natural::GCD(const Natural& lhs, const Natural& rhs){
+	Natural tmpl = lhs;
+	Natural tmpr = rhs;
+	bool l = lhs == 0;
+	bool r = rhs == 0;
+	if(l && r)
+		return Natural(0);
+	if(l)
+		return tmpr;
+	if(r)
+		return tmpl;
+
+	int shift = 0;
+	for(; tmpl.isEven() && tmpr.isEven(); shift++){
+		tmpl /= 2;
+		tmpr /= 2;
+	}
+
+	while (tmpl.isEven())
+		tmpl /= 2;
+
+	while(tmpr != 0){
+		while(tmpr.isEven())
+			tmpr /= 2;
+
+		if(tmpl > tmpr){
+			Natural tmp = tmpl;
+			tmpl = tmpr;
+			tmpr = tmp;
+		}
+		tmpr -= tmpl;
+	}
+	Natural Shift = 1;
+	for(int i = 0; i < shift; i++){
+		Shift *= 2;
+	}
+	return tmpl*Shift;
+}
+
+
+
+
+/****
 ARBITRARY INTEGER OPERATORS
 ****/
 const Natural Natural::operator+(const Natural& rhs)const{
@@ -964,6 +1021,37 @@ Natural Natural::operator--(int){
 	Natural result(*this);
 	*this -= 1;
 	return result;
+}
+
+/****
+
+****/
+Natural& Natural::operator=(short s){
+	return *this = Natural(s);
+}
+
+Natural& Natural::operator=(unsigned short us){
+	return *this = Natural(us);
+}
+
+Natural& Natural::operator=(int i){
+	return *this = Natural(i);
+}
+
+Natural& Natural::operator=(long l){
+	return *this = Natural(l);
+}
+
+Natural& Natural::operator=(unsigned long ul){
+	return *this = Natural(ul);
+}
+
+Natural& Natural::operator=(long long ll){
+	return *this = Natural(ll);
+}
+
+Natural& Natural::operator=(unsigned long long ull){
+	return *this = Natural(ull);
 }
 /****
 

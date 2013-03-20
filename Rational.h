@@ -23,6 +23,7 @@ namespace CAS{
 		Rational(unsigned long);
 		Rational(long long);
 		Rational(unsigned long long);
+		Rational(int, int);
 		Rational(float);
 		Rational(double);
 		Rational(std::string);
@@ -38,7 +39,10 @@ namespace CAS{
 		Natural getNumerator()const;
 		Natural getDenominator()const;
 		bool getSign()const;
-		std::string toString()const;
+		numType getType()const;
+		std::string toString(int)const;
+		std::string fracToString()const;
+		std::string fracToString2()const;
 
 		bool isInteger();
 		bool isEven();
@@ -78,12 +82,34 @@ namespace CAS{
 		Rational& operator*=(const Rational&);
 		Rational& operator/=(const Rational&);
 
+		bool operator<(const int&)const;
+		bool operator<=(const int&)const;
+		bool operator==(const int&)const;
+		bool operator!=(const int&)const;
+		bool operator>=(const int&)const;
+		bool operator>(const int&)const;
+
+		bool operator<(const Natural&)const;
+		bool operator<=(const Natural&)const;
+		bool operator==(const Natural&)const;
+		bool operator!=(const Natural&)const;
+		bool operator>=(const Natural&)const;
+		bool operator>(const Natural&)const;
+
+		bool operator<(const Integer&)const;
+		bool operator<=(const Integer&)const;
+		bool operator==(const Integer&)const;
+		bool operator!=(const Integer&)const;
+		bool operator>=(const Integer&)const;
+		bool operator>(const Integer&)const;
+
 		bool operator<(const Rational&)const;
 		bool operator<=(const Rational&)const;
 		bool operator==(const Rational&)const;
 		bool operator!=(const Rational&)const;
 		bool operator>=(const Rational&)const;
 		bool operator>(const Rational&)const;
+
 
 	};
 };

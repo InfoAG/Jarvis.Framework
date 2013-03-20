@@ -6,6 +6,7 @@ Integer::Integer(){
 	nat = 0;
 	sign = false;
 }
+
 Integer::Integer(short s){
 	if(s < 0){
 		s    *= -1;
@@ -14,10 +15,12 @@ Integer::Integer(short s){
 		sign = false;
 	nat = s;
 }
+
 Integer::Integer(unsigned short us){
 	sign = false;
 	nat = us;
 }
+
 Integer::Integer(int i){
 	if(i < 0){
 		i   *= -1;
@@ -26,10 +29,12 @@ Integer::Integer(int i){
 		sign = false;
 	nat = i;
 }
+
 Integer::Integer(unsigned int ui){
 	sign = false;
 	nat  = ui;
 }
+
 Integer::Integer(long l){
 	if(l < 0){
 		l   *= -1;
@@ -38,10 +43,12 @@ Integer::Integer(long l){
 		sign = false;
 	nat = l;
 }
+
 Integer::Integer(unsigned long ul){
 	sign = false;
 	nat = ul;
 }
+
 Integer::Integer(long long ll){
 	if(ll < 0){
 		ll   *= -1;
@@ -50,16 +57,20 @@ Integer::Integer(long long ll){
 		sign = false;
 	nat = ll;
 }
+
 Integer::Integer(unsigned long long ull){
 	sign = false;
 	nat = ull;
 }
+
 Integer::Integer(float f){
 
 }
+
 Integer::Integer(double d){
 
 }
+
 Integer::Integer(std::string str){
 	if(str.at(0)=='-'){
 		sign = true;
@@ -80,12 +91,23 @@ Integer::Integer(const Natural& rhs){
 Natural Integer::getNat()const{
 	return nat;
 }
+
 fbyte Integer::getNumberAt(unsigned int ui)const{
 	return nat.getDigitsAt(ui);
 }
+
 fbyte Integer::getSize()const{
 	return nat.getSize();
 }
+
+bool Integer::getSign()const{
+	return sign;
+}
+
+numType Integer::getType()const{
+	return NumInt;
+}
+
 std::string Integer::toString()const{
 	std::string str;
 	if(sign)
@@ -93,18 +115,22 @@ std::string Integer::toString()const{
 	return str + nat.toString();
 }
 
+
 /****
 
 ****/
 bool Integer::isInteger(){
 	return true;
 }
+
 bool Integer::isEven(){
 	return nat.isEven();
 }
+
 bool Integer::isOdd(){
 	return nat.isOdd();
 }
+
 bool Integer::isPrime(){
 	return true;
 }
@@ -129,6 +155,7 @@ const Integer Integer::operator+(const Natural& rhs)const{
 	}
 	return result;
 }
+
 const Integer Integer::operator-(const Natural& rhs)const{
 	Integer result;
 	if(sign){
@@ -145,39 +172,46 @@ const Integer Integer::operator-(const Natural& rhs)const{
 	}
 	return result;
 }
+
 const Integer Integer::operator*(const Natural& rhs)const{
 	Integer result;
 	result.nat  = nat * rhs;
 	result.sign = sign;
 	return result;
 }
+
 const Integer Integer::operator/(const Natural& rhs)const{
 	Integer result;
 	result.nat  = nat / rhs;
 	result.sign = sign;
 	return result;
 }
+
 const Integer Integer::operator%(const Natural& rhs)const{
 	return Integer(0);
 }
+
 Integer& Integer::operator=(const Natural& rhs){
-	Integer result;
-	result.sign = false;
-	result.nat  = rhs;
-	return  result;
+	sign = false;
+	nat  = rhs;
+	return  *this;
 }
+
 Integer& Integer::operator+=(const Natural& rhs){
 	*this = *this + rhs;
 	return *this;
 }
+
 Integer& Integer::operator-=(const Natural& rhs){
 	*this = *this - rhs;
 	return *this;
 }
+
 Integer& Integer::operator*=(const Natural& rhs){
 	*this = *this * rhs;
 	return *this;
 }
+
 Integer& Integer::operator/=(const Natural& rhs){
 	*this = *this / rhs;
 	return *this;
@@ -209,6 +243,7 @@ const Integer Integer::operator+(const Integer& rhs)const{
 	}
 	return result;
 }
+
 const Integer Integer::operator-(const Integer& rhs)const{
 	Integer result;
 	if(sign == rhs.sign){
@@ -228,85 +263,106 @@ const Integer Integer::operator-(const Integer& rhs)const{
 	}
 	return result;
 }
+
 const Integer Integer::operator*(const Integer& rhs)const{
 	Integer result;
 	result.nat  = nat * rhs.nat;
 	result.sign = sign ^ rhs.sign;
 	return result;
 }
+
 const Integer Integer::operator/(const Integer& rhs)const{
 	Integer result;
 	result.nat  = nat / rhs.nat;
 	result.sign = sign ^ rhs.sign;
 	return result;
 }
+
 const Integer Integer::operator%(const Integer& rhs)const{
 	return Integer(0);
 }
+
 Integer& Integer::operator=(const Integer& rhs){
 	nat  = rhs.nat;
 	sign = rhs.sign;
 	return *this;
 }
+
 Integer& Integer::operator+=(const Integer& rhs){
 	*this = *this + rhs;
 	return *this;
 }
+
 Integer& Integer::operator-=(const Integer& rhs){
 	*this = *this - rhs;
 	return *this;
 }
+
 Integer& Integer::operator*=(const Integer& rhs){
 	*this = *this * rhs;
 	return *this;
 }
+
 Integer& Integer::operator/=(const Integer& rhs){
 	*this = *this / rhs;
 	return *this;
 }
+
 /****
 
 ****/
+
 const Integer Integer::operator+(const int& ui)const{
 	return *this + Integer(ui);
 }
+
 const Integer Integer::operator-(const int& ui)const{
 	return *this - Integer(ui);
 }
+
 const Integer Integer::operator*(const int& ui)const{
 	return *this * Integer(ui);
 }
+
 const Integer Integer::operator/(const int& ui)const{
 	return *this / Integer(ui);
 }
+
 const Integer Integer::operator%(const int& ui)const{
 	return *this % Integer(ui);
 }
+
 Integer& Integer::operator=(const int& ui){
 	nat  = -1*ui;
 	sign = (ui<0);
 	return *this;
 }
+
 Integer& Integer::operator+=(const int& ui){
     *this = *this + ui;
     return *this;
 }
+
 Integer& Integer::operator-=(const int& ui){
     *this = *this - ui;
     return *this;
 }
+
 Integer& Integer::operator*=(const int& ui){
     *this = *this * ui;
     return *this;
 }
+
 Integer& Integer::operator/=(const int& ui){
     *this = *this / ui;
     return *this;
 }
+
 /****
 
 
 ****/
+
 bool Integer::operator<(const Integer& rhs) const {
 	if(sign != rhs.sign){
 		if(sign)
@@ -319,6 +375,7 @@ bool Integer::operator<(const Integer& rhs) const {
 	else 
 		return false;
 }
+
 bool Integer::operator<=(const Integer& rhs) const {
 	if(sign != rhs.sign){
 		if(sign)
@@ -331,6 +388,7 @@ bool Integer::operator<=(const Integer& rhs) const {
 	else 
 		return false;
 }
+
 bool Integer::operator==(const Integer& rhs) const {
 	if(sign != rhs.sign)
 		return false;
@@ -338,6 +396,11 @@ bool Integer::operator==(const Integer& rhs) const {
 		return true;
 	return false;
 }
+
+bool Integer::operator!=(const Integer& rhs)const { 
+	return !(*this == rhs);
+}
+
 bool Integer::operator>=(const Integer& rhs) const {
 	if(sign != rhs.sign){
 		if(sign)
@@ -350,6 +413,7 @@ bool Integer::operator>=(const Integer& rhs) const {
 	else 
 		return false;
 }
+
 bool Integer::operator>(const Integer& rhs) const {
 	if(sign != rhs.sign){
 		if(sign)

@@ -8,7 +8,7 @@
 namespace CAS{
 	class Integer;
 
-	class Natural : public Number{
+	class Natural:public Number{
 	private:
         std::vector<fbyte> digits;
 		fbyte size;
@@ -36,13 +36,14 @@ namespace CAS{
         std::vector<fbyte> getDigits()const;
 		fbyte getDigitsAt(unsigned int)const;
 		fbyte getSize()const;
+		numType getType()const;
         std::string toString()const;
 
 		//Properties
-		bool isInteger();
-		bool isEven();
-		bool isOdd();
-		bool isPrime();
+		bool isInteger(); // ghosts in the machine???
+		bool isEven()const;
+		bool isOdd()const;
+		bool isPrime()const;
 
 		//Shift Operations
 		Natural LeftShift(int)const;
@@ -74,6 +75,9 @@ namespace CAS{
 		Natural longDivisionDaC2by1(const Natural&)const;
 		Natural longDivisionDaC3by2(const Natural&)const;
 
+		Natural static LCM(const Natural&, const Natural&);
+		Natural static GCD(const Natural&, const Natural&);
+
 		//Arbitrary Natural Operators
         const Natural operator+(const Natural&)const;
         const Natural operator-(const Natural&)const;
@@ -101,6 +105,15 @@ namespace CAS{
         Natural &operator--();
         Natural operator++(int);
         Natural operator--(int);
+
+		
+        Natural &operator=(short);
+        Natural &operator=(unsigned short);
+        Natural &operator=(int);
+        Natural &operator=(long);
+        Natural &operator=(unsigned long);
+        Natural &operator=(long long);
+        Natural &operator=(unsigned long long);
 
 
 		//Bool Operators
