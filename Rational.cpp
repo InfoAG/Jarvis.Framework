@@ -120,11 +120,35 @@ Rational::Rational(const Natural& rhs){
 	sign = false;
 }
 
+Rational::Rational(const Natural& n, const Natural& d){
+	sign = false;
+	numerator = n;
+	denominator = d;
+}
+
 Rational::Rational(const Integer& rhs){
 	numerator = rhs.getNat();
 	denominator = 1;
 	sign = rhs.getSign();
 
+}
+
+Rational::Rational(const Natural& n, const Integer& d){
+	sign = d.getSign();
+	numerator = n;
+	denominator = d.getNat();
+}
+
+Rational::Rational(const Integer& n, const Natural& d){
+	sign = n.getSign();
+	numerator = n.getNat();
+	denominator = d;
+}
+
+Rational::Rational(const Integer& n, const Integer& d){
+	sign = n.getSign() == d.getSign() ? false : true;
+	numerator = n.getNat();
+	denominator = d.getNat();
 }
 
 Rational::Rational(const Rational& rhs){
@@ -145,8 +169,8 @@ bool Rational::getSign()const{
 	return sign;
 }
 
-numType Rational::getType()const{
-	return NumRat;
+NUM_TYPE Rational::getType()const{
+	return NUM_RAT;
 }
 
 std::string Rational::toString(int precision)const{
@@ -237,6 +261,44 @@ bool Rational::isPrime(){ // to come
 	return true;
 }
 
+Rational Rational::round(const Rational& r, ROUND_MODE mode){
+	Rational result = r.numerator/r.denominator;
+	if(result != 0){
+		result.sign = r.sign;
+	}
+	if(mode == ROUND_DOWN){
+		if(r.sign && (result - r) != 0){
+			return result-Rational(1);
+		}
+		return result;
+	}else if(mode == ROUND_UP){
+		if((result - r) != 0 && !r.sign){
+			return result+Rational(1);
+		}
+		return result;
+	}else if(mode == ROUND_TOWARD_ZERO){
+		return result;
+	}else if(mode == ROUND_AWAY_FROM_ZERO){
+		if((result-r) != 0){
+			if(r.sign){
+				return result-Rational(1);
+			}else{
+				return result+Rational(1);
+			}
+		}
+		return result;
+	}else{ //ROUND_TO_NEAREST
+		if( (result - r) < Rational(1,2)){
+			return result;
+		}
+		if(r.sign){
+			return result-Rational(1);		
+		}else{
+			return result+Rational(1);
+		}
+	}
+}
+
 
 const Rational Rational::operator+(const Natural& rhs)const{
 	Rational result;
@@ -300,8 +362,8 @@ const Rational Rational::operator/(const Natural& rhs)const{
 	return result;
 }
 
-const Rational Rational::operator%(const Natural& rhs)const{ //.....
-	return Rational();
+const Rational Rational::operator%(const Natural& rhs)const{ 
+	return *this - round(*this/rhs,ROUND_DOWN)*rhs;
 }
 
 Rational& Rational::operator=(const Natural& rhs){
@@ -410,7 +472,7 @@ const Rational Rational::operator/(const Integer& rhs)const{
 }
 
 const Rational Rational::operator%(const Integer& rhs)const{ //......
-	return Rational();
+	return *this - round(*this/rhs,ROUND_DOWN)*rhs;
 }
 
 Rational& Rational::operator=(const Integer& rhs){
@@ -501,7 +563,7 @@ const Rational Rational::operator/(const Rational& rhs)const{
 }
 
 const Rational Rational::operator%(const Rational& rhs)const{  //......
-	return Rational();
+	return *this - round(*this/rhs,ROUND_DOWN)*rhs;
 }
 
 Rational& Rational::operator=(const Rational& rhs){
@@ -563,36 +625,51 @@ bool Rational::operator<(const Natural& rhs)const{
 	if(sign){
 		return true;
 	}
+	Natural g = numerator/denominator;
+	if(g < rhs){
+		return true;
+	}
+	return false;
 }
 
 bool Rational::operator<=(const Natural& rhs)const{
-	if(sign){
-		return true;
-	}
+	return !( *this > rhs );
 }
 
 bool Rational::operator==(const Natural& rhs)const{
 	if(sign){
 		return false;
 	}
+	Natural tmp = numerator/denominator;
+	if( tmp == rhs ){
+		Rational r = *this - tmp;
+		if( r != 0 ){
+			return false;
+		}
+		return true;
+	}
+	return false;
 }
 
 bool Rational::operator!=(const Natural& rhs)const{
-	if(sign){
-		return true;
-	}
+	return !(*this == rhs);
 }
 
 bool Rational::operator>=(const Natural& rhs)const{
-	if(sign){
-		return false;
-	}
+	return !( *this < rhs );
 }
 
 bool Rational::operator>(const Natural& rhs)const{
 	if(sign){
 		return false;
 	}
+	Natural tmp = numerator/denominator;
+	if( tmp > rhs ){
+		return true;
+	}else if( tmp == rhs && (*this - tmp) != 0 ){
+		return true;
+	}
+	return false;
 }
 
 /*****
@@ -600,27 +677,43 @@ bool Rational::operator>(const Natural& rhs)const{
 *****/
 
 bool Rational::operator<(const Integer& rhs)const{
-	return true;
+	if(sign != rhs.getSign()){
+		if(sign){
+			return true;
+		}
+		return false;
+	}
+	return (*this < rhs.getNat());
 }
 
 bool Rational::operator<=(const Integer& rhs)const{
-	return true;
+	return !( *this > rhs );
 }
 
 bool Rational::operator==(const Integer& rhs)const{
-	return true;
+	if(sign != rhs.getSign()){
+		return false;
+	}
+	return ( *this == rhs.getNat() );
 }
 
 bool Rational::operator!=(const Integer& rhs)const{
-	return true;
+	return !( *this == rhs );
 }
 
 bool Rational::operator>=(const Integer& rhs)const{
-	return true;
+	return !( *this < rhs );
 }
 
 bool Rational::operator>(const Integer& rhs)const{
-	return true;
+	if(sign != rhs.getSign()){
+		if(sign){
+			return false;
+		}else{
+			return true;
+		}
+	}
+	return ( *this > rhs.getNat() );
 }
 
 /******

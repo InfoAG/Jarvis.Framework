@@ -9,7 +9,7 @@ namespace CAS{
 	private:
 	public:
 		virtual bool isInteger()=0;
-		numType getType()const;
+		NUM_TYPE getType()const;
 	};
 	
 };

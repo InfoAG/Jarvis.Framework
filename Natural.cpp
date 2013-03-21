@@ -57,15 +57,16 @@ Natural::Natural(unsigned int ui){
 Natural::Natural(long l){
 	if(l<0)
 		l *= -1;
-	if(l < intmod[MAX_INT]){
+	unsigned long ul = (unsigned long)l;
+	if(ul < intmod[MAX_INT]){
 		size = 1;
 		digits.resize(1);
-		digits.at(0) = l;
+		digits.at(0) = ul;
 	}else{
 		size = 2;
 		digits.resize(size);
-		digits.at(0) = l % intmod[MAX_INT];
-		digits.at(1) = l / intmod[MAX_INT];
+		digits.at(0) = ul % intmod[MAX_INT];
+		digits.at(1) = ul / intmod[MAX_INT];
 	}
 }
 
@@ -126,7 +127,7 @@ Natural::Natural(double d){
 
 }
 
-Natural::Natural(std::string str){
+Natural::Natural(std::string str){ // rewrite
 	if(str.find_first_not_of("0123456789")!=str.npos){
 		//throw exception()
 	}
@@ -178,8 +179,8 @@ fbyte Natural::getDigitsAt(unsigned int ui)const{
 fbyte Natural::getSize()const{
 	return size;
 }
-numType Natural::getType()const{
-	return NumNat;
+NUM_TYPE Natural::getType()const{
+	return NUM_NAT;
 }
 
 std::string Natural::toString()const{
@@ -223,7 +224,7 @@ bool Natural::isPrime()const{
 SHIFT OPERATIONS
 ****/
 
-Natural Natural::LeftShift(int ui)const{
+Natural Natural::LeftShift(unsigned int ui)const{
 	Natural result;
 	result.size = size + ui;
 	result.digits.resize(result.size);
@@ -234,7 +235,7 @@ Natural Natural::LeftShift(int ui)const{
 	}
 	return result;
 }
-Natural Natural::RightShift(int ui)const{
+Natural Natural::RightShift(unsigned int ui)const{
 	if(ui >= size){
 		Natural result(0);
 		return result;
@@ -249,7 +250,7 @@ Natural Natural::RightShift(int ui)const{
 	}
 	return result;
 }
-Natural Natural::MSB(int ui)const{
+Natural Natural::MSB(unsigned int ui)const{
 	if(ui == 0){
 		Natural result(0);
 		return result;
@@ -264,11 +265,7 @@ Natural Natural::MSB(int ui)const{
 	}
 	return result;
 }
-Natural Natural::LSB(int ui)const{
-	if(ui <= 0){
-		Natural result(0);
-		return result;
-	}
+Natural Natural::LSB(unsigned int ui)const{
 	if(ui >= size){
 		return (*this);
 	}
@@ -400,7 +397,7 @@ Natural Natural::Multiplication(const Natural& rhs)const{
 			c.at(i + j) = (fbyte)(tmp % emod);
 			buffer = tmp / emod;
 		}
-		c.at(i + m)=buffer;
+		c.at(i + m)=(fbyte)buffer;
 	}
 	fbyte count=0;
 	for(int i = k + m ; i >= 1 && c.at(i) == 0; i--){
@@ -422,10 +419,10 @@ Natural Natural::simpleMultiplication(const Natural& rhs)const{
 	for(fbyte i = 0 ; i < getSize() ; i++){
 		tmp     = tmp + (ebyte)getDigitsAt(i)*(ebyte)rhs.getDigitsAt(0);
 		c.at(i) = (fbyte) (tmp % emod);
-		tmp     = (fbyte) (tmp / emod);
+		tmp     = (tmp / emod);
 	}
 	if(tmp!=0)
-		c.at(getSize()) = tmp;
+		c.at(getSize()) = (fbyte)tmp;
 	else{
 		c.pop_back();
 		s--;
@@ -443,7 +440,7 @@ Natural Natural::shortDivision(const Natural& rhs)const{
 	c.resize(s);
 	for(fbyte j = s-1 ; j >= 1 ; j--){
 		tmp     = r * emod + (ebyte)digits.at(j);
-		c.at(j) = tmp / rhs.getDigitsAt(0);
+		c.at(j) = (fbyte) (tmp / rhs.getDigitsAt(0));
 		r       = tmp % rhs.getDigitsAt(0);
 	}
 	tmp     = r * emod + (ebyte)digits.at(0);

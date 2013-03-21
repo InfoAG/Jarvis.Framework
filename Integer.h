@@ -38,7 +38,7 @@ namespace CAS{
 		fbyte getNumberAt(unsigned int) const;
 		fbyte getSize() const;
 		bool getSign() const;
-		numType getType() const;
+		NUM_TYPE getType() const;
         std::string toString()const;
 
 		//Properties

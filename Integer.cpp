@@ -104,8 +104,8 @@ bool Integer::getSign()const{
 	return sign;
 }
 
-numType Integer::getType()const{
-	return NumInt;
+NUM_TYPE Integer::getType()const{
+	return NUM_INT;
 }
 
 std::string Integer::toString()const{

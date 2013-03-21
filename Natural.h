@@ -36,7 +36,7 @@ namespace CAS{
         std::vector<fbyte> getDigits()const;
 		fbyte getDigitsAt(unsigned int)const;
 		fbyte getSize()const;
-		numType getType()const;
+		NUM_TYPE getType()const;
         std::string toString()const;
 
 		//Properties
@@ -46,10 +46,10 @@ namespace CAS{
 		bool isPrime()const;
 
 		//Shift Operations
-		Natural LeftShift(int)const;
-		Natural RightShift(int)const;
-		Natural MSB(int)const;
-		Natural LSB(int)const;
+		Natural LeftShift(unsigned int)const;
+		Natural RightShift(unsigned int)const;
+		Natural MSB(unsigned int)const;
+		Natural LSB(unsigned int)const;
 
 		//Schoolbool Algorithms
 		Natural Addition(const Natural&)const;

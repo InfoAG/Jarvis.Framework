@@ -9,9 +9,14 @@ typedef unsigned int fbyte;
 typedef unsigned long long ebyte;
 
 
-enum numType
+enum NUM_TYPE
 {
-	NumNat,NumInt,NumRat
+	NUM_NAT,NUM_INT,NUM_RAT
+};
+
+enum ROUND_MODE
+{
+	ROUND_UP,ROUND_DOWN,ROUND_TOWARD_ZERO,ROUND_AWAY_FROM_ZERO,ROUND_TO_NEAREST
 };
 
 
